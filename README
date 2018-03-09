@@ -1,0 +1,44 @@
+CS351 - Project 3 - README
+Tatsuya Yokota
+03/02/2018
+
+Run and build configuration for C:
+OSX El Capitan 10.11.5 - Apple LLVM version 8.0.0 (clang-800.0.42.1)
+
+
+ALL PROGRAMS USAGE INSTRUCTIONS:
+
+Circle and Line Testing Program: test3a.c
+>>> cd src
+>>> make test3a
+>>> ./test3a
+
+Line draw Testing Program: test3b.c
+>>> cd src
+>>> make test3b
+>>> ./test3b
+
+Polyline Test Program: test3c.c
+>>> cd src
+>>> make test3c
+>>> ./test3c
+
+Line Draw All Cases Test Program: test3d.c
+>>> cd src
+>>> make test3d
+>>> ./test3d 
+
+Line draw Speed Testing: testbench.c
+>>> cd src
+>>> make testbench
+>>> ./testbench 
+
+Program that draws a 3D box in a 3D box: 3D_box.c
+>>> cd src
+>>> make 3D_box
+>>> ./3D_box
+
+Program that draws HAL: HAL.c
+>>> cd src
+>>> make HAL
+>>> ./HAL
