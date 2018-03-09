@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   color_set(&White, 1.0, 1.0, 1.0 );
   color_set(&Blue, 0.2, 0.1, 0.95 );
   
-  src = image_create(rows, cols);
+  src = image_create(rows, cols, 255);
 
   // make a simple square to test proper areas and locations
   // the square ought to be 20x20, include pixel (30,30) and exclude pixel (50, 50)

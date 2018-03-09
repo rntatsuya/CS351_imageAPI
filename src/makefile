@@ -32,10 +32,10 @@ _DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h graphics.h
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test4a #test4b test4c test4c-loop polyspeed
+EXECUTABLES = test4b #test4b test4c test4c-loop polyspeed
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test4a.o #test4b.o test4c.o test4c-loop.o polyspeed.o
+_OBJ = test4b.o #test4b.o test4c.o test4c-loop.o polyspeed.o
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -60,8 +60,8 @@ all:
 test4a: $(ODIR)/test4a.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
-# test4b: $(ODIR)/test4b.o
-# 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+test4b: $(ODIR)/test4b.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 # 
 # test4c: $(ODIR)/test4c.o
 # 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)

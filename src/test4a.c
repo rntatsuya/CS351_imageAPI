@@ -30,54 +30,64 @@ int main(int argc, char *argv[]) {
   color_set(&White, 1.0, 1.0, 1.0 );
   color_set(&Blue, 0.2, 0.1, 0.95 );
 
-  src = image_create(rows, cols);
+  src = image_create(rows, cols, 255);
 
   // make a simple square to test proper areas and locations
   // the square ought to be 20x20, include pixel (30,30) and exclude pixel (50, 50)
-  point_set2D(&(pt[0]), 30, 30);
-  point_set2D(&(pt[1]), 50, 30);
-  point_set2D(&(pt[2]), 50, 50);
-  point_set2D(&(pt[3]), 30, 50);
+  point_set2D(&(pt[0]), 60, 30);
+  point_set2D(&(pt[1]), 70, 30);
+  point_set2D(&(pt[2]), 70, 70);
+//   point_set2D(&(pt[3]), 30, 50);
 
-  p = polygon_createp(4, pt);
+  p = polygon_createp(3, pt);
 
   printf("drawing a square\n");
-  polygon_drawFill(p, src, Blue);
+  polygon_drawFillB(p, src, Blue);
+  
+  point_set2D(&(pt[0]), 100, 30);
+  point_set2D(&(pt[1]), 140, 70);
+  point_set2D(&(pt[2]), 100, 70);
+//   point_set2D(&(pt[3]), 30, 50);
 
-  // something more interesting
-  for(i=0;i<50;i++) {
-    float dr = rand() % 20;
-    point_set2D(&(pt[i]), 
-    200 + cos((float)i * M_PI * 2.0 / 50.0)*(70 + dr),
-    150 + sin((float)i * M_PI * 2.0 / 50.0)*(70 + dr));
-  }
-  polygon_set(p, 50, pt);
+  p = polygon_createp(3, pt);
 
-  printf("drawing first big polygon\n");
-  polygon_drawFill(p, src, Red);
-
-  for(i=0;i<50;i++) {
-    float dr = rand() % 15;
-    point_set2D(&(pt[i]), 
-    200 + cos((float)i * M_PI * 2.0 / 50.0)*(50 + dr),
-    150 + sin((float)i * M_PI * 2.0 / 50.0)*(50 + dr));
-  }
-  polygon_set(p, 50, pt);
-
-  printf("drawing second big polygon\n");
-  polygon_drawFill(p, src, Orange);
-
-  for(i=0;i<50;i++) {
-    float dr = rand() % 10;
-    point_set2D(&(pt[i]), 
-    200 + cos((float)i * M_PI * 2.0 / 50.0)*(30 + dr),
-    150 + sin((float)i * M_PI * 2.0 / 50.0)*(30 + dr));
-  }
-  polygon_set(p, 50, pt);
-
-  printf("drawing third big polygon\n");
-  polygon_drawFill(p, src, White);
-
+  printf("drawing a square\n");
+  polygon_drawFillB(p, src, Blue);
+// 
+//   // something more interesting
+//   for(i=0;i<50;i++) {
+//     float dr = rand() % 20;
+//     point_set2D(&(pt[i]), 
+//     200 + cos((float)i * M_PI * 2.0 / 50.0)*(70 + dr),
+//     150 + sin((float)i * M_PI * 2.0 / 50.0)*(70 + dr));
+//   }
+//   polygon_set(p, 50, pt);
+// 
+//   printf("drawing first big polygon\n");
+//   polygon_drawFillB(p, src, Red);
+// 
+//   for(i=0;i<50;i++) {
+//     float dr = rand() % 15;
+//     point_set2D(&(pt[i]), 
+//     200 + cos((float)i * M_PI * 2.0 / 50.0)*(50 + dr),
+//     150 + sin((float)i * M_PI * 2.0 / 50.0)*(50 + dr));
+//   }
+//   polygon_set(p, 50, pt);
+// 
+//   printf("drawing second big polygon\n");
+//   polygon_drawFillB(p, src, Orange);
+// 
+//   for(i=0;i<50;i++) {
+//     float dr = rand() % 10;
+//     point_set2D(&(pt[i]), 
+//     200 + cos((float)i * M_PI * 2.0 / 50.0)*(30 + dr),
+//     150 + sin((float)i * M_PI * 2.0 / 50.0)*(30 + dr));
+//   }
+//   polygon_set(p, 50, pt);
+// 
+//   printf("drawing third big polygon\n");
+//   polygon_drawFillB(p, src, White);
+// 
   printf("writing output\n");
   image_write(src, "test4a.ppm");
 

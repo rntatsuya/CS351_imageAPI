@@ -8,6 +8,7 @@
 #include "line.h"
 #include "circle.h"
 #include "color.h"
+#include "polygon.h"
 
 
 /* "Higher level code that didn't/couldn't belong elsewhere" */
