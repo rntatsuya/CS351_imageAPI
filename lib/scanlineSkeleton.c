@@ -129,11 +129,8 @@ static Edge *makeEdgeRec( Point start, Point end, Image *src)
 	// Check for really bad cases with steep slopes where xIntersect has gone beyond the end of the edge
     if ( ((edge->xIntersect) > (edge->x1)) && (edge->dxPerScan > 0) ) 
 		edge->xIntersect = edge->x1 - 1;
-//     	return NULL;
     if ( ((edge->xIntersect) < (edge->x1)) && (edge->dxPerScan < 0) )
     	edge->xIntersect = edge->x1 - 1;
-//         return NULL;
-    	// NEED TO ADD STATEMENT HERE
 
 	// return the newly created edge data structure
 	return(edge);
@@ -234,6 +231,55 @@ static void fillScan( int scan, LinkedList *active, Image *src, Color c ) {
 	return;
 }
 
+/*
+	Draw one scanline of a polygon given the scanline, the active edges,
+	a DrawState, the image, and some Lights (for Phong shading only).
+ */
+static void fillScanGradient( int scan, LinkedList *active, Image *src, Color c1, Color c2, Point a, Point b ) {
+  Edge *p1, *p2;
+  // int i, f;
+
+	// loop over the list
+  p1 = ll_head( active );
+  while(p1) {
+		// the edges have to come in pairs, draw from one to the next
+	  p2 = ll_next( active );
+	  if( !p2 ) {
+		  printf("bad bad bad (your edges are not coming in pairs)\n");
+		  break;
+	  }
+
+		// if the xIntersect values are the same, don't draw anything.
+		// Just go to the next pair.
+	  if( p2->xIntersect == p1->xIntersect ) {
+		  p1 = ll_next( active );
+		  continue;
+	  }
+
+		// Identify the starting column
+		// clip to the left side of the image
+		int start = p1->xIntersect;
+		if ( start < 0 ) 
+			start = 0;
+
+		// Identify the ending column
+		// clip to the right side of the image
+		int end = p2->xIntersect;
+		if ( end >= src->cols )
+			end = src->cols - 1;
+	  
+	    printf("Point a: %f, %f\nPoint b: %f, %f\n", a.val[0], a.val[1], b.val[0], b.val[1]);
+		// Loop from start to end and color in the pixels
+	  	for ( int i = start ; i < end; i++ ) 
+	  		image_setColorGradient( src, a.val[0], a.val[1], b.val[0], b.val[1], scan, i, c1, c2 );
+
+		// Move ahead to the next pair of edges
+	  	p1 = ll_next( active );
+  }
+
+	return;
+}
+
 /* 
 	 Process the edge list, assumes the edges list has at least one entry
 */
@@ -306,6 +352,78 @@ static int processEdgeList( LinkedList *edges, Image *src, Color c ) {
 	return(0);
 }
 
+/* 
+	 Process the edge list, assumes the edges list has at least one entry
+*/
+static int processEdgeListGradient( LinkedList *edges, Image *src, Color c1, Color c2, Point a, Point b ) {
+	LinkedList *active = NULL;
+	LinkedList *tmplist = NULL;
+	LinkedList *transfer = NULL;
+	Edge *current;
+	Edge *tedge;
+	int scan = 0;
+
+	active = ll_new( );
+	tmplist = ll_new( );
+
+	// get a pointer to the first item on the list and reset the current pointer
+	current = ll_head( edges );
+
+	// start at the first scanline and go until the active list is empty
+	for(scan = current->yStart;scan < src->rows;scan++ ) {
+
+		// grab all edges starting on this row
+		while( current != NULL && current->yStart == scan ) {
+			ll_insert( active, current, compXIntersect );
+			current = ll_next( edges );
+		}
+		// current is either null, or the first edge to be handled on some future scanline
+
+		if( ll_empty(active) ) {
+			break;
+		}
+
+		// if there are active edges
+		// fill out the scanline
+		fillScanGradient( scan, active, src, c1, c2, a, b);
+
+		// remove any ending edges and update the rest
+		for( tedge = ll_pop( active ); tedge != NULL; tedge = ll_pop( active ) ) {
+
+			// keep anything that's not ending
+			if( tedge->yEnd > scan ) {
+				float a = 1.0;
+
+				// update the edge information with the dPerScan values
+				tedge->xIntersect += tedge->dxPerScan;
+
+				// adjust in the case of partial overlap
+				if( tedge->dxPerScan < 0.0 && tedge->xIntersect < tedge->x1 ) {
+					a = (tedge->xIntersect - tedge->x1) / tedge->dxPerScan;
+					tedge->xIntersect = tedge->x1;
+				}
+				else if( tedge->dxPerScan > 0.0 && tedge->xIntersect > tedge->x1 ) {
+					a = (tedge->xIntersect - tedge->x1) / tedge->dxPerScan;
+					tedge->xIntersect = tedge->x1;
+				}
+
+				ll_insert( tmplist, tedge, compXIntersect );
+			}
+		}
+
+		transfer = active;
+		active = tmplist;
+		tmplist = transfer;
+
+	}
+
+	// get rid of the lists, but not the edge records
+	ll_delete(active, NULL);
+	ll_delete(tmplist, NULL);
+
+	return(0);
+}
+
 /*
 	Draws a filled polygon of the specified color into the image src.
  */
@@ -319,6 +437,23 @@ void polygon_drawFill(Polygon *p, Image *src, Color c ) {
 	
 	// process the edge list (should be able to take an arbitrary edge list)
 	processEdgeList( edges, src, c);
+
+	// clean up
+	ll_delete( edges, (void (*)(const void *))free );
+
+	return;
+}
+
+void polygon_drawFillGradient(Polygon *p, Image *src, Color c1, Color c2, Point a, Point b ) {
+	LinkedList *edges = NULL;
+
+	// set up the edge list
+	edges = setupEdgeList( p, src );
+	if( !edges )
+		return;
+	
+	// process the edge list (should be able to take an arbitrary edge list)
+	processEdgeListGradient( edges, src, c1, c2, a, b);
 
 	// clean up
 	ll_delete( edges, (void (*)(const void *))free );

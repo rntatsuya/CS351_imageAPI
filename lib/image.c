@@ -241,7 +241,44 @@ void image_setColorFunc(Image *src, int r, int c, Color color) {
   src->data[r*src->cols + c].rgb[2] = color.c[2];
 }
 
-void image_setColorGradient(Image *src, int r_anchor, int c_anchor, int r, int c, int radius, Color color1, Color color2) {
+
+// Given two points, calculates the gradient fill for a point. 
+// NOTE: the point has to be in between the two points
+void image_setColorGradient(Image *src, int r1, int c1, int r2, int c2, int p_r, int p_c, Color color1, Color color2) {
+  // project point onto line between two given points
+  float m;
+  float b;
+
+  if (c2 != c1) {
+    m = (float)(r2 - r1) / (c2 - c1);
+  }
+  else {
+    m = (float)(c2 - c1) / (r2 - r1);
+  }
+  
+  b = (float)r1 - (m * c1);
+
+  printf("m: %f\n", m);
+  printf("b: %f\n", b);
+
+  float x = (m * p_r + p_c - m * b) / (m * m + 1);
+  float y = (m * m * p_r + m * p_c + b) / (m * m + 1);
+  
+  // determine how far the calculated point is from point 1 and point 2 and take a ratio
+  // to determine blend ratio
+  float d1 = __sqrt((float)(x - c1) * (x - c1) + (y - r1) * (y - r1));
+  float d_total = __sqrt((float)(c2 - c1) * (c2 - c1) + (r2 - r1) * (r2 - r1));
+  
+  float alpha = d1/d_total;
+  
+  printf("Alpha: %f\n", alpha);
+  
+  src->data[p_r*src->cols + p_c].rgb[0] = color1.c[0] * (1 - alpha) + color2.c[0] * alpha;
+  src->data[p_r*src->cols + p_c].rgb[1] = color1.c[1] * (1 - alpha) + color2.c[1] * alpha;
+  src->data[p_r*src->cols + p_c].rgb[2] = color1.c[2] * (1 - alpha) + color2.c[2] * alpha;
+}
+
+void image_setColorGradientRadiant(Image *src, int r_anchor, int c_anchor, int r, int c, int radius, Color color1, Color color2) {
   // get distance
   float d = __sqrt((float)(c - c_anchor) * (c - c_anchor) + (r - r_anchor) * (r - r_anchor));
   float alpha = d / radius;
@@ -255,6 +292,7 @@ void image_setColor_scaleIntensity(Image *src, int r, int c, Color color, float 
   src->data[r*src->cols + c].rgb[1] = color.c[1] * scale;
   src->data[r*src->cols + c].rgb[2] = color.c[2] * scale;
 }
+
 
 /* sets the alpha value of pixel (r, c) to val. */
 void image_seta(Image *src, int r, int c, float val) {

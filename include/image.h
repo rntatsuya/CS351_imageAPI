@@ -62,7 +62,9 @@ void image_setColorFunc(Image *src, int r, int c, Color color);
 
 void image_setColor_scaleIntensity(Image *src, int r, int c, Color color, float scale);
 
-void image_setColorGradient(Image *src, int r_anchor, int c_anchor, int r, int c, int radius, Color color1, Color color2);
+void image_setColorGradient(Image *src, int r1, int c1, int r2, int c2, int p_r, int p_c, Color color1, Color color2);
+
+void image_setColorGradientRadiant(Image *src, int r_anchor, int c_anchor, int r, int c, int radius, Color color1, Color color2);
 
 void image_seta(Image *src, int r, int c, float val);
 
