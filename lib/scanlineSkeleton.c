@@ -121,7 +121,8 @@ static Edge *makeEdgeRec( Point start, Point end, Image *src)
     if ( ((edge->xIntersect) > (edge->x1)) && (edge->dxPerScan > 0) ) 
     	edge->xIntersect = edge->x1;
     if ( ((edge->xIntersect) < (edge->x1)) && (edge->dxPerScan < 0) )
-    
+    	// NEED TO ADD STATEMENT HERE
+
 	// return the newly created edge data structure
 	return(edge);
 }
