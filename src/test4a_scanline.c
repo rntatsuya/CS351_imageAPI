@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
   p = polygon_createp(4, pt);
 
   printf("drawing a square\n");
-  polygon_drawFill(p, src, Blue);
+  polygon_drawFillGradient(p, src, Blue, White, pt[0], pt[1]);
 
   // something more interesting
   for(i=0;i<50;i++) {

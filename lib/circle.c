@@ -212,7 +212,7 @@ void colorHorizontalGradient(Image *src, int x_anchor, int y_anchor, int x0, int
   dx = c1 - c0;
   
   for (i=0; i<dx; i++) {
-    image_setColorGradient(src, y_anchor, x_anchor, y, c0+i, radius, color1, color2);
+    image_setColorGradientRadiant(src, y_anchor, x_anchor, y, c0+i, radius, color1, color2);
   }
 }
 
