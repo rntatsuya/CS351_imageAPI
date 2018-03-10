@@ -71,6 +71,8 @@ void polygon_drawFill(Polygon *p, Image *src, Color c);
 // draw the filled polygon using color c with the Barycentric coordinates algorithm.
 void polygon_drawFillB(Polygon *p, Image *src, Color c);
 
+void polygon_drawFillBGradient(Polygon *p, Image *src, Color c1, Color c2, Color c3);
+
 // draw the filled polygon using the given DrawState. The shade field of the DrawState 
 // determines how the polygon should be rendered. The Lighting parameter should be NULL 
 // unless you are doing Phong shading

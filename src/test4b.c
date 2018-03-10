@@ -38,12 +38,12 @@ int main(int argc, char *argv[]) {
   p = polygon_createp(3, pt);
 
   printf("drawing polygon 1\n");
-  polygon_drawFillB(p, src, Blue);
+  polygon_drawFillBGradient(p, src, Red, Blue, White);
 
   polygon_set(p, 3, &(pt[2]) );
 
   printf("drawing polygon 2\n");
-  polygon_drawFillB(p, src, Red);
+  polygon_drawFillBGradient(p, src, Red, Blue, White);
 
   point_set2D(&(pt[5]), 60, 20);
   point_set2D(&(pt[6]), 80, 85);
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
   polygon_set(p, 3, &(pt[5]));
 
   printf("drawing polygon 3\n");
-  polygon_drawFillB(p, src, White);
+  polygon_drawFillBGradient(p, src, Red, Blue, White);
 
   point_set2D(&(pt[8]), 5, 5);
   point_set2D(&(pt[9]), 25, 5);
@@ -62,12 +62,12 @@ int main(int argc, char *argv[]) {
   polygon_set(p, 3, &(pt[10]) );
 
   printf("drawing polygon 4\n");
-  polygon_drawFillB(p, src, Red);
+  polygon_drawFillBGradient(p, src, Red, Blue, White);
 
   polygon_set(p, 3, &(pt[8]));
 
   printf("drawing polygon 5\n");
-  polygon_drawFillB(p, src, Blue);
+  polygon_drawFillBGradient(p, src, Red, Blue, White);
 
 
   printf("writing output\n");

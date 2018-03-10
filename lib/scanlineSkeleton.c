@@ -103,24 +103,33 @@ static Edge *makeEdgeRec( Point start, Point end, Image *src)
 	// Calculate xIntersect, adjusting for the fraction of the point in the pixel.
 	// Scanlines go through the middle of pixels
 	// Move the edge to the first scanline it crosses
-	edge->xIntersect = edge->x0 + (edge->yStart + 0.5 - edge->y0) * edge->dxPerScan;
-
+	if (edge->y0 - (int)edge->y0 <= 0.5) {
+	  edge->xIntersect += (0.5 - ((int)edge->y0 - edge->y0)) * edge->dxPerScan;
+	}
+	else  {
+	  edge->xIntersect += (1.5 - ((int)edge->y0 - edge->y0)) * edge->dxPerScan;
+	}
+	
+	
 	// Adjust if the edge starts above the image
 	// Move the intersections down to scanline zero
 	if ( edge->y0 < 0 ) {
+	
 		// Returns x to a safe value if out-of-bounds 
 	    edge->xIntersect += -edge->yStart * edge->dxPerScan; 
 	    edge->yStart = 0;
 
 	    // Sets up x0 and y0
-	    edge->y0 = edge->y0 + ( -1 * edge->y0 );
 	    edge->x0 = ( edge->y1 - edge->y0 ) / ( edge->dxPerScan + edge->x0 );
+	    edge->y0 = edge->y0 + ( -1 * edge->y0 );
+	    
 	}
 
 	// Check for really bad cases with steep slopes where xIntersect has gone beyond the end of the edge
     if ( ((edge->xIntersect) > (edge->x1)) && (edge->dxPerScan > 0) ) 
-    	edge->xIntersect = edge->x1;
+    	return NULL;
     if ( ((edge->xIntersect) < (edge->x1)) && (edge->dxPerScan < 0) )
+        return NULL;
     	// NEED TO ADD STATEMENT HERE
 
 	// return the newly created edge data structure

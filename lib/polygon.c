@@ -387,3 +387,111 @@ void polygon_drawFillB(Polygon *p, Image *src, Color c) {
   }
 }
 
+
+// uses barycentric coordinates to determine which pixels to fill given a polygon 
+// with only 3 points
+void polygon_drawFillBGradient(Polygon *p, Image *src, Color c1, Color c2, Color c3) {    
+  // if polygon doesn't have 3 vertices, exit
+  if (p->nVertex != 3) {
+    printf("Number of vertices of Polygon have to be three in polygon_drawFillB\nGot %d\n", p->nVertex);
+    exit(-1);
+  }
+  
+  // box_x is leftmost col, box_y is topmost row
+  // box_dx is col dif between furthest two points in terms of cols 
+  // box_dy is row dif between furthest two points in terms of rows 
+  float box_x, box_y;
+  int box_dx, box_dy;
+  float alpha, beta, gamma;
+  float x_a = p->vertex[0].val[0]; 
+  float y_a = p->vertex[0].val[1];
+  float x_b = p->vertex[1].val[0];
+  float y_b = p->vertex[1].val[1];
+  float x_c = p->vertex[2].val[0];
+  float y_c = p->vertex[2].val[1];
+  int i,j;
+  
+/////// CAN PROBABLY UNROLL FOR LOOP HERE TO INCREASE SPEED///////////
+  // find info of bounding box of the triangle
+  // i.e. keep the highest and lowest row
+  //   and the most left and most right column 
+  // to get the top left corner and dx, dy of the box
+  box_x = x_a;
+  box_y = y_a;
+  box_dx = 0;
+  box_dy = 0;  
+  for (i=1; i<3; i++) {
+    // compare x
+    if (p->vertex[i].val[0] < box_x) {
+      box_x = p->vertex[i].val[0];
+    }
+    // compare y
+    if (p->vertex[i].val[1] < box_y) {
+      box_y = p->vertex[i].val[1];
+    }
+  }
+  // keep track of greatest dx, dy
+  for (i=0; i<3; i++) {
+    if (p->vertex[i].val[0] - box_x > box_dx) {
+      box_dx = round(p->vertex[i].val[0] - box_x);
+    }
+    
+    if (p->vertex[i].val[1] - box_y > box_dy) {
+      box_dy = round(p->vertex[i].val[1] - box_y);
+    }
+  }
+  
+  printf("box_x: %f\nbox_y: %f\nbox_dx: %d\nbox_dy: %d\n",box_x, box_y, box_dx, box_dy);
+  
+  float x_v0;
+  float x_v1;
+  float x_v2;
+  float y_v0;
+  float y_v1;
+  float y_v2;
+  float d00, d01, d11, d20, d21, denom;
+  
+  float cur_x = box_x + 0.5;
+  float cur_y = box_y + 0.5;
+  
+  // loop through all points in the bounding box of the triangle
+  for (i=0; i<box_dx; i++) {
+    cur_x += 1;
+    cur_y = box_y + 0.5;
+    for (j=0; j<box_dy; j++) {
+      cur_y += 1;
+      
+//       printf("box_x, box_y: %d, %d\n", cur_x, cur_y);
+      
+      x_v0 = x_b - x_a;
+      y_v0 = y_b - y_a;
+      x_v1 = x_c - x_a;
+      y_v1 = y_c - y_a;
+      x_v2 = cur_x - x_a;
+      y_v2 = cur_y - y_a;
+      
+      d00 = x_v0*x_v0 + y_v0*y_v0;
+      d01 = x_v0*x_v1 + y_v0*y_v1;
+      d11 = x_v1*x_v1 + y_v1*y_v1;
+      d20 = x_v2*x_v0 + y_v2*y_v0;
+      d21 = x_v2*x_v1 + y_v2*y_v1;
+      denom = d00 * d11 - d01 * d01;
+      
+      beta = (d11 * d20 - d01 * d21) / denom;
+      gamma = (d00 * d21 - d01 * d20) / denom;
+      
+      alpha = 1 - beta - gamma;
+      
+//       printf("alpha: %f\nbeta: %f\ngamma: %f\n", alpha, beta, gamma);
+      // checking for ors is faster than checking for a lot of ands
+      if (alpha < 0 || beta < 0 || gamma < 0) {
+//         printf("x, y: %f, %f\n", cur_x, cur_y);
+        continue;
+      }
+//       image_setColor(src, (int)cur_y, (int)cur_x, c);
+      image_setc(src, (int)cur_y, (int)cur_x, 0, c1.c[0]*alpha + c2.c[0]*beta + c3.c[0]*gamma);
+      image_setc(src, (int)cur_y, (int)cur_x, 1, c1.c[1]*alpha + c2.c[1]*beta + c3.c[1]*gamma);
+      image_setc(src, (int)cur_y, (int)cur_x, 2, c1.c[2]*alpha + c2.c[2]*beta + c3.c[2]*gamma);
+    }
+  }
+}
