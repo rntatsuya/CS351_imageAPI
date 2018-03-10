@@ -26,16 +26,16 @@ LIBS = -lm -limageIO
 LFLAGS = -L$(LIBDIR)
 
 # put all of the relevant include files here
-_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h graphics.h
+_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h graphics.h 
 
 # convert them to point to the right place
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test4b #test4b test4c test4c-loop polyspeed
+EXECUTABLES = test4b #test4b test4c test4c-loop polyspeed test4a_scanline artistic
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test4b.o #test4b.o test4c.o test4c-loop.o polyspeed.o
+_OBJ = test4b.o #test4b.o test4c.o test4c-loop.o polyspeed.o test4a_scanline.o artistic.o
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -61,6 +61,12 @@ test4a: $(ODIR)/test4a.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
 test4b: $(ODIR)/test4b.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+test4a_scanline: $(ODIR)/test4a_scanline.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+artistic: $(ODIR)/artistic.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 # 
 # test4c: $(ODIR)/test4c.o

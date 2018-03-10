@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "polygon.h"
+#include "graphics.h"
 #include "list.h"
 
 
@@ -66,85 +66,64 @@ static int compXIntersect( const void *a, const void *b ) {
 	Eventually, the points will be 3D and we'll add color and texture
 	coordinates.
  */
-static Edge *makeEdgeRec( Point start, Point end, Image *src) {
-  Edge *edge;
-  float dscan = end.val[1] - start.val[1];
-
-	/******
-				 Your code starts here
-	******/
+static Edge *makeEdgeRec( Point start, Point end, Image *src)
+{
+	// Allocate an edge structure and set the x0, y0, x1, y1 values
+	Edge *edge = malloc( sizeof(Edge) );
+	edge->x0 = start.val[0];
+	edge->y0 = start.val[1];
+	edge->x1 = end.val[0];
+	edge->y1 = end.val[1];
 
 	// Check if the starting row is below the image or the end row is
 	// above the image and skip the edge if either is true
-  if (start.val[1] >= rows|| end.val[1] < 0) {
-    return NULL;
-  }
-  
-  	float x0, y0;                   /* start point for the edge */
-	float x1, y1;                   /* end point for the edge */
-	int yStart, yEnd;               /* start row and end row */
-  float xIntersect, dxPerScan;    /* where the edge intersects the current scanline and how it changes */
-	/* we'll add more here later */
-  struct tEdge *next;
-	// allocate an edge structure and set the x0, y0, x1, y1 values
-  edge = malloc(sizeof(Edge));
-  edge.x0 = start.val[0];
-  edge.y0 = start.val[1];
-  edge.x1 = end.val[0];
-  edge.y1 = end.val[1];
-  
-	// turn on an edge only if the edge starts in the top half of it or
+	if ( edge->y0 > src->rows || edge->y1 < 0 )  // Checks bounds of y values 
+		return NULL;
+
+	// Turn on an edge only if the edge starts in the top half of it or
 	// the lower half of the pixel above it.  In other words, round the
 	// start y value to the nearest integer and assign it to
 	// edge->yStart.
-  edge->yStart = (int)start.val[1] + 0.5;
-  
-  
+	edge->yStart = (int)(start.val[1] + 0.5);
+
 	// Turn off the edge if it starts in the lower half or the top half
 	// of the next pixel.  In other words, round the end y value to the
 	// nearest integer and subtract 1, assigning the result to
 	// edge->yEnd.
-  edge->yEnd = (int)end.val[1] + 0.5;
-  
-  
+	edge->yEnd = (int)(end.val[1] + 0.5);
+
 	// Clip yEnd to the number of rows-1.
-  
-  
+	if ( edge->yEnd > src->rows )
+		edge->yEnd = src->rows - 1; 
+
 	// Calculate the slope, dxPerScan
-  edge->dxPerScan = (end.val[0] - start.val[0]) / dscan;
-  
-  
+	float dscan = end.val[1] - start.val[1]; 
+	edge->dxPerScan = (end.val[0] - start.val[0]) / dscan;
+
 	// Calculate xIntersect, adjusting for the fraction of the point in the pixel.
 	// Scanlines go through the middle of pixels
 	// Move the edge to the first scanline it crosses
-  edge->xIntersect = 
-  
-  
-	// adjust if the edge starts above the image
-	// move the intersections down to scanline zero
-	// if edge->y0 < 0
-	//   update xIntersect
-	//   update y0
-  //   update x0
-	//   update yStart
-  if (edge->y0 < 0) {
-    edge->xIntersect = 
-    edge->y0 = 
-    edge->x0 = 
-    edge->yStart = 
-  }
-  
+	edge->xIntersect = edge->x0 + (edge->yStart + 0.5 - edge->y0) * edge->dxPerScan;
 
-  // check for really bad cases with steep slopes where xIntersect has gone beyond the end of the edge
-  if (dxPerScan > 0 && edge->xIntersect > end.val[0]) {
-    return NULL;
-  }
-  else if (dxPerScan < 0 && edge->xIntersect < start.val[0]) {
-    return NULL;
-  }
-  
-  // return the newly created edge data structure
-  return( edge );
+	// Adjust if the edge starts above the image
+	// Move the intersections down to scanline zero
+	if ( edge->y0 < 0 ) {
+		// Returns x to a safe value if out-of-bounds 
+	    edge->xIntersect += -edge->yStart * edge->dxPerScan; 
+	    edge->yStart = 0;
+
+	    // Sets up x0 and y0
+	    edge->y0 = edge->y0 + ( -1 * edge->y0 );
+	    edge->x0 = ( edge->y1 - edge->y0 ) / ( edge->dxPerScan + edge->x0 );
+	}
+
+	// Check for really bad cases with steep slopes where xIntersect has gone beyond the end of the edge
+    if ( ((edge->xIntersect) > (edge->x1)) && (edge->dxPerScan > 0) ) 
+    	edge->xIntersect = edge->x1;
+    if ( ((edge->xIntersect) < (edge->x1)) && (edge->dxPerScan < 0) )
+    
+	// return the newly created edge data structure
+	return(edge);
 }
 
 
@@ -200,7 +179,7 @@ static LinkedList *setupEdgeList( Polygon *p, Image *src) {
  */
 static void fillScan( int scan, LinkedList *active, Image *src, Color c ) {
   Edge *p1, *p2;
-  int i, f;
+  // int i, f;
 
 	// loop over the list
   p1 = ll_head( active );
@@ -219,15 +198,24 @@ static void fillScan( int scan, LinkedList *active, Image *src, Color c ) {
 		  continue;
 	  }
 
-		/**** Your code goes here ****/
-	  // identify the starting column
-	  // clip to the left side of the image
-	  // identify the ending column
-	  // clip to the right side of the image
-		// loop from start to end and color in the pixels
+		// Identify the starting column
+		// clip to the left side of the image
+		int start = p1->xIntersect;
+		if ( start < 0 ) 
+			start = 0;
 
-		// move ahead to the next pair of edges
-	  p1 = ll_next( active );
+		// Identify the ending column
+		// clip to the right side of the image
+		int end = p2->xIntersect;
+		if ( end >= src->cols )
+			end = src->cols - 1;
+	  
+		// Loop from start to end and color in the pixels
+	  	for ( int i = start ; i < end; i++ ) 
+	  		image_setColor( src, scan, i, c );
+
+		// Move ahead to the next pair of edges
+	  	p1 = ll_next( active );
   }
 
 	return;

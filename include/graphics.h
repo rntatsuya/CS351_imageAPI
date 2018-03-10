@@ -10,7 +10,6 @@
 #include "color.h"
 #include "polygon.h"
 
-
 /* "Higher level code that didn't/couldn't belong elsewhere" */
 
 int checkColorEq_rc2rc(Image *src, int r1, int c1, int r2, int c2);
