@@ -1,3 +1,7 @@
+/**
+ * Assignment 4 - Kimberly's Required Image 1
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

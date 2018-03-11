@@ -1,22 +1,18 @@
-/*
-  Assignment 4, required image 1
+/**
+ * Assignment 4 - Kimberly's Required Image 2
+ */
 
-  C version
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "graphics.h"
 
-/*
-  Program to test polygon functionality
-*/
 int main(int argc, char *argv[]) {
   Image *src;
   const int rows = 1000;
   const int cols = 1000;
 
-  Color Red, Dark_Red, Orange, Yellow, Light_Yellow, White, Blue, Gray2, Gray3, Gray4, Gray5, Gray8, Gray9, Light_Black, Black;
+  Color Red, Dark_Red, Orange, Yellow, Light_Yellow, White, Blue, Gray2, Gray3, Gray4, Gray5, Gray8, Gray9, Light_Black, Black, Temp;
  
   Point tri[3];
   Point rect[4];
@@ -46,15 +42,15 @@ int main(int argc, char *argv[]) {
   // Background
   point_set2D(&(tri[0]), 0, 0);
   point_set2D(&(tri[1]), 1000, 0);
-  point_set2D(&(tri[2]), 0, 1000);
+  point_set2D(&(tri[2]), 1000, 1000);
   triangle = polygon_createp(3, tri);
-  polygon_drawFillBGradient( triangle, src, Red, Orange, Dark_Red);
+  polygon_drawFillBGradient( triangle, src, Orange, Red, Dark_Red);
 
-  point_set2D(&(tri[0]), 1000, 0);
+  point_set2D(&(tri[0]), 0, 0);
   point_set2D(&(tri[1]), 1000, 1000);
   point_set2D(&(tri[2]), 0, 1000);
   triangle = polygon_createp(3, tri);
-  polygon_drawFillBGradient( triangle, src, Orange, Red, Dark_Red);
+  polygon_drawFillBGradient( triangle, src, Orange, Dark_Red, Red );
 
   // Sun
   Circle circle;
@@ -94,18 +90,18 @@ int main(int argc, char *argv[]) {
   points_4 = polygon_createp(4, rect);
   polygon_drawFill(points_4, src, Gray3); // Side
 
-  // for ( int i = 605 ; i < 830; i += 40 ) { // Window
-  //   for ( int j = 805 ; j < 1000; j += 35 ) {
-  //     point_set2D(&(rect[0]), i, j);
-  //     point_set2D(&(rect[1]), i+30, j);
-  //     point_set2D(&(rect[2]), i+30, j+22);
-  //     point_set2D(&(rect[3]), i, j+22);
-  //     points_4 = polygon_createp(4, rect);
-  //     float f = (rand() % 100);
-  //     if ( f > 20 ) 
-  //       polygon_drawFill(points_4, src, Gray2); 
-  //   }
-  // }
+  for ( int i = 705 ; i < 835; i += 20 ) { // Window
+    for ( int j = 505 ; j < 795; j += 40 ) {
+      point_set2D(&(rect[0]), i, j);
+      point_set2D(&(rect[1]), i+19, j);
+      point_set2D(&(rect[2]), i+19, j+39);
+      point_set2D(&(rect[3]), i, j+39);
+      points_4 = polygon_createp(4, rect);
+      float val = (100 + (rand() % 50)) / 255.0;
+      color_set( &Temp, val, val, val );
+      polygon_drawFill(points_4, src, Temp); 
+    }
+  }
 
   // Building left
   point_set2D(&(rect[0]), 200, 710);
@@ -129,16 +125,16 @@ int main(int argc, char *argv[]) {
   points_4 = polygon_createp(4, rect);
   polygon_drawFill(points_4, src, Gray3); // Side
 
-  for ( int i = 210 ; i < 330; i += 25 ) { // Window
-    for ( int j = 720 ; j < 1000; j += 30 ) {
+  for ( int i = 205 ; i < 330; i += 20 ) { // Window
+    for ( int j = 715 ; j < 1000; j += 20 ) {
       point_set2D(&(rect[0]), i, j);
-      point_set2D(&(rect[1]), i+20, j);
-      point_set2D(&(rect[2]), i+20, j+20);
-      point_set2D(&(rect[3]), i, j+20);
+      point_set2D(&(rect[1]), i+19, j);
+      point_set2D(&(rect[2]), i+19, j+19);
+      point_set2D(&(rect[3]), i, j+19);
       points_4 = polygon_createp(4, rect);
-      float f = (rand() % 100);
-      if ( f > 20 ) 
-        polygon_drawFill(points_4, src, Gray2); 
+      float val = (50 + (rand() % 50)) / 255.0;
+      color_set( &Temp, val, val, val );
+      polygon_drawFill(points_4, src, Temp); 
     }
   }
 
@@ -164,16 +160,16 @@ int main(int argc, char *argv[]) {
   points_4 = polygon_createp(4, rect);
   polygon_drawFill(points_4, src, Gray3); // Side
 
-  for ( int i = 605 ; i < 830; i += 40 ) { // Window
+  for ( int i = 605 ; i < 835; i += 40 ) { // Window
     for ( int j = 805 ; j < 1000; j += 35 ) {
       point_set2D(&(rect[0]), i, j);
-      point_set2D(&(rect[1]), i+30, j);
-      point_set2D(&(rect[2]), i+30, j+22);
-      point_set2D(&(rect[3]), i, j+22);
+      point_set2D(&(rect[1]), i+39, j);
+      point_set2D(&(rect[2]), i+39, j+34);
+      point_set2D(&(rect[3]), i, j+34);
       points_4 = polygon_createp(4, rect);
-      float f = (rand() % 100);
-      if ( f > 20 ) 
-        polygon_drawFill(points_4, src, Gray2); 
+      float val = (20 + (rand() % 50)) / 255.0;
+      color_set( &Temp, val, val, val );
+      polygon_drawFill(points_4, src, Temp); 
     }
   }
 
