@@ -32,10 +32,10 @@ _DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h grap
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test4b #test4b test4c test4c-loop polyspeed test4a_scanline artistic artistic_triangle
+EXECUTABLES = test4b #test4b test4c test4c-loop polyspeed test4a_scanline city_morning night desk
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test4b.o #test4b.o test4c.o test4c-loop.o polyspeed.o test4a_scanline.o artistic.o artistic_triangle.o
+_OBJ = test4b.o #test4b.o test4c.o test4c-loop.o polyspeed.o test4a_scanline.o city_morning.o night.o desk.o
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -66,10 +66,13 @@ test4b: $(ODIR)/test4b.o
 test4a_scanline: $(ODIR)/test4a_scanline.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
-artistic: $(ODIR)/artistic.o
+night: $(ODIR)/night.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
-artistic_triangle: $(ODIR)/artistic_triangle.o
+city_morning: $(ODIR)/city_morning.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+desk: $(ODIR)/desk.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 # 
 # test4c: $(ODIR)/test4c.o
