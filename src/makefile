@@ -26,16 +26,16 @@ LIBS = -lm -limageIO
 LFLAGS = -L$(LIBDIR)
 
 # put all of the relevant include files here
-_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h graphics.h 
+_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h graphics.h #matrix.h #vector.h #view.h
 
 # convert them to point to the right place
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test4b #test4b test4c test4c-loop polyspeed test4a_scanline city_morning night desk
+EXECUTABLES = #test5a #test5b #test5c #test5d
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test4b.o #test4b.o test4c.o test4c-loop.o polyspeed.o test4a_scanline.o city_morning.o night.o desk.o
+_OBJ = #test5a.o #test5b.o #test5c.o #test5d.o
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -55,36 +55,21 @@ $(ODIR)/%.o: %.cpp $(DEPS)
 all:
 	for i in $(EXECUTABLES); do (make $$i) ; done
 
-
 # put the specific executable rules here
-test4a: $(ODIR)/test4a.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+# test5a: $(ODIR)/test5a.o
+# 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
-test4b: $(ODIR)/test4b.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-
-test4a_scanline: $(ODIR)/test4a_scanline.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-
-night: $(ODIR)/night.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-
-city_morning: $(ODIR)/city_morning.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-
-desk: $(ODIR)/desk.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-# 
-# test4c: $(ODIR)/test4c.o
+# test5b: $(ODIR)/test5b.o
 # 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-# 
-# test4c-loop: $(ODIR)/test4c-loop.o
+	
+# test5c: $(ODIR)/test5c.o
 # 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-# 
-# polyspeed: $(ODIR)/polyspeed.o
+	
+# test5d: $(ODIR)/test5d.o
 # 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-
-
+	
+	
 .PHONY: clean
 
 clean:
