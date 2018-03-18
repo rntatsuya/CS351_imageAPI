@@ -5,6 +5,7 @@
 #include "polygon.h"
 #include "vector.h"
 #include <stdlib.h>
+// #include "math.h"
 
 typedef struct {
 	double m[4][4];
