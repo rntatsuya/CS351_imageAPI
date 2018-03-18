@@ -26,7 +26,7 @@ LIBS = -lm -limageIO
 LFLAGS = -L$(LIBDIR)
 
 # put all of the relevant include files here
-_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h graphics.h matrix.h vector.h #view.h 
+_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h graphics.h #vector.h #matrix.h #view.h 
 
 # convert them to point to the right place
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))

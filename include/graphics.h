@@ -9,8 +9,8 @@
 #include "circle.h"
 #include "color.h"
 #include "polygon.h"
-#include "vector.h"
-#include "matrix.h"
+// #include "vector.h"
+// #include "matrix.h"
 // #include "view.h"
 
 /* "Higher level code that didn't/couldn't belong elsewhere" */

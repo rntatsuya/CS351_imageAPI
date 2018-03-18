@@ -3,7 +3,7 @@
  * matrix.c
  */
 
-#include "graphics.h"
+#include "matrix.h"
 
 //////////////////////////////
 // Generic Matrix Functions //

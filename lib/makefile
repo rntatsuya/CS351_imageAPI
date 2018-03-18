@@ -28,13 +28,13 @@ LIBDIR =.
 BINDIR =../bin
 
 # put all of the relevant include files here
-_DEPS = ppmIO.h color.h image.h fractals.h line.h circle.h list.h graphics.h math_aprox.h polygon.h matrix.h vector.h
+_DEPS = ppmIO.h color.h image.h fractals.h line.h circle.h list.h graphics.h math_aprox.h polygon.h vector.h #matrix.h
 
 # convert them to point to the right place
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of all the object files (with .o endings)
-_COMMON = ppmIO.o color.o image.o fractals.o line.o circle.o list.o graphics.o math_aprox.o polygon.o scanlineSkeleton.o matrix.o vector.o
+_COMMON = ppmIO.o color.o image.o fractals.o line.o circle.o list.o graphics.o math_aprox.o polygon.o scanlineSkeleton.o vector.o #matrix.o
 
 # convert them to point to the right place
 COMMON = $(patsubst %,$(ODIR)/%,$(_COMMON))

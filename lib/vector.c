@@ -3,7 +3,10 @@
  * vector.c
  */
 
-#include "graphics.h"
+#include "vector.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 void vector_set( Vector *v, double x, double y, double z ) {
 	v->val[0] = x;
@@ -47,7 +50,6 @@ void vector_normalize( Vector *v ) {
 	v->val[0] /= l; 
 	v->val[1] /= l; 
 	v->val[2] /= l; 
-
 }
 
 double vector_dot( Vector *a, Vector *b ) {
@@ -59,5 +61,5 @@ double vector_dot( Vector *a, Vector *b ) {
 void vector_cross( Vector *a, Vector *b, Vector *c ) {
 	c->val[0] = a->val[1]*b->val[2] - a->val[2]*b->val[1];
 	c->val[1] = a->val[2]*b->val[0] - a->val[0]*b->val[2];
-	c->val[3] = a->val[0]*b->val[1] - a->val[1]*b->val[0];
+	c->val[2] = a->val[0]*b->val[1] - a->val[1]*b->val[0];
 }
