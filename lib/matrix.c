@@ -5,6 +5,7 @@
 
 #include "matrix.h"
 
+
 //////////////////////////////
 // Generic Matrix Functions //
 //////////////////////////////
@@ -103,37 +104,37 @@ void matrix_xformLine( Matrix *m, Line *line ) {
 
 void matrix_scale2D( Matrix *m, double sx, double sy ) {
 	Matrix t; // Temp
-	for ( int i = 0; i < 4; i++ ) 
+	for ( int i = 0; i < 4; i++ ) {
 		for ( int j = 0; j < 4; j++ ) {
-			if ( i == 0 && j == 0 ) 
-				t->m[i][j] = sx; 
-			else if ( i == 1 && j == 1 ) 
-				t->m[i][j] = sy; 
-			else if (( i == 2 && j == 2 ) || ( i == 3 && j == 3 ))
-				t->m[i][j]] = 1; 
+			if (( i == 2 && j == 2 ) || ( i == 3 && j == 3 ))
+				t.m[i][j] = 1; 
 			else 
-				t->m[i][j] = 0;
+				t.m[i][j] = 0;
 		}
 	}
-	matrix_multiply( t, m, m );
+
+	t.m[0][0] = sx; 
+	t.m[1][1] = sy; 
+
+	matrix_multiply( &t, m, m );
 }
 
 void matrix_rotateZ( Matrix *m, double cth, double sth ) {
 	Matrix t; // Temp
 	for ( int i = 0; i < 4; i++ ) 
 		for ( int j = 0; j < 4; j++ ) 
-			t->m[i][j] = 0;
+			t.m[i][j] = 0;
 
-	t->m[0][0] = cos(cth);
-	t->m[1][1] = cos(cth);
+	t.m[0][0] = cos(cth);
+	t.m[1][1] = cos(cth);
 
-	t->m[0][1] = -sin(sth);
-	t->m[1][0] = sin(sth);
+	t.m[0][1] = -sin(sth);
+	t.m[1][0] = sin(sth);
 
-	t->m[2][2] = 1;
-	t->m[3][3] = 1;
+	t.m[2][2] = 1;
+	t.m[3][3] = 1;
 
-	matrix_multiply( t, m, m );
+	matrix_multiply( &t, m, m );
 }
 
 void matrix_translate2D( Matrix *m, double tx, double ty ) {
@@ -141,16 +142,16 @@ void matrix_translate2D( Matrix *m, double tx, double ty ) {
 	for ( int i = 0; i < 4; i++ ) {
 		for ( int j = 0; j < 4; j++ ) {
 			if ( i == j ) 
-				t->m[i][j] = 1;
+				t.m[i][j] = 1;
 			else 
-				t->m[i][j] = 0;
+				t.m[i][j] = 0;
 		}
 	}
 
-	t->m[0][3] = tx;
-	t->m[1][3] = ty;
+	t.m[0][3] = tx;
+	t.m[1][3] = ty;
 
-	matrix_multiply( t, m, m );
+	matrix_multiply( &t, m, m );
 }
 
 void matrix_shear2D( Matrix *m, double shx, double shy ) {
@@ -158,16 +159,16 @@ void matrix_shear2D( Matrix *m, double shx, double shy ) {
 	for ( int i = 0; i < 4; i++ ) {
 		for ( int j = 0; j < 4; j++ ) {
 			if ( i == j ) 
-				t->m[i][j] = 1;
+				t.m[i][j] = 1;
 			else 
-				t->m[i][j] = 0;
+				t.m[i][j] = 0;
 		}
 	}
 
-	t->m[0][1] = shx;
-	t->m[1][0] = shy;
+	t.m[0][1] = shx;
+	t.m[1][0] = shy;
 
-	matrix_multiply( t, m, m );
+	matrix_multiply( &t, m, m );
 }
 
 
@@ -176,29 +177,118 @@ void matrix_shear2D( Matrix *m, double shx, double shy ) {
 /////////////////////////
 
 void matrix_translate( Matrix *m, double tx, double ty, double tz ) {
+	Matrix t; // Temp
+	for ( int i = 0; i < 4; i++ ) {
+		for ( int j = 0; j < 4; j++ ) {
+			if ( i == j ) 
+				t.m[i][j] = 1;
+			else 
+				t.m[i][j] = 0;
+		}
+	}
 
+	t.m[0][3] = tx;
+	t.m[1][3] = ty;
+	t.m[2][3] = tz;
+
+	matrix_multiply( &t, m, m );
 }
 
 void matrix_scale( Matrix *m, double sx, double sy, double sz ) {
+	Matrix t; // Temp
+	for ( int i = 0; i < 4; i++ ) 
+		for ( int j = 0; j < 4; j++ )
+			t.m[i][j] = 0;
 
+	t.m[0][0] = sx;
+	t.m[1][1] = sy;
+	t.m[2][2] = sz;
+	t.m[3][3] = 1;
+
+	matrix_multiply( &t, m, m );
 }
 
 void matrix_rotateX( Matrix *m, double cth, double sth ) {
+	Matrix t; // Temp
+	for ( int i = 0; i < 4; i++ ) 
+		for ( int j = 0; j < 4; j++ ) {
+			if ( (i == 0 && j == 0) || (i == 3 && j == 3) ) 
+				t.m[i][j] = 1;
+			else 
+				t.m[i][j] = 0;
+		}
+		
+	t.m[1][1] = cos(cth);
+	t.m[1][1] = cos(cth);
 
+	t.m[1][2] = -sin(sth);
+	t.m[2][1] = sin(sth);
+
+	matrix_multiply( &t, m, m );
 }
 
 void matrix_rotateY( Matrix *m, double cth, double sth ) {
+	Matrix t; // Temp
+	for ( int i = 0; i < 4; i++ ) 
+		for ( int j = 0; j < 4; j++ ) {
+			if ( (i == 1 && j == 1) || (i == 3 && j == 3) ) 
+				t.m[i][j] = 1;
+			else 
+				t.m[i][j] = 0;
+		}
+		
+	t.m[0][0] = cos(cth);
+	t.m[2][2] = cos(cth);
 
+	t.m[0][2] = sin(sth);
+	t.m[2][0] = -sin(sth);	
+
+	matrix_multiply( &t, m, m );
 }
 
 void matrix_rotateXYZ( Matrix *m, Vector *u, Vector *v, Vector *w ) {
+	// Matrix t; // Temp
 
+	// How could we explicitly hardcode a matrix struct?
+	// Matrix  = {
+	// 	{1,8,12,20,25}, 
+	// 	{5,9,13,24,26},
+	// 	{1,8,12,20,25}, 
+	// 	{5,9,13,24,26}
+	// };
+
+	// matrix_multiply( &t, m, m );
 }
 
 void matrix_shearZ( Matrix *m, double shx, double shy ) {
+	Matrix t; // Temp
+	for ( int i = 0; i < 4; i++ ) {
+		for ( int j = 0; j < 4; j++ ) {
+			if (i == j) 
+				t.m[i][j] = 1;
+			else 
+				t.m[i][j] = 0;
+		}
+	}
 
+	t.m[0][2] = shx;
+	t.m[1][2] = shy;
+
+	matrix_multiply( &t, m, m );
 }
 
 void matrix_perspective( Matrix *m, double d ) {
+	Matrix t; // Temp
+	for ( int i = 0; i < 4; i++ ) {
+		for ( int j = 0; j < 4; j++ ) {
+			if ( (i != 4) && (i == j) )
+				t.m[i][j] = 1;
+			else 
+				t.m[i][j] = 0;
+		}
+	}
 
+	t.m[3][2] = 1 / d;
+
+	matrix_multiply( &t, m, m );
 }
