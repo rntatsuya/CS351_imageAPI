@@ -46,15 +46,15 @@ void matrix_copy( Matrix *dest, Matrix *src ) {
 
 // Not sure if this is correct 
 void matrix_transpose( Matrix *m ) {
-	// Matrix b; // Temp matrix
+	Matrix b; // Temp matrix
 
-	// for ( int i = 0; i < 4; i++ )
- //        for ( int j = 0; j < 4; j++ ) 
- //            b->m[i * 4 + j] = m->m[j * 4 + i];
+	for ( int i = 0; i < 4; i++ )
+        for ( int j = 0; j < 4; j++ ) 
+            b.m[i][j] = m->m[j][i];
 
- //    for ( int i = 0; i < 4; i++ )
- //        for ( int j = 0; j < 4; j++ ) 
- //            m->m[i * 4 + j] = b->m[j * 4 + i];
+    for ( int i = 0; i < 4; i++ )
+        for ( int j = 0; j < 4; j++ ) 
+            m->m[i][j] = b.m[j][i];
 }
 
 void matrix_multiply( Matrix *left, Matrix *right, Matrix *m ) {
@@ -64,31 +64,37 @@ void matrix_multiply( Matrix *left, Matrix *right, Matrix *m ) {
 }
 
 void matrix_xformPoint( Matrix *m, Point *p, Point *q ) {
-	for ( int i = 0; i < 4; i+=4 ) 
-		q->val[i] = (m->m[i]) * (p->val[0])
-			+ (m->m[i+1]) * (p->val[1]) 
-			+ (m->m[i+2]) * (p->val[2]) 
-			+ (m->m[i+3]) * (p->val[3]);
+	for ( int i = 0; i < 4; i++ ) 
+		for ( int j = 0; j < 4; j++ ) 
+			q->val[j] += m->m[i][j] * p->val[j]; 
 }
 
 void matrix_xformVector( Matrix *m, Vector *p, Vector *q ) {
-	for ( int i = 0; i < 4; i+=4 ) 
-		q->val[i] = m->m[i]*p->val[0] 
-			+ m->m[i+1]*p->val[1] 
-			+ m->m[i+2]*p->val[2] 
-			+ m->m[i+3]*p->val[3];
+	for ( int i = 0; i < 4; i++ ) 
+		for ( int j = 0; j < 4; j++ ) 
+			q->val[j] += m->m[i][j] * p->val[j]; 
 }
 
 void matrix_xformPolygon( Matrix *m, Polygon *p ) {
-
+	for ( int k = 0; k < p->nVertex; k++ )
+		for ( int i = 0; i < 4; i++ ) 
+			for ( int j = 0; j < 4; j++ ) 
+				p->vertex[k].val[j] += m->m[i][j] * p->vertex[k].val[j]; 
 }
 
 void matrix_xformPolyline( Matrix *m, Polyline *p ) {
-
+	for ( int k = 0; k < p->numVertex; k++ )
+		for ( int i = 0; i < 4; i++ ) 
+			for ( int j = 0; j < 4; j++ ) 
+				p->vertex[k].val[j] += m->m[i][j] * p->vertex[k].val[j]; 
 }
 
 void matrix_xformLine( Matrix *m, Line *line ) {
-
+	for ( int i = 0; i < 4; i++ ) 
+		for ( int j = 0; j < 4; j++ ) {
+			line->a.val[j] += m->m[i][j] * line->a.val[j]; 
+			line->b.val[j] += m->m[i][j] * line->b.val[j]; 
+		}
 }
 
 /////////////////////////
@@ -96,7 +102,7 @@ void matrix_xformLine( Matrix *m, Line *line ) {
 /////////////////////////
 
 void matrix_scale2D( Matrix *m, double sx, double sy ) {
-
+	
 }
 
 void matrix_rotateZ( Matrix *m, double cth, double sth ) {
