@@ -4,9 +4,8 @@
  */
 
 #include "vector.h"
-#include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+// #include <math.h>
 
 void vector_set( Vector *v, double x, double y, double z ) {
 	v->val[0] = x;

@@ -1,6 +1,10 @@
-#ifdef MATRIX_H
+#ifndef MATRIX_H
 
 #define MATRIX_H
+
+#include "polygon.h"
+#include "vector.h"
+#include <stdlib.h>
 
 typedef struct {
 	double m[4][4];

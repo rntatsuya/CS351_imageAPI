@@ -1,4 +1,4 @@
-#ifdef VIEW_H
+#ifndef VIEW_H
 
 #define VIEW_H
 

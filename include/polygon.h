@@ -4,6 +4,7 @@
 
 
 #include <stdio.h>
+#include "line.h"
 #include "image.h"
 #include "color.h"
 
