@@ -102,19 +102,72 @@ void matrix_xformLine( Matrix *m, Line *line ) {
 /////////////////////////
 
 void matrix_scale2D( Matrix *m, double sx, double sy ) {
-	
+	Matrix t; // Temp
+	for ( int i = 0; i < 4; i++ ) 
+		for ( int j = 0; j < 4; j++ ) {
+			if ( i == 0 && j == 0 ) 
+				t->m[i][j] = sx; 
+			else if ( i == 1 && j == 1 ) 
+				t->m[i][j] = sy; 
+			else if (( i == 2 && j == 2 ) || ( i == 3 && j == 3 ))
+				t->m[i][j]] = 1; 
+			else 
+				t->m[i][j] = 0;
+		}
+	}
+	matrix_multiply( t, m, m );
 }
 
 void matrix_rotateZ( Matrix *m, double cth, double sth ) {
+	Matrix t; // Temp
+	for ( int i = 0; i < 4; i++ ) 
+		for ( int j = 0; j < 4; j++ ) 
+			t->m[i][j] = 0;
 
+	t->m[0][0] = cos(cth);
+	t->m[1][1] = cos(cth);
+
+	t->m[0][1] = -sin(sth);
+	t->m[1][0] = sin(sth);
+
+	t->m[2][2] = 1;
+	t->m[3][3] = 1;
+
+	matrix_multiply( t, m, m );
 }
 
 void matrix_translate2D( Matrix *m, double tx, double ty ) {
+	Matrix t; // Temp
+	for ( int i = 0; i < 4; i++ ) {
+		for ( int j = 0; j < 4; j++ ) {
+			if ( i == j ) 
+				t->m[i][j] = 1;
+			else 
+				t->m[i][j] = 0;
+		}
+	}
 
+	t->m[0][3] = tx;
+	t->m[1][3] = ty;
+
+	matrix_multiply( t, m, m );
 }
 
 void matrix_shear2D( Matrix *m, double shx, double shy ) {
+	Matrix t; // Temp
+	for ( int i = 0; i < 4; i++ ) {
+		for ( int j = 0; j < 4; j++ ) {
+			if ( i == j ) 
+				t->m[i][j] = 1;
+			else 
+				t->m[i][j] = 0;
+		}
+	}
 
+	t->m[0][1] = shx;
+	t->m[1][0] = shy;
+
+	matrix_multiply( t, m, m );
 }
 
 
