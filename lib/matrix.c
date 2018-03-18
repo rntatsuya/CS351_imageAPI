@@ -12,39 +12,56 @@ void matrix_print( Matrix *m, FILE *fp ) {
 }
 
 void matrix_clear( Matrix *m ) {
-
+	for ( int i = 0; i < 4; i++ ) 
+		for ( int j = 0; j < 4; j++ ) 
+			m[i * 4 + j] = 0.0;
 }
 
 void matrix_identity( Matrix *m ) {
-
+	for ( int i = 0; i < 4; i++ ) {
+		for ( int j = 0; j < 4; j++ ) {
+			if ( i == j )
+				m[i * 4 + j] = 1.0;
+ 			else
+				m[i * 4 + j] = 0.0;
+		}
+	}
 }
 
 double matrix_get( Matrix *m, int r, int c ) {
-
+	return m[r * 4 + c];
 }
 
 void matrix_set( Matrix *m, int r, int c, double v ) {
-
+	m[r * 4 + c] = v; 
 }
 
 void matrix_copy( Matrix *dest, Matrix *src ) {
-
+	for ( int i = 0; i < 4; i++ ) 
+		for ( int j = 0; j < 4; j++ ) 
+			dest[i * 4 + j] = src[i * 4 + j];
 }
 
 void matrix_transpose( Matrix *m ) {
-
 }
 
 void matrix_multiply( Matrix *left, Matrix *right, Matrix *m ) {
-
+	for (j = 0; j < 4; ++j) {
+        for (i = 0; i < 4; ++i) {
+        	int d = i * 4 + j;
+ 	        m[d] = left[d] * right[d];
+ 	    }
+ 	}
 }
 
 void matrix_xformPoint( Matrix *m, Point *p, Point *q ) {
-
+	for ( int i = 0; i < 4; i+=4 ) 
+		q->val[i] = m[i]*p[0] + m[i+1]*p[1] + m[i+2]*p[2] + m[i+3]*p[3];
 }
 
 void matrix_xformVector( Matrix *m, Vector *p, Vector *q ) {
-
+	for ( int i = 0; i < 4; i+=4 ) 
+		q->val[i] = m[i]*p[0] + m[i+1]*p[1] + m[i+2]*p[2] + m[i+3]*p[3];
 }
 
 void matrix_xformPolygon( Matrix *m, Polygon *p ) {
@@ -58,7 +75,6 @@ void matrix_xformPolyline( Matrix *m, Polyline *p ) {
 void matrix_xformLine( Matrix *m, Line *line ) {
 
 }
-
 
 /////////////////////////
 // 2D Matrix Functions //
