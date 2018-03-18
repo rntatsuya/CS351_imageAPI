@@ -3,6 +3,8 @@
  * matrix.c
  */
 
+#include "graphics.h"
+
 //////////////////////////////
 // Generic Matrix Functions //
 //////////////////////////////
@@ -14,54 +16,70 @@ void matrix_print( Matrix *m, FILE *fp ) {
 void matrix_clear( Matrix *m ) {
 	for ( int i = 0; i < 4; i++ ) 
 		for ( int j = 0; j < 4; j++ ) 
-			m[i * 4 + j] = 0.0;
+			m->m[i * 4 + j] = 0.0;
 }
 
 void matrix_identity( Matrix *m ) {
 	for ( int i = 0; i < 4; i++ ) {
 		for ( int j = 0; j < 4; j++ ) {
 			if ( i == j )
-				m[i * 4 + j] = 1.0;
+				m->m[i * 4 + j] = 1.0;
  			else
-				m[i * 4 + j] = 0.0;
+				m->m[i * 4 + j] = 0.0;
 		}
 	}
 }
 
 double matrix_get( Matrix *m, int r, int c ) {
-	return m[r * 4 + c];
+	return m->m[r * 4 + c];
 }
 
 void matrix_set( Matrix *m, int r, int c, double v ) {
-	m[r * 4 + c] = v; 
+	m->m[r * 4 + c] = v; 
 }
 
 void matrix_copy( Matrix *dest, Matrix *src ) {
 	for ( int i = 0; i < 4; i++ ) 
 		for ( int j = 0; j < 4; j++ ) 
-			dest[i * 4 + j] = src[i * 4 + j];
+			dest->m[i * 4 + j] = src->m[i * 4 + j];
 }
 
+// Not sure if this is correct 
 void matrix_transpose( Matrix *m ) {
+	// Matrix b; // Temp matrix
+
+	// for ( int i = 0; i < 4; i++ )
+ //        for ( int j = 0; j < 4; j++ ) 
+ //            b->m[i * 4 + j] = m->m[j * 4 + i];
+
+ //    for ( int i = 0; i < 4; i++ )
+ //        for ( int j = 0; j < 4; j++ ) 
+ //            m->m[i * 4 + j] = b->m[j * 4 + i];
 }
 
 void matrix_multiply( Matrix *left, Matrix *right, Matrix *m ) {
-	for (j = 0; j < 4; ++j) {
-        for (i = 0; i < 4; ++i) {
+	for ( int i = 0; i < 4; i++) {
+        for ( int j = 0; j < 4; j++ ) {
         	int d = i * 4 + j;
- 	        m[d] = left[d] * right[d];
+ 	        m->m[d] = left->m[d] * right->m[d];
  	    }
  	}
 }
 
 void matrix_xformPoint( Matrix *m, Point *p, Point *q ) {
 	for ( int i = 0; i < 4; i+=4 ) 
-		q->val[i] = m[i]*p[0] + m[i+1]*p[1] + m[i+2]*p[2] + m[i+3]*p[3];
+		q->val[i] = m->m[i]*p->val[0] 
+			+ m->m[i+1]*p->val[1] 
+			+ m->m[i+2]*p->val[2] 
+			+ m->m[i+3]*p->val[3];
 }
 
 void matrix_xformVector( Matrix *m, Vector *p, Vector *q ) {
 	for ( int i = 0; i < 4; i+=4 ) 
-		q->val[i] = m[i]*p[0] + m[i+1]*p[1] + m[i+2]*p[2] + m[i+3]*p[3];
+		q->val[i] = m->m[i]*p->val[0] 
+			+ m->m[i+1]*p->val[1] 
+			+ m->m[i+2]*p->val[2] 
+			+ m->m[i+3]*p->val[3];
 }
 
 void matrix_xformPolygon( Matrix *m, Polygon *p ) {
@@ -113,11 +131,11 @@ void matrix_rotateX( Matrix *m, double cth, double sth ) {
 
 }
 
-void matrix_rotateY( Matrix *m, double cth, double st h {
+void matrix_rotateY( Matrix *m, double cth, double sth ) {
 
 }
 
-void matrix_rotateXYZ( Matrix *m, Vector *u, Vector *v, Vector  * {
+void matrix_rotateXYZ( Matrix *m, Vector *u, Vector *v, Vector *w ) {
 
 }
 

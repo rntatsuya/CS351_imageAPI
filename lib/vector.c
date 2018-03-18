@@ -3,6 +3,8 @@
  * vector.c
  */
 
+#include "graphics.h"
+
 void vector_set( Vector *v, double x, double y, double z ) {
 	v->val[0] = x;
 	v->val[1] = y;

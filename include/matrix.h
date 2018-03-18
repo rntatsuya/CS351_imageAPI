@@ -37,9 +37,9 @@ void matrix_shear2D( Matrix *m, double shx, double shy );
 void matrix_translate( Matrix *m, double tx, double ty, double tz );
 void matrix_scale( Matrix *m, double sx, double sy, double sz );
 void matrix_rotateX( Matrix *m, double cth, double sth );
-void matrix_rotateY( Matrix *m, double cth, double st h;
-void matrix_rotateXYZ( Matrix *m, Vector *u, Vector *v, Vector  *;
+void matrix_rotateY( Matrix *m, double cth, double sth );
+void matrix_rotateXYZ( Matrix *m, Vector *u, Vector *v, Vector *w );
 void matrix_shearZ( Matrix *m, double shx, double shy );
 void matrix_perspective( Matrix *m, double d );
 
-#endif MATRIX_H
+#endif

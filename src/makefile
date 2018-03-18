@@ -26,16 +26,16 @@ LIBS = -lm -limageIO
 LFLAGS = -L$(LIBDIR)
 
 # put all of the relevant include files here
-_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h graphics.h #matrix.h #vector.h #view.h
+_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h graphics.h matrix.h vector.h #view.h 
 
 # convert them to point to the right place
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = #test5a #test5b #test5c #test5d
+EXECUTABLES = #test5a #test5b #test5c #test5d test
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = #test5a.o #test5b.o #test5c.o #test5d.o
+_OBJ = #test5a.o #test5b.o #test5c.o #test5d.o test
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -69,6 +69,8 @@ all:
 # test5d: $(ODIR)/test5d.o
 # 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
+test: $(ODIR)/test.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
 .PHONY: clean
 
