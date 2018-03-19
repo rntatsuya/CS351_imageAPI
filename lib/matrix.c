@@ -218,14 +218,15 @@ void matrix_scale( Matrix *m, double sx, double sy, double sz ) {
 
 void matrix_rotateX( Matrix *m, double cth, double sth ) {
 	Matrix t; // Temp
-	for ( int i = 0; i < 4; i++ ) 
+	for ( int i = 0; i < 4; i++ ) {
 		for ( int j = 0; j < 4; j++ ) {
 			if ( (i == 0 && j == 0) || (i == 3 && j == 3) ) 
 				t.m[i][j] = 1;
 			else 
 				t.m[i][j] = 0;
 		}
-		
+	}
+	
 	t.m[1][1] = cos(cth);
 	t.m[1][1] = cos(cth);
 
@@ -254,6 +255,7 @@ void matrix_rotateY( Matrix *m, double cth, double sth ) {
 
 	matrix_multiply( &t, m, m );
 }
+
 
 void matrix_rotateXYZ( Matrix *m, Vector *u, Vector *v, Vector *w ) {
 	Matrix t; // Temp

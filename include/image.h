@@ -2,7 +2,7 @@
 
 #define IMAGE_H
 
-#define round(a)({(int)((a)+0.5);})
+#define _round(a)({(int)((a)+0.5);})
 
 #define image_setColor(src, r1, c1, color)({\
   (src)->data[(r1)*(src)->cols + (c1)].rgb[0] = (color).c[0];\

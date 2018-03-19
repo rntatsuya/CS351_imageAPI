@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
 
   srand(42);
 
-  src = image_create(rows, cols);
+  src = image_create(rows, cols, 255);
 
   // initialize the three matrices
   matrix_identity(&VTM);
