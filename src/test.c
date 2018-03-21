@@ -11,8 +11,10 @@ int main ( int argc, char *argv[] ) {
     matrix_clear( &m );
 
     // matrix_identity( &m );
-    matrix_set( &m, 2, 1, 21.0);
-    matrix_set( &m, 3, 0, 30.0);
+    matrix_set( &m, 0, 0, 1.0);
+    matrix_set( &m, 0, 1, 2.0);
+    matrix_set( &m, 0, 2, 3.0);
+    matrix_set( &m, 0, 3, 4.0);
     matrix_transpose(&m);
 
     matrix_print( &m, fp );
