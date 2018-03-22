@@ -96,15 +96,21 @@ void matrix_multiply( Matrix *left, Matrix *right, Matrix *m ) {
 }
 
 void matrix_xformPoint( Matrix *m, Point *p, Point *q ) {
-	for ( int i = 0; i < 4; i++ ) 
-		for ( int j = 0; j < 4; j++ ) 
-			q->val[j] += m->m[i][j] * p->val[j]; 
+	for ( int i = 0; i < 4; i++ ) {
+		q->val[i] = 0;
+		for ( int j = 0; j < 4; j++ ) {
+			q->val[i] += m->m[i][j] * p->val[j]; 
+// 			printf("[%d](%.2f) += [%d][%d](%.2f) * [%d](%.2f)\n", i, q->val[i], j,i, m->m[j][i], j, p->val[j]);
+		}
+	}
 }
 
 void matrix_xformVector( Matrix *m, Vector *p, Vector *q ) {
-	for ( int i = 0; i < 4; i++ ) 
+	for ( int i = 0; i < 4; i++ ) {
+		q->val[i] = 0;
 		for ( int j = 0; j < 4; j++ ) 
-			q->val[j] += m->m[i][j] * p->val[j]; 
+			q->val[i] += m->m[j][i] * p->val[j]; 
+	}
 }
 
 void matrix_xformPolygon( Matrix *m, Polygon *p ) {
@@ -146,8 +152,10 @@ void matrix_scale2D( Matrix *m, double sx, double sy ) {
 
 	t.m[0][0] = sx; 
 	t.m[1][1] = sy; 
-
+	
+	matrix_print(m, stdout);
 	matrix_multiply( &t, m, m );
+	matrix_print(m, stdout);
 }
 
 void matrix_rotateZ( Matrix *m, double cth, double sth ) {
@@ -156,11 +164,11 @@ void matrix_rotateZ( Matrix *m, double cth, double sth ) {
 		for ( int j = 0; j < 4; j++ ) 
 			t.m[i][j] = 0;
 
-	t.m[0][0] = cos(cth);
-	t.m[1][1] = cos(cth);
+	t.m[0][0] = cth;
+	t.m[1][1] = cth;
 
-	t.m[0][1] = -sin(sth);
-	t.m[1][0] = sin(sth);
+	t.m[0][1] = -sth;
+	t.m[1][0] = sth;
 
 	t.m[2][2] = 1;
 	t.m[3][3] = 1;
@@ -170,14 +178,20 @@ void matrix_rotateZ( Matrix *m, double cth, double sth ) {
 
 void matrix_translate2D( Matrix *m, double tx, double ty ) {
 	Matrix t; // Temp
-	for ( int i = 0; i < 4; i++ ) {
-		for ( int j = 0; j < 4; j++ ) {
-			if ( i == j ) 
-				t.m[i][j] = 1;
-			else 
-				t.m[i][j] = 0;
-		}
-	}
+	// for ( int i = 0; i < 4; i++ ) {
+// 		for ( int j = 0; j < 4; j++ ) {
+// 			if ( i == j ) 
+// 				t.m[i][j] = 1;
+// 			else 
+// 				t.m[i][j] = 0;
+// 		}
+// 	}
+	matrix_clear(&t);
+	
+	t.m[0][0] = 1;
+	t.m[1][1] = 1;
+	t.m[2][2] = 1;
+	t.m[3][3] = 1;
 
 	t.m[0][3] = tx;
 	t.m[1][3] = ty;
@@ -250,11 +264,11 @@ void matrix_rotateX( Matrix *m, double cth, double sth ) {
 		}
 	}
 	
-	t.m[1][1] = cos(cth);
-	t.m[1][1] = cos(cth);
+	t.m[1][1] = cth;
+	t.m[2][2] = cth;
 
-	t.m[1][2] = -sin(sth);
-	t.m[2][1] = sin(sth);
+	t.m[1][2] = -sth;
+	t.m[2][1] = sth;
 
 	matrix_multiply( &t, m, m );
 }
@@ -270,33 +284,38 @@ void matrix_rotateY( Matrix *m, double cth, double sth ) {
 		}
 	}
 
-	t.m[0][0] = cos(cth);
-	t.m[2][2] = cos(cth);
+	t.m[0][0] = cth;
+	t.m[2][2] = cth;
 
-	t.m[0][2] = sin(sth);
-	t.m[2][0] = -sin(sth);	
+	t.m[0][2] = sth;
+	t.m[2][0] = -sth;	
 
 	matrix_multiply( &t, m, m );
 }
 
 
 void matrix_rotateXYZ( Matrix *m, Vector *u, Vector *v, Vector *w ) {
-	Matrix t; // Temp
 
-	matrix_identity(m);
-	t.m[0][0] = u->val[0];
-	t.m[0][1] = u->val[1];
-	t.m[0][2] = u->val[2];
+	m->m[0][0] = u->val[0];
+	m->m[0][1] = u->val[1];
+	m->m[0][2] = u->val[2];
+	m->m[0][3] = 0;
 
-	t.m[1][0] = v->val[0];
-	t.m[1][1] = v->val[1];
-	t.m[1][2] = v->val[2];
+	m->m[1][0] = v->val[0];
+	m->m[1][1] = v->val[1];
+	m->m[1][2] = v->val[2];
+	m->m[1][3] = 0;
 
-	t.m[2][0] = w->val[0];
-	t.m[2][1] = w->val[1];
-	t.m[2][2] = w->val[2];
-
-	matrix_multiply( &t, m, m );
+	m->m[2][0] = w->val[0];
+	m->m[2][1] = w->val[1];
+	m->m[2][2] = w->val[2];
+	m->m[2][3] = 0;
+	
+	m->m[3][0] = 0;
+	m->m[3][1] = 0;
+	m->m[3][2] = 0;
+	m->m[3][3] = 1;
+	
 }
 
 void matrix_shearZ( Matrix *m, double shx, double shy ) {

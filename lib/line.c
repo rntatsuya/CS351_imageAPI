@@ -82,13 +82,9 @@ void point_drawf(Point *p, Image *src, FPixel c) {
 }
 
 // – use fprintf to print the contents of the Point to the stream fp
-void point_print(Point *point, FILE *fp) {
-  char *filename = "point_content.txt";
-  
-  fp = fopen(filename, "w");
-  
+void point_print(Point *point, FILE *fp) {  
   if (fp == NULL) {
-    fprintf(stderr, "Can't open output file %s!\n", filename);
+    fprintf(stderr, "Can't open output file!\n");
     exit(1);
   }
     

@@ -14,9 +14,6 @@ void vector_set( Vector *v, double x, double y, double z ) {
 }
 
 void vector_print( Vector *v, FILE *fp ) {
-// 	char *filename = "vector_content.txt";
-// 
-// 	fp = fopen(filename, "w");
 
 	if (fp == NULL) {
 		fprintf(stderr, "Can't open output file!\n");
