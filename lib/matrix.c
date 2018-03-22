@@ -79,17 +79,20 @@ void matrix_transpose( Matrix *m ) {
 }
 
 void matrix_multiply( Matrix *left, Matrix *right, Matrix *m ) {
-	for ( int i = 0; i < 4; i++) {
-	    for ( int j = 0; j < 4; j++ ) {
-	    	m->m[i][j] = 0;
-	    	for ( int k = 0; k < 4; k++ ) {
-	 	        m->m[i][j] += left->m[i][k] * right->m[k][j];
-	 	        // printf("%.2f * %.2f = %.2f\n", left->m[i][k], right->m[k][j], m->m[i][j] );
-	    	}
-	    	// printf("\n");
-	    	// printf("%f\n", m->m[i][j]);
-	 	} 
- 	}
+ 	int i,j,k;
+ 	Matrix out;
+ 	// make output matrix in case input and output matrix have the same address
+ 	matrix_clear(&out);
+ 	
+ 	for (k=0;k<4;k++) {
+    	for (i=0;i<4;i++) {
+	    	for (j=0;j<4;j++) {
+			out.m[i][k] += left->m[i][j] * right->m[j][k];
+			}
+    	}
+  	}
+  
+	matrix_copy( m, &out );
 }
 
 void matrix_xformPoint( Matrix *m, Point *p, Point *q ) {

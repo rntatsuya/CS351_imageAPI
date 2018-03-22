@@ -97,8 +97,8 @@ int main(int argc, char *argv[]) {
 	printf("matrix_multiply: result should be\n");
 	printf("[[56, 152, 248, 344]\n[62, 174, 286, 398]\n[68, 196, 324, 452]\n[74, 218, 362, 506]]\n");
 	matrix_print(&o, stdout);
-
-	// It stops printing out correct contents (vector_contents.txt) here  
+	
+	
 	matrix_multiply(&m, &n, &m);
 	printf("matrix_multiply: result should not change from above\n");
 	matrix_print(&m, stdout);
