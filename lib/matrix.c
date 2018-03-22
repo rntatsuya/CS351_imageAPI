@@ -11,19 +11,31 @@
 //////////////////////////////
  
 void matrix_print( Matrix *m, FILE *fp ) {
-	char *filename = "matrix_content.txt";
-
-	fp = fopen(filename, "w");
 
 	if (fp == NULL) {
-		fprintf(stderr, "Can't open output file %s!\n", filename);
+		fprintf(stderr, "Can't open output file!\n");
 		exit(1);
 	}
+	
+	int i,j;
+	
+	fprintf(fp, "[ [");
+    for (i=0;i<4;i++) {
+		if (i != 0)
+			fprintf(fp, "  [");
+		for (j=0;j<4;j++) {
+			fprintf(fp, "%.2f ", m->m[i][j]);
+		}
+		fprintf(fp, "]");
+		if (i==3)
+			fprintf(fp, " ]");
+		fprintf(fp, "\n");
+    }
 
-	for ( int i = 0 ; i < 4; i++ ) {
-		fprintf(fp, "%.2f, %.2f, %.2f, %.2f \n", 
-			m->m[i][0], m->m[i][1], m->m[i][2], m->m[i][3]);
-	}
+// 	for ( int i = 0 ; i < 4; i++ ) {
+// 		fprintf(fp, "%.2f, %.2f, %.2f, %.2f \n", 
+// 			m->m[i][0], m->m[i][1], m->m[i][2], m->m[i][3]);
+// 	}
 }
 
 void matrix_clear( Matrix *m ) {
