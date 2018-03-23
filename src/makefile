@@ -60,8 +60,8 @@ all:
 test5a: $(ODIR)/test5a.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
-# test5b: $(ODIR)/test5b.o
-# 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+test5b: $(ODIR)/test5b.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
 # test5c: $(ODIR)/test5c.o
 # 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)

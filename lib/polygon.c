@@ -34,9 +34,21 @@ Polygon *polygon_createp(int numV, Point *vlist) {
     exit(-1);
   }
   
+  p->vertex = malloc(sizeof(Point) * numV);
+  
+  if (!p->vertex) {
+    printf("Ran out of memory while mallocing vertex pointer in polygon_set!\n");
+    free(p);
+    exit(-1);
+  }
+  
+  int i;
+  for (i=0; i<numV; i++) {
+    p->vertex[i] = vlist[i];
+  }
+  
   p->zBuffer = 1;
   p->nVertex = numV;
-  p->vertex = vlist;
   p->color = NULL;
 //   p->normal = NULL;
   p->oneSided = 1;
@@ -83,6 +95,7 @@ void polygon_set(Polygon *p, int numV, Point *vlist) {
   
   if (!p->vertex) {
     printf("Ran out of memory while mallocing vertex pointer in polygon_set!\n");
+    free(p);
     exit(-1);
   }
   
@@ -134,6 +147,7 @@ void polygon_setColors(Polygon *p, int numV, Color *clist) {
   
   if (!p->color) {
     printf("Ran out of memory while mallocing colors pointer in polygon_setColors!\n");
+    free(p);
     exit(-1);
   }
   
@@ -231,26 +245,23 @@ void polygon_copy(Polygon *to, Polygon *from) {
 
 
 void polygon_print(Polygon *p, FILE *fp) {
-  char *filename = "pline_content.txt";
   int i;
   
-  fp = fopen(filename, "w");
-  
   if (fp == NULL) {
-    fprintf(stderr, "Can't open output file %s!\n", filename);
+    fprintf(stderr, "Can't open output file!\n");
     exit(1);
   }
 
 
-  fprintf(fp, "zBuffer: %d\n", p->zBuffer);
-  fprintf(fp, "numVertex: %d\n", p->nVertex);
-  fprintf(fp, "oneSided: %d\n", p->oneSided);
+//   fprintf(fp, "zBuffer: %d\n", p->zBuffer);
+//   fprintf(fp, "numVertex: %d\n", p->nVertex);
+//   fprintf(fp, "oneSided: %d\n", p->oneSided);
   for (i=0; i<p->nVertex; i++) {
-    fprintf(fp, "(x, y, z, h): (%lf, %lf, %lf, %lf)\n", 
+    fprintf(fp, "(%lf, %lf, %lf)\n", 
       p->vertex[i].val[0],
       p->vertex[i].val[1],
-      p->vertex[i].val[2],
-      p->vertex[i].val[3]);
+      p->vertex[i].val[2]);
+//       p->vertex[i].val[3]);
   }
 }
 

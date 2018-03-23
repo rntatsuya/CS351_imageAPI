@@ -109,29 +109,37 @@ void matrix_xformVector( Matrix *m, Vector *p, Vector *q ) {
 	for ( int i = 0; i < 4; i++ ) {
 		q->val[i] = 0;
 		for ( int j = 0; j < 4; j++ ) 
-			q->val[i] += m->m[j][i] * p->val[j]; 
+			q->val[i] += m->m[i][j] * p->val[j]; 
 	}
 }
 
 void matrix_xformPolygon( Matrix *m, Polygon *p ) {
-	for ( int k = 0; k < p->nVertex; k++ )
-		for ( int i = 0; i < 4; i++ ) 
-			for ( int j = 0; j < 4; j++ ) 
-				p->vertex[k].val[j] += m->m[i][j] * p->vertex[k].val[j]; 
+	Point temp;
+	
+	for ( int k = 0; k < p->nVertex; k++ ) {
+		// copy point to separate left and right hand side of equation below
+// 		point_copy(&temp, &p->vertex[k]);
+// 		for ( int i = 0; i < 4; i++ ) {
+// 			for ( int j = 0; j < 4; j++ ) 
+				matrix_xformPoint( m, &p->vertex[k], &temp );
+				point_copy(&p->vertex[k], &temp);
+// 				p->vertex[k].val[i] += m->m[i][j] * temp.val[j]; 
+// 		}
+	}
 }
 
 void matrix_xformPolyline( Matrix *m, Polyline *p ) {
 	for ( int k = 0; k < p->numVertex; k++ )
 		for ( int i = 0; i < 4; i++ ) 
 			for ( int j = 0; j < 4; j++ ) 
-				p->vertex[k].val[j] += m->m[i][j] * p->vertex[k].val[j]; 
+				p->vertex[k].val[i] += m->m[i][j] * p->vertex[k].val[j]; 
 }
 
 void matrix_xformLine( Matrix *m, Line *line ) {
 	for ( int i = 0; i < 4; i++ ) 
 		for ( int j = 0; j < 4; j++ ) {
-			line->a.val[j] += m->m[i][j] * line->a.val[j]; 
-			line->b.val[j] += m->m[i][j] * line->b.val[j]; 
+			line->a.val[i] += m->m[i][j] * line->a.val[j]; 
+			line->b.val[i] += m->m[i][j] * line->b.val[j]; 
 		}
 }
 
@@ -153,9 +161,7 @@ void matrix_scale2D( Matrix *m, double sx, double sy ) {
 	t.m[0][0] = sx; 
 	t.m[1][1] = sy; 
 	
-	matrix_print(m, stdout);
 	matrix_multiply( &t, m, m );
-	matrix_print(m, stdout);
 }
 
 void matrix_rotateZ( Matrix *m, double cth, double sth ) {
@@ -172,8 +178,13 @@ void matrix_rotateZ( Matrix *m, double cth, double sth ) {
 
 	t.m[2][2] = 1;
 	t.m[3][3] = 1;
-
+	
+	printf("Before rotate\n");
+	matrix_print(m, stdout);
+	matrix_print(&t, stdout);
 	matrix_multiply( &t, m, m );
+// 	printf("After rotate\n");
+// 	matrix_print(m, stdout);
 }
 
 void matrix_translate2D( Matrix *m, double tx, double ty ) {

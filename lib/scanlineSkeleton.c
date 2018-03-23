@@ -93,7 +93,7 @@ static Edge *makeEdgeRec( Point start, Point end, Image *src)
 	edge->yEnd = (int)(end.val[1] + 0.5) - 1;
 
 	// Clip yEnd to the number of rows-1.
-	if ( edge->yEnd > src->rows )
+	if ( edge->yEnd >= src->rows )
 		edge->yEnd = src->rows - 1; 
 
 	// Calculate the slope, dxPerScan

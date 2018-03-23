@@ -3,19 +3,20 @@
  * view.c
  */
 
-#include "graphics.h"
+#include "matrix.h"
+#include "view.h"
+#include <math.h>
 
 void matrix_setView2D(Matrix *vtm, View2D *view) {
-	int du = view->du;
-	int c = view->c;
-	int r = view->r;
-	int dv = du * r / c; // height of view window
-	int theta = view->theta;
+	int dx = view->dx;
+	int screenx = view->screenx;
+	int screeny = view->screeny;
+	int dy = dx * screeny / screenx; // height of view window
 	
-	matrix_translate( vtm, -view->v0.val[0], -view->v0.val[1], 0 );
-	matrix_rotateZ( vtm, theta, -theta );
-	matrix_scale( vtm, c/du, -r/dv, 1 );
-	matrix_translate( vtm, c/2, r/2, 0 );
+	matrix_translate( vtm, -view->vrp.val[0], -view->vrp.val[1], 0 );
+	matrix_rotateZ( vtm, view->x.val[0], -view->x.val[1] );
+	matrix_scale( vtm, screenx/dx, -screeny/dy, 1 );
+	matrix_translate( vtm, screenx/2, screeny/2, 0 );
 }
 
 // void matrix_setView3D( Matrix *vtm, View3D *view ) {

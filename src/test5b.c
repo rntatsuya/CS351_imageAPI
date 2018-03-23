@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   char filename[256];
   Image *src;
 
-  src = image_create( rows, cols );
+  src = image_create( rows, cols, 255 );
 
   srand48(0x01234ABCD);
 

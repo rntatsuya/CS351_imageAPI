@@ -283,10 +283,10 @@ int main(int argc, char *argv[]) {
     ship[index] = polygon_createp(4, pt);
     shipColor[index++] = Red;
   }
-
+  matrix_print(&GTM, stdout);
   matrix_rotateZ(&GTM, cos(theta*M_PI/180.0), sin(theta*M_PI/180.0));
-
-  printf("GTM:\n");
+	
+  printf("GTM: here\n");
   matrix_print(&GTM, stdout);
 
   printf("Pre-GTM/VTM\n");
