@@ -31,4 +31,4 @@ void matrix_setView2D(Matrix *vtm, View2D *view);
 // Implements the 3D perspective pipeline
 void matrix_setView3D( Matrix *vtm, View3D *view );
 
-#endif VIEW_H
+#endif
