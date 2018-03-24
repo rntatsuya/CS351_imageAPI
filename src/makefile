@@ -32,10 +32,10 @@ _DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h grap
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = #test5a #test5b #test5c test5d test
+EXECUTABLES = test5a test5b test5c test5d test
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = #test5a.o #test5b.o #test5c.o test5d.o test
+_OBJ = test5a.o test5b.o test5c.o test5d.o test
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
