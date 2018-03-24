@@ -174,10 +174,15 @@ void matrix_rotateZ( Matrix *m, double cth, double sth ) {
 	Matrix t; // Temp
 	matrix_identity(&t);
 
-	t.m[0][0] = cos(cth);
-	t.m[1][1] = cos(cth);
-	t.m[0][1] = -sin(sth);
-	t.m[1][0] = sin(sth);
+	// t.m[0][0] = cos(cth);
+	// t.m[1][1] = cos(cth);
+	// t.m[0][1] = -sin(sth);
+	// t.m[1][0] = sin(sth);
+
+	t.m[0][0] = cth;
+	t.m[1][1] = cth;
+	t.m[0][1] = -sth;
+	t.m[1][0] = sth;
 
 // 	printf("Before rotate\n");
 // 	matrix_print(m, stdout);
@@ -240,10 +245,15 @@ void matrix_rotateX( Matrix *m, double cth, double sth ) {
 	Matrix t; // Temp
 	matrix_identity(&t);
 	
-	t.m[1][1] = cos(cth);
-	t.m[2][2] = cos(cth);
-	t.m[1][2] = -sin(sth);
-	t.m[2][1] = sin(sth);
+	// t.m[1][1] = cos(cth);
+	// t.m[2][2] = cos(cth);
+	// t.m[1][2] = -sin(sth);
+	// t.m[2][1] = sin(sth);
+	
+	t.m[1][1] = cth;
+	t.m[2][2] = cth;
+	t.m[1][2] = -sth;
+	t.m[2][1] = sth;
 
 	matrix_multiply( &t, m, m );
 }
@@ -252,10 +262,15 @@ void matrix_rotateY( Matrix *m, double cth, double sth ) {
 	Matrix t; // Temp
 	matrix_identity(&t);
 
-	t.m[0][0] = cos(cth);
-	t.m[2][2] = cos(cth);
-	t.m[0][2] = sin(sth);
-	t.m[2][0] = -sin(sth);	
+	// t.m[0][0] = cos(cth);
+	// t.m[2][2] = cos(cth);
+	// t.m[0][2] = sin(sth);
+	// t.m[2][0] = -sin(sth);	
+
+	t.m[0][0] = cth;
+	t.m[2][2] = cth;
+	t.m[0][2] = sth;
+	t.m[2][0] = -sth;
 
 	matrix_multiply( &t, m, m );
 }

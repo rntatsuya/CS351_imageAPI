@@ -16,10 +16,10 @@ void matrix_setView2D(Matrix *vtm, View2D *view) {
 	// need to initialize vtm to the identity
 	matrix_identity( vtm );
 	
-	matrix_translate( vtm, -view->vrp.val[0], -view->vrp.val[1], 0 );
+	matrix_translate2D( vtm, -view->vrp.val[0], -view->vrp.val[1] );
 	matrix_rotateZ( vtm, view->x.val[0], -view->x.val[1] );
-	matrix_scale( vtm, screenx/dx, -screeny/dy, 1 );
-	matrix_translate( vtm, screenx/2, screeny/2, 0 );
+	matrix_scale2D( vtm, screenx/dx, -screeny/dy );
+	matrix_translate2D( vtm, screenx/2, screeny/2 );
 }
 
 void matrix_setView3D( Matrix *vtm, View3D *view ) {
