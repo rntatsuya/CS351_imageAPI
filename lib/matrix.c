@@ -98,11 +98,11 @@ void matrix_multiply( Matrix *left, Matrix *right, Matrix *m ) {
 void matrix_xformPoint( Matrix *m, Point *p, Point *q ) {
 	for ( int i = 0; i < 4; i++ ) {
 		q->val[i] = 0;
-		for ( int j = 0; j < 4; j++ ) {
+		for ( int j = 0; j < 4; j++ ) 
 			q->val[i] += m->m[i][j] * p->val[j]; 
-// 			printf("[%d](%.2f) += [%d][%d](%.2f) * [%d](%.2f)\n", i, q->val[i], j,i, m->m[j][i], j, p->val[j]);
-		}
 	}
+
+	// point_print( q, stdout );
 }
 
 void matrix_xformVector( Matrix *m, Vector *p, Vector *q ) {
@@ -116,16 +116,11 @@ void matrix_xformVector( Matrix *m, Vector *p, Vector *q ) {
 void matrix_xformPolygon( Matrix *m, Polygon *p ) {
 	Point temp;
 	
-	
 	for ( int k = 0; k < p->nVertex; k++ ) {
 		// copy point to separate left and right hand side of equation below
-// 		point_copy(&temp, &p->vertex[k]);
-// 		for ( int i = 0; i < 4; i++ ) {
-// 			for ( int j = 0; j < 4; j++ ) 
-				matrix_xformPoint( m, &p->vertex[k], &temp );
-				point_copy(&p->vertex[k], &temp);
-// 				p->vertex[k].val[i] += m->m[i][j] * temp.val[j]; 
-// 		}
+		// point_copy(&temp, &p->vertex[k]);
+		matrix_xformPoint( m, &p->vertex[k], &temp );
+		point_copy(&p->vertex[k], &temp);
 	}
 }
 
@@ -136,24 +131,16 @@ void matrix_xformPolyline( Matrix *m, Polyline *p ) {
 		matrix_xformPoint( m, &p->vertex[k], &temp );
 		point_copy(&p->vertex[k], &temp);
 	}
-// 		for ( int i = 0; i < 4; i++ ) 
-// 			for ( int j = 0; j < 4; j++ ) 
-// 				p->vertex[k].val[i] += m->m[i][j] * p->vertex[k].val[j]; 
 }
 
 void matrix_xformLine( Matrix *m, Line *line ) {
 	Point temp;
 	matrix_xformPoint( m, &line->a, &temp );
-	matrix_print(m, stdout);
-	point_print(&temp, stdout);
+	// matrix_print(m, stdout);
+	// point_print(&temp, stdout);
 	point_copy(&line->a, &temp);
-	matrix_xformPoint( m, &line->b, &temp );	
+	// matrix_xformPoint( m, &line->b, &temp );	
 	point_copy(&line->b, &temp);
-// 	for ( int i = 0; i < 4; i++ ) 
-// 		for ( int j = 0; j < 4; j++ ) {
-// 			line->a.val[i] += m->m[i][j] * line->a.val[j]; 
-// 			line->b.val[i] += m->m[i][j] * line->b.val[j]; 
-// 		}
 }
 
 /////////////////////////

@@ -102,9 +102,11 @@ void line_set2D(Line *line, double x1, double y1, double x2, double y2) {
 
   start.val[0] = x1;
   start.val[1] = y1;
+  start.val[3] = 1.0;
 
   end.val[0] = x2;
   end.val[1] = y2;
+  end.val[3] = 1.0;
   
   line->a = start;
   line->b = end;
