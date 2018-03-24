@@ -222,17 +222,24 @@ void polygon_copy(Polygon *to, Polygon *from) {
 
   // check if there's already memory allocated for the color field  
   if (!to->color) {
+    printf("here\n");
     to->color = malloc(sizeof(Color) * nVertex);
   }
   else {
+  	printf("ho\n");
     free(to->color);
     to->color = malloc(sizeof(Color) * nVertex);
   }
   
+  printf("%d\n",nVertex);
   // copy content from source
   for (i=0; i<nVertex; i++) {
-    to->vertex[i] = from->vertex[i];
-    to->color[i] = from->color[i];
+
+    to->vertex[i].val[0] = from->vertex[i].val[0];
+    to->vertex[i].val[1] = from->vertex[i].val[1];
+    to->vertex[i].val[2] = from->vertex[i].val[2];
+    to->vertex[i].val[3] = from->vertex[i].val[3];
+//     to->color[i] = from->color[i];     
   }
   
   to->nVertex = nVertex;
@@ -282,7 +289,7 @@ void polygon_draw(Polygon *p, Image *src, Color c) {
   
   // connect all points except for first and last
   for (i=0; i<numVertex-1; i++) {
-    printf("%d, %d\n", i, i+1);
+//     printf("%d, %d\n", i, i+1);
     line_set(&line, p->vertex[i], p->vertex[i+1]);
     line_draw(&line, src, c);
   }
@@ -291,6 +298,23 @@ void polygon_draw(Polygon *p, Image *src, Color c) {
   line_set(&line, p->vertex[0], p->vertex[i+1]);
   line_draw(&line, src, c);
   
+}
+
+void polygon_drawFrame( Polygon *p, Image *src, Color c ) {
+  int i;
+  int numVertex = p->nVertex;
+  Line line;
+  
+  // connect all points except for first and last
+  for (i=0; i<numVertex-1; i++) {
+//     printf("%d, %d\n", i, i+1);
+    line_set(&line, p->vertex[i], p->vertex[i+1]);
+    line_draw(&line, src, c);
+  }
+  
+  // connect first and last points
+  line_set(&line, p->vertex[0], p->vertex[i+1]);
+  line_draw(&line, src, c);
 }
 
 // uses barycentric coordinates to determine which pixels to fill given a polygon 

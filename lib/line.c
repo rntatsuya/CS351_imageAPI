@@ -42,11 +42,11 @@ void point_set3D(Point *point, double x, double y, double z) {
 }
 
 // set the four values of the vector to x, y, z, and h, respectively.
-void point_set(Point *point, double x, double y, double z, double h) {
+void point_set(Point *point, double x, double y, double z) {
   point->val[0] = x;
   point->val[1] = y;
   point->val[2] = z;
-  point->val[3] = h;
+  point->val[3] = 1.0;
 }
 
 // normalize the x and y values of a point by its homogeneous coordinate: x = x/h, y = y/h
@@ -144,7 +144,8 @@ void line_draw(Line *line, Image *src, Color color) {
     printf("cols, rows: %d, %d\n", src->cols, src->rows);
     printf("(x1, y1): (%lf, %lf)\n", line->a.val[0], line->a.val[1]);
     printf("(x2, y2): (%lf, %lf)\n", line->b.val[0], line->b.val[1]);
-    exit(-1);
+	return;
+//     exit(-1);
   }
   
   // always start at the bottom and end at the top

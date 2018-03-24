@@ -66,6 +66,8 @@ void polygon_normalize( Polygon *p );
 // draw the outline of the polygon using color c.
 void polygon_draw(Polygon *p, Image *src, Color c);
 
+void polygon_drawFrame( Polygon *p, Image *src, Color c );
+
 // draw the filled polygon using color c with the scanline z-buffer rendering algorithm.
 void polygon_drawFill(Polygon *p, Image *src, Color c);
 
