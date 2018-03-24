@@ -5,7 +5,7 @@
 typedef struct {
 	Point vrp; 	// The center of the view rectangle V0 in world coordinates
 	double dx; 	// The width of the view rectangle du in world coordinates
-	Vector x; 	// The orientation angle v_theta or the x-axis of the view window expressed as a normalized vector (nx, ny).
+	Vector x; 	// The orientation angle v_theta or the x-axis of the view 	window expressed as a normalized vector (nx, ny).
 				// The relationship between the two is given by (nx, ny) = (cos(✓v),sin(✓v)).
 	int screenx; 		// The number of columns C in the output image
 	int screeny; 		// The number of rows R in the output image

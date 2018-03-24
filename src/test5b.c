@@ -59,6 +59,9 @@ int main(int argc, char *argv[]) {
   view.screenx = cols;
   view.screeny = rows;
 
+  // max's addition
+  matrix_identity(&vtm);
+
   matrix_setView2D( &vtm, &view );
   printf("vtm:\n");
   matrix_print(&vtm, stdout);
@@ -72,8 +75,7 @@ int main(int argc, char *argv[]) {
     for(i=0;i<nLines;i++) {
       float angle = orient[i] + freq[i]*2*M_PI*t/nFrames;
       tline = line[i];
-      printf("line (%.2f %.2f) (%.2f %.2f)\n", line[i].a.val[0], line[i].a.val[1], 
-             line[i].b.val[0], line[i].b.val[1] );
+      printf("line (%.2f %.2f) (%.2f %.2f)\n", line[i].a.val[0], line[i].a.val[1], line[i].b.val[0], line[i].b.val[1] );
 
       matrix_identity( &ltm );
       matrix_translate2D( &ltm, -tline.a.val[0], -tline.a.val[1] );
@@ -82,10 +84,10 @@ int main(int argc, char *argv[]) {
       matrix_print(&ltm, stdout);
 
       matrix_xformLine( &ltm, &tline );
-      printf("line (%.2f %.2f) (%.2f %.2f)\n", tline.a.val[0], tline.a.val[1], 
+      printf("line2 (%.2f %.2f) (%.2f %.2f)\n", tline.a.val[0], tline.a.val[1], 
              tline.b.val[0], tline.b.val[1] );
       matrix_xformLine( &vtm, &tline );
-      printf("line (%.2f %.2f) (%.2f %.2f)\n", tline.a.val[0], tline.a.val[1], 
+      printf("line3 (%.2f %.2f) (%.2f %.2f)\n", tline.a.val[0], tline.a.val[1], 
              tline.b.val[0], tline.b.val[1] );
       
       line_draw( &tline, src, color[i] );

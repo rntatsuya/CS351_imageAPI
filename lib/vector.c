@@ -11,6 +11,7 @@ void vector_set( Vector *v, double x, double y, double z ) {
 	v->val[0] = x;
 	v->val[1] = y;
 	v->val[2] = z;
+	v->val[3] = 0.0;
 }
 
 void vector_print( Vector *v, FILE *fp ) {
