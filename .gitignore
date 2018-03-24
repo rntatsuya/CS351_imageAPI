@@ -1,0 +1,6 @@
+# prevents compiled files (.o, .ppm, etc) from being pushed to repo
+
+*.o
+bin/*.ppm
+bin/*.txt
+.DS_Store
