@@ -24,7 +24,7 @@ void matrix_print( Matrix *m, FILE *fp ) {
 		if (i != 0)
 			fprintf(fp, "  [");
 		for (j=0;j<4;j++) {
-			fprintf(fp, "%.2f ", m->m[i][j]);
+			fprintf(fp, "%.3f ", m->m[i][j]);
 		}
 		fprintf(fp, "]");
 		if (i==3)
@@ -161,11 +161,6 @@ void matrix_rotateZ( Matrix *m, double cth, double sth ) {
 	Matrix t; // Temp
 	matrix_identity(&t);
 
-	// t.m[0][0] = cos(cth);
-	// t.m[1][1] = cos(cth);
-	// t.m[0][1] = -sin(sth);
-	// t.m[1][0] = sin(sth);
-
 	t.m[0][0] = cth;
 	t.m[1][1] = cth;
 	t.m[0][1] = -sth;
@@ -232,11 +227,6 @@ void matrix_rotateX( Matrix *m, double cth, double sth ) {
 	Matrix t; // Temp
 	matrix_identity(&t);
 	
-	// t.m[1][1] = cos(cth);
-	// t.m[2][2] = cos(cth);
-	// t.m[1][2] = -sin(sth);
-	// t.m[2][1] = sin(sth);
-	
 	t.m[1][1] = cth;
 	t.m[2][2] = cth;
 	t.m[1][2] = -sth;
@@ -248,11 +238,6 @@ void matrix_rotateX( Matrix *m, double cth, double sth ) {
 void matrix_rotateY( Matrix *m, double cth, double sth ) {
 	Matrix t; // Temp
 	matrix_identity(&t);
-
-	// t.m[0][0] = cos(cth);
-	// t.m[2][2] = cos(cth);
-	// t.m[0][2] = sin(sth);
-	// t.m[2][0] = -sin(sth);	
 
 	t.m[0][0] = cth;
 	t.m[2][2] = cth;
@@ -297,6 +282,7 @@ void matrix_perspective( Matrix *m, double d ) {
 	matrix_identity(&t);
 
 	t.m[3][2] = 1.0 / d;
+	t.m[3][3] = 0.0;
 
 	matrix_multiply( &t, m, m );
 }
