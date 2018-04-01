@@ -222,16 +222,16 @@ void polygon_copy(Polygon *to, Polygon *from) {
 
   // check if there's already memory allocated for the color field  
   if (!to->color) {
-    printf("here\n");
+//     printf("here\n");
     to->color = malloc(sizeof(Color) * nVertex);
   }
   else {
-  	printf("ho\n");
+//   	printf("ho\n");
     free(to->color);
     to->color = malloc(sizeof(Color) * nVertex);
   }
   
-  printf("%d\n",nVertex);
+//   printf("%d\n",nVertex);
   // copy content from source
   for (i=0; i<nVertex; i++) {
 

@@ -72,6 +72,9 @@ test5d: $(ODIR)/test5d.o
 test: $(ODIR)/test.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
+line_test: $(ODIR)/line_test.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)	
+
 .PHONY: clean
 
 clean:

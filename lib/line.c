@@ -165,7 +165,7 @@ void line_draw(Line *line, Image *src, Color color) {
   double v_y = b_y - a_y;
   double v_z = line->b.val[2] - line->a.val[2];
   
-  printf("v_x %f\n", v_x);
+//   printf("v_x %f\n", v_x);
   
   double p1 = -v_x;
   double p2 = v_x;
@@ -205,7 +205,7 @@ void line_draw(Line *line, Image *src, Color color) {
     }       
      
     if (p_k == 0 && q_k < 0) {
-      printf("Discard %d: pk %.2f qk %.2f\n", k, p_k, q_k);
+//       printf("Discard %d: pk %.2f qk %.2f\n", k, p_k, q_k);
       return; // discard this line
     }
     else if (p_k == 0)
@@ -225,7 +225,7 @@ void line_draw(Line *line, Image *src, Color color) {
   Line new_line; 
   line_set2D(&new_line, a_x + t0*v_x, a_y + t0*v_y, a_x + t_f*v_x, a_y + t_f*v_y);
   
-  printf("Drawing (%.2f %.2f) (%.2f %.2f)\n", a_x + t0*v_x, a_y + t0*v_y, a_x + t_f*v_x, a_y + t_f*v_y);
+//   printf("Drawing (%.2f %.2f) (%.2f %.2f)\n", a_x + t0*v_x, a_y + t0*v_y, a_x + t_f*v_x, a_y + t_f*v_y);
   // always start at the bottom and end at the top
   int c1;
   int r1;

@@ -114,27 +114,17 @@ int main(int argc, char *argv[]) {
 
   // use a temprary polygon to transform stuff
   polygon_init( &tpoly );
-  
+
   printf("Drawing Polygons\n");
   for(i=0;i<6;i++) {
-    printf("Copying\n");
     polygon_copy( &tpoly, &side[i] );
-//     polygon_print( &side[i], stdout );
-
-    printf("xforming\n");
     matrix_xformPolygon( &vtm, &tpoly );
-//     polygon_print( &tpoly, stdout );
 
-	printf("normalizing\n");
     // normalize by homogeneous coordinate before drawing
     polygon_normalize( &tpoly );
-//     polygon_print( &tpoly, stdout );
 
-	printf("drawing\n");
     polygon_drawFrame( &tpoly, src, color[i] );
-    printf("printing\n");
     polygon_print( &tpoly, stdout );
-    return 0;
   }
 
   printf("Writing image\n");

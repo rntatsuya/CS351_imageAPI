@@ -46,10 +46,33 @@ void matrix_setView3D( Matrix *vtm, View3D *view ) {
 	int screenx = view->screenx;
 	int screeny = view->screeny;	
 	
+	printf("original\n");
+	matrix_print(vtm, stdout);
 	matrix_translate( vtm, -view->vrp.val[0], -view->vrp.val[1], -view->vrp.val[2] );
+	printf("translate\n");
+	matrix_print(vtm, stdout);
+	
 	matrix_rotateXYZ( vtm, &u, &vup, &vpn );
+	printf("rotate\n");
+	matrix_print(vtm, stdout);
+	
 	matrix_translate( vtm, 0, 0, view->d );
+	printf("translate\n");
+	matrix_print(vtm, stdout);
+	
 	matrix_scale( vtm, 2*d/(B_dash*du), 2*d/(B_dash*dv), 1/B_dash );
+	printf("scale\n");
+	matrix_print(vtm, stdout);
+	
+	matrix_perspective( vtm, d_dash );
+	printf("perspective\n");
+	matrix_print(vtm, stdout);
+		
 	matrix_scale( vtm, -screenx/(2*d_dash), -screeny/(2*d_dash), 1 );
-	matrix_translate( vtm, screenx, screeny, 0 );
+	printf("scale\n");
+	matrix_print(vtm, stdout);
+	
+	matrix_translate( vtm, screenx/2, screeny/2, 0 );
+	printf("translate\n");
+	matrix_print(vtm, stdout);
 }
