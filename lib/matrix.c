@@ -139,7 +139,7 @@ void matrix_xformLine( Matrix *m, Line *line ) {
 	// matrix_print(m, stdout);
 	// point_print(&temp, stdout);
 	point_copy(&line->a, &temp);
-	// matrix_xformPoint( m, &line->b, &temp );	
+	matrix_xformPoint( m, &line->b, &temp );	
 	point_copy(&line->b, &temp);
 }
 

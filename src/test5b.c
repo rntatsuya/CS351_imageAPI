@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     for(i=0;i<nLines;i++) {
       float angle = orient[i] + freq[i]*2*M_PI*t/nFrames;
       tline = line[i];
-      printf("line (%.2f %.2f) (%.2f %.2f)\n", line[i].a.val[0], line[i].a.val[1], 
+      printf("------------\nline (%.2f %.2f) (%.2f %.2f)\n", line[i].a.val[0], line[i].a.val[1], 
              line[i].b.val[0], line[i].b.val[1] );
 
       matrix_identity( &ltm );
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
       line_draw( &tline, src, color[i] );
     }
 
-    printf("writing file\n");
+    printf("writing file %d\n", t);
     sprintf(filename, "frame-%04d.ppm", t );
     image_write( src, filename );
 
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     matrix_setView2D( &vtm, &view );
     matrix_print( &vtm, stdout );
   }
-
+  printf("Cleaning up\n");
   // cleanup
   image_free( src );
 

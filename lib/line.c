@@ -42,11 +42,11 @@ void point_set3D(Point *point, double x, double y, double z) {
 }
 
 // set the four values of the vector to x, y, z, and h, respectively.
-void point_set(Point *point, double x, double y, double z) {
+void point_set(Point *point, double x, double y, double z, double h) {
   point->val[0] = x;
   point->val[1] = y;
   point->val[2] = z;
-  point->val[3] = 1.0;
+  point->val[3] = h;
 }
 
 // normalize the x and y values of a point by its homogeneous coordinate: x = x/h, y = y/h
@@ -143,15 +143,89 @@ void line_copy(Line *to, Line *from) {
 // – draw the line into src using color c and the z-buffer, if appropriate.
 void line_draw(Line *line, Image *src, Color color) {
   // check if line points are in Image boundaries
-  if (line->a.val[1] >= src->rows || line->a.val[0] >= src->cols || line->b.val[1] >= src->rows || line->b.val[0] >= src->cols) {
-    printf("Line points are not in image boundary\n");
-    printf("cols, rows: %d, %d\n", src->cols, src->rows);
-    printf("(x1, y1): (%lf, %lf)\n", line->a.val[0], line->a.val[1]);
-    printf("(x2, y2): (%lf, %lf)\n", line->b.val[0], line->b.val[1]);
-	return;
-//     exit(-1);
+//   if (line->a.val[1] >= src->rows || line->a.val[0] >= src->cols || line->b.val[1] >= src->rows || line->b.val[0] >= src->cols) {
+//     printf("Line points are not in image boundary\n");
+//     printf("cols, rows: %d, %d\n", src->cols, src->rows);
+//     printf("(x1, y1): (%lf, %lf)\n", line->a.val[0], line->a.val[1]);
+//     printf("(x2, y2): (%lf, %lf)\n", line->b.val[0], line->b.val[1]);
+// 	return;
+// //     exit(-1);
+//   }
+
+  double a_x = line->a.val[0];
+  double a_y = line->a.val[1];
+  double b_x = line->b.val[0];
+  double b_y = line->b.val[1];
+  double  x_min = 0.0;
+  double  y_min = 0.0;
+  double  x_max = src->cols;
+  double  y_max = src->rows;
+  
+  double v_x = b_x - a_x;
+  double v_y = b_y - a_y;
+  double v_z = line->b.val[2] - line->a.val[2];
+  
+  printf("v_x %f\n", v_x);
+  
+  double p1 = -v_x;
+  double p2 = v_x;
+  double p3 = -v_y;
+  double p4 = v_y;
+//  double p5 = -v_z;
+//  double p6 = v_z;
+  
+  double q1 = a_x - x_min;
+  double q2 = x_max - a_x;
+  double q3 = a_y - y_min;
+  double q4 = y_max - a_y;
+  
+  // loop through all 4 boundaries
+  int k;
+  double t0 = 0.0; 
+  double t_f = 1.0; 
+  double t_k, p_k, q_k;
+  for (k=0; k<4; k++) {
+    
+    // ugly, refactor later
+    if (k==0) {
+      p_k = p1;
+      q_k = q1;
+    }
+    else if (k==1) {
+      p_k = p2;
+      q_k = q2;
+    }
+    else if (k==2) {
+      p_k = p3;
+      q_k = q3;
+    }
+    else {
+      p_k = p4;
+      q_k = q4;    
+    }       
+     
+    if (p_k == 0 && q_k < 0) {
+      printf("Discard %d: pk %.2f qk %.2f\n", k, p_k, q_k);
+      return; // discard this line
+    }
+    else if (p_k == 0)
+      continue; // go to next boundary
+    
+    t_k = q_k / p_k;
+    
+    if (p_k < 0)
+      t0 = t0 > t_k ? t0 : t_k;
+    else
+      t_f = t_f < t_k ? t_f : t_k;
+    
+    if (t0 >= t_f)
+      return; // discard line
   }
   
+  Line new_line; 
+  line_set2D(&new_line, a_x + t0*v_x, a_y + t0*v_y, a_x + t_f*v_x, a_y + t_f*v_y);
+  
+  printf("Drawing (%.2f %.2f) (%.2f %.2f)\n", a_x + t0*v_x, a_y + t0*v_y, a_x + t_f*v_x, a_y + t_f*v_y);
   // always start at the bottom and end at the top
   int c1;
   int r1;
@@ -163,18 +237,18 @@ void line_draw(Line *line, Image *src, Color color) {
   
   // reverse start and end 
   // change from x,y coordinates to image coordinates by subtracting from rows offset
-  if (line->a.val[1] < line->b.val[1]) {
-    c1 = line->b.val[0];
-    r1 = line->b.val[1];
-    c2 = line->a.val[0];
-    r2 = line->a.val[1];
+  if (new_line.a.val[1] < new_line.b.val[1]) {
+    c1 = new_line.b.val[0];
+    r1 = new_line.b.val[1];
+    c2 = new_line.a.val[0];
+    r2 = new_line.a.val[1];
     reversed = 1;
   }
   else {
-    c1 = line->a.val[0];
-    r1 = line->a.val[1];
-    c2 = line->b.val[0];
-    r2 = line->b.val[1];
+    c1 = new_line.a.val[0];
+    r1 = new_line.a.val[1];
+    c2 = new_line.b.val[0];
+    r2 = new_line.b.val[1];
     reversed = 0;
   }
 //   printf("reversed: %d\n", reversed);
