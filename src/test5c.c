@@ -124,6 +124,7 @@ int main(int argc, char *argv[]) {
     polygon_normalize( &tpoly );
 
     polygon_drawFrame( &tpoly, src, color[i] );
+    printf("Polygon\n");
     polygon_print( &tpoly, stdout );
   }
 
