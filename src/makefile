@@ -32,10 +32,10 @@ _DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h grap
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test5a test5b test5c test5d test
+EXECUTABLES = test5a test5b test5c test5d scene2D scene3D icosphere_ext
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test5a.o test5b.o test5c.o test5d.o test
+_OBJ = test5a.o test5b.o test5c.o test5d.o scene2D.o scene3D.o icosphere_ext.o
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -68,11 +68,17 @@ test5c: $(ODIR)/test5c.o
 	
 test5d: $(ODIR)/test5d.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-	
-test: $(ODIR)/test.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-	
+
 line_test: $(ODIR)/line_test.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+scene2D: $(ODIR)/scene2D.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)	
+
+scene3D: $(ODIR)/scene3D.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)	
+
+icosphere_ext: $(ODIR)/icosphere_ext.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)	
 
 .PHONY: clean
