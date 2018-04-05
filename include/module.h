@@ -2,9 +2,9 @@
 
 #define MODULE_H
 
-typedef enum { 
-	ObjNone,
-	ObjLine,
+typedef enum { 		// Type of elements possible	
+	ObjNone,		// Modules can be made up of a combination of
+	ObjLine,		// primitives, transformations, attributes, etc
 	ObjPoint,
 	ObjPolyline,
 	ObjPolygon,
@@ -24,6 +24,25 @@ typedef struct {		// Element struct using void * option
 	void *obj;			// pointer to the object
 	void *next; 		// next pointer
 } Element;
+
+// option 2 for Element structure (union option)
+// typedef union {
+// 	Point point;
+// 	Line line;
+// 	Polyline polyline;
+// 	Polygon polygon;
+// 	Matrix matrix;
+// 	Color color;
+// 	float coeff;
+// 	void *module;
+// } Object;
+
+// // Module structure
+// typedef struct {
+// 	ObjectType type;
+// 	Object obj;
+// 	void *next;
+// } Element;
 
 typedef struct {		// Linked list of elements
 	Element *head;		

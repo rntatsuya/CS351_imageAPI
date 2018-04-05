@@ -44,19 +44,34 @@ void module_point( Module *md, Point *p ) {
 }
 
 void module_line( Module *md, Line *p ) {
+	Element *e;
+	e = element_init( ObjLine, p );
 
+	module_insert( md, e );
 }
 
 void module_polyline( Module *md, Polyline *p ) {
+	Element *e;
+	e = element_init( ObjPolyline, p );
 
+	module_insert( md, e );
 }
 
 void module_polygon( Module *md, Polygon *p ) {
+	Element *e;
+	e = element_init( ObjPolygon, p );
 
+	module_insert( md, e );
 }
 
 void module_identity( Module *md ) {
+	Element *e;
+	Matrix *m;
 
+	matrix_identity( m );
+	e = element_init( ObjIdentity, m );
+
+	module_insert( md, e );
 }
 
 // void module_color(Module *md, Color *c) { }
@@ -67,23 +82,47 @@ void module_identity( Module *md ) {
 /////////////////////////
 
 void module_translate2D( Module *md, double tx, double ty ) {
+	Element *e;
+	Matrix *m;
 
+	matrix_translate2D( m, tx, ty );
+	e = element_init( ObjMatrix, m );
+
+	module_insert( md, e );
 }
 
 void module_scale2D( Module *md, double sx, double sy ) {
+	Element *e;
+	Matrix *m;
 
+	matrix_scale2D( m, sx, sy );
+	e = element_init( ObjMatrix, m );
+
+	module_insert( md, e );
 }
 
-void module_rotateZ( Module *md, double cth, double sth ) {
+void matrix_rotateZ( Module *md, double cth, double sth ) {
+	Element *e;
+	Matrix *m;
 
+	matrix_scale2D( m, cth, sth );
+	e = element_init( ObjMatrix, m );
+
+	module_insert( md, e );
 }
 
 void module_shear2D( Module *md, double shx, double shy ) {
+	Element *e;
+	Matrix *m;
 
+	matrix_shear2D( m, shx, shy );
+	e = element_init( ObjMatrix, m );
+
+	module_insert( md, e );
 }
 
 void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting *lighting, Image *src ) {
-
+	
 }
 
 
