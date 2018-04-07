@@ -74,7 +74,9 @@ void module_identity( Module *md ) {
 	module_insert( md, e );
 }
 
-// void module_color(Module *md, Color *c) { }
+void module_color(Module *md, Color *c) { 
+
+}
 
 
 /////////////////////////
@@ -131,23 +133,53 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 /////////////////////////
 
 void module_translate( Module *md, double tx, double ty, double tz ) {
+	Element *e;
+	Matrix *m;
 
+	matrix_translate( m, tx, ty, tz );
+	e = element_init( ObjMatrix, m );
+
+	module_insert( md, e );
 }
 
 void module_scale( Module *md, double sx, double sy, double sz ) {
+	Element *e;
+	Matrix *m;
 
+	matrix_scale( m, sx, sy, sz );
+	e = element_init( ObjMatrix, m );
+
+	module_insert( md, e );
 }
 
 void module_rotateX( Module *md, double cth, double sth ) {
+	Element *e;
+	Matrix *m;
 
+	matrix_rotateX( m, cth, sth );
+	e = element_init( ObjMatrix, m );
+
+	module_insert( md, e );
 }
 
 void module_rotateY( Module *md, double cth, double sth ) {
+	Element *e;
+	Matrix *m;
 
+	matrix_rotateY( m, cth, sth );
+	e = element_init( ObjMatrix, m );
+
+	module_insert( md, e );
 }
 
 void module_rotateXYZ( Module *md, Vector *u, Vector *v, Vector *w ) {
+	Element *e;
+	Matrix *m;
 
+	matrix_rotateXYZ( m, u, v, w );
+	e = element_init( ObjMatrix, m );
+
+	module_insert( md, e );
 }
 
 void module_cube( Module *md, int solid ) {
