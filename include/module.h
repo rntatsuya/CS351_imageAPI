@@ -19,30 +19,30 @@ typedef enum { 		// Type of elements possible
 } ObjectType;
 
 // Feel free to swap out if you set up element differently
-typedef struct {		// Element struct using void * option
-	ObjectType type; 	// Type of object stored in the obj pointer
-	void *obj;			// pointer to the object
-	void *next; 		// next pointer
-} Element;
+// typedef struct {		// Element struct using void * option
+// 	ObjectType type; 	// Type of object stored in the obj pointer
+// 	void *obj;			// pointer to the object
+// 	void *next; 		// next pointer
+// } Element;
 
 // option 2 for Element structure (union option)
-// typedef union {
-// 	Point point;
-// 	Line line;
-// 	Polyline polyline;
-// 	Polygon polygon;
-// 	Matrix matrix;
-// 	Color color;
-// 	float coeff;
-// 	void *module;
-// } Object;
+typedef union {
+	Point point;
+	Line line;
+	Polyline polyline;
+	Polygon polygon;
+	Matrix matrix;
+	Color color;
+	float coeff;
+	void *module;
+} Object;
 
-// // Module structure
-// typedef struct {
-// 	ObjectType type;
-// 	Object obj;
-// 	void *next;
-// } Element;
+// Module structure
+typedef struct {
+	ObjectType type;
+	Object obj;
+	void *next;
+} Element;
 
 typedef struct {		// Linked list of elements
 	Element *head;		
