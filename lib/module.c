@@ -64,6 +64,7 @@ Element *element_init( ObjectType type, void *obj ) {
 		
 		case ObjPolygon :
 			{
+				printf("copying\n");
 				polygon_copy( &copyObj.polygon, obj);
 				break;
 			}
@@ -123,7 +124,7 @@ Element *element_init( ObjectType type, void *obj ) {
 		case ObjModule :
 			{
 				// No duplicate module needed
-				copyObj = (Object)NULL;
+				copyObj.module = obj;
 				break;
 			}
 	}
@@ -241,6 +242,7 @@ void module_delete( Module *md ) {
 }
 
 void module_insert( Module *md, Element *e ) {
+	printf("adding element type %d\n", e->type );
 	if (!md->head) {
 		md->head = e;
 		md->tail = e;
@@ -249,12 +251,13 @@ void module_insert( Module *md, Element *e ) {
 
 	Element *cur_e = md->head;
 	
+	printf("hey\n");
 	// loop till we get a NULL for the next pointer
 	while (cur_e->next) {
 		cur_e = cur_e->next;
 	}
 	
-	printf("adding element type %d\n", e->type );
+	
 	cur_e->next = e;
 	md->tail = e;
 }
@@ -277,7 +280,7 @@ void module_point( Module *md, Point *p ) {
 void module_line( Module *md, Line *p ) {
 	Element *e;
 	e = element_init( ObjLine, p );
-
+	
 	module_insert( md, e );
 }
 
@@ -377,35 +380,35 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 	Matrix LTM;
 	matrix_identity( &LTM );
 	
-	printf("md is null %d\n", (md == NULL));
 	Element *cur_e = md->head;
 	
-	printf("going into while loop\n");
-	while ( cur_e->next ) { // Break when pointer reaches end of LL
+	while ( cur_e ) { // Break when pointer reaches end of LL
+		printf("Handling type %d\n", cur_e->type);
 		switch( cur_e->type ) {
 			case ObjColor:
 				{
-					printf("color\n");
+// 					printf("color\n");
 					ds->color = cur_e->obj.color;
 					break;
 				}
 
 			case ObjPoint:
 				{
-					printf("point\n");
-					Point temp;
-					point_copy( &temp, &(cur_e->obj.point) );
-					matrix_xformPoint( &LTM, &temp, &temp );
-					matrix_xformPoint( GTM, &temp, &temp );
-					matrix_xformPoint( VTM, &temp, &temp );
-					point_normalize( &temp );
-					point_draw( &temp, src, ds->color );
+// 					printf("point\n");
+					Point temp1, temp2;
+					matrix_xformPoint( &LTM, &(cur_e->obj.point), &temp1 );
+					matrix_xformPoint( GTM, &temp1, &temp2 );
+					matrix_xformPoint( VTM, &temp2, &temp1 );
+					point_normalize( &temp1 );
+					point_print( &temp1, stdout );
+					point_draw( &temp1, src, ds->color );
+					point_print( &temp1, stdout );
 					break;
 				}
 
 			case ObjLine:
 				{
-					printf("line\n");
+// 					printf("line\n");
 					Line temp;
 					line_copy( &temp, &(cur_e->obj.line) );
 					matrix_xformLine( &LTM, &temp );
@@ -413,12 +416,13 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 					matrix_xformLine( VTM, &temp );
 					line_normalize( &temp );
 					line_draw( &temp, src, ds->color );
+					line_print( &temp, stdout );
 					break;
 				}
 
 			case ObjPolygon:
 				{
-					printf("polygon\n");
+// 					printf("polygon\n");
 					Polygon temp;
 					polygon_copy( &temp, &(cur_e->obj.polygon) );
 					matrix_xformPolygon( &LTM, &temp );
@@ -426,34 +430,33 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 					matrix_xformPolygon( VTM, &temp );
 					polygon_normalize( &temp );
 
-					if ( ds->method == ShadeFrame ) // Outline polygon
-						polygon_drawFrame( &temp, src, ds->color );
-					else 							// Fill polygon
-						polygon_drawFill( &temp, src, ds->color );
+					polygon_drawShade(&temp, src, ds, lighting);
 					break;
 				}
 
 			case ObjMatrix:
 				{
-					printf("matrix\n");
+// 					printf("matrix\n");
 					matrix_multiply( &(cur_e->obj.matrix), &LTM, &LTM ); 
 					break;
 				}
 
 			case ObjIdentity:
 				{
-					printf("identity\n");
+// 					printf("identity\n");
 					matrix_identity( &LTM );
 					break;
 				}
 
 			case ObjModule:
 				{
-					printf("module\n");
+// 					printf("module\n");
 					Matrix tempGTM;
 					matrix_multiply( GTM, &LTM, &tempGTM );
 					
 					DrawState tempDS;
+					
+					drawstate_copy( &tempDS, ds );
 
 					module_draw( cur_e->obj.module, VTM, &tempGTM, &tempDS, lighting, src );
 					break;
@@ -464,7 +467,7 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 		}
 
 		// Move pointer to next element in LL 
-		printf("moving pointer to next element\n");
+//		printf("moving pointer to next element\n");
 		cur_e = cur_e->next; 
 	}
 }

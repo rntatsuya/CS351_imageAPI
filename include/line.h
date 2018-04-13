@@ -59,6 +59,8 @@ void line_normalize(Line *l);
 
 void line_copy(Line *to, Line *from);
 
+void line_print(Line *line, FILE *fp);
+
 void line_draw(Line *line, Image *src, Color color);
 
 void line_drawRef(Line *line, Image *src, Color *color);

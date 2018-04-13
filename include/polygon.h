@@ -7,6 +7,8 @@
 #include "line.h"
 #include "image.h"
 #include "color.h"
+#include "drawstate.h"
+#include "lighting.h"
 
 typedef struct {
   int oneSided; // whether to consider the polygon one-sided (1) or two-sided (0) for shading

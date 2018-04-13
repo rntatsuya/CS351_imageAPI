@@ -12,7 +12,12 @@ DrawState *drawstate_create( void ) {
 		printf("Ran out of memory while mallocing DrawState pointer in drawstate_create\n");
     	exit(-1);
 	}
-
+	
+	Color c;
+	color_set( &c, 1, 1, 1 );
+	
+	ds->color = c;
+	
 	return ds;
 }
 

@@ -18,3 +18,15 @@ void color_set( Color *colors, float r, float g, float b) {
   colors->c[1] = g;
   colors->c[2] = b;
 }
+
+void color_print( Color *color, FILE *fp ) {
+  if (fp == NULL) {
+    fprintf(stderr, "Can't open output file!\n");
+    exit(1);
+  }
+  
+  fprintf(fp, "Color: (%.2f, %.2f, %.2f)\n", 
+  color->c[0],
+  color->c[1],
+  color->c[2]);
+}

@@ -162,23 +162,24 @@ int main(int argc, char *argv[]) {
   // create the image and draw the module
   src = image_create( view.screeny, view.screenx, 255 );
   ds = drawstate_create(); // default color is white
+  ds->shade = ShadeFrame;
   module_draw( scene, &vtm, &gtm, ds, NULL, src );
-
+  
   // write out the image
-  // image_write( src, "xwings.ppm" );
+  image_write( src, "xwings.ppm" );
 
-  // // free modules
-  // module_delete( scene );
-  // module_delete( formation );
-  // module_delete( xwing );
-  // module_delete( body );
-  // module_delete( wing );
+  // free modules
+  module_delete( scene );
+  module_delete( formation );
+  module_delete( xwing );
+  module_delete( body );
+  module_delete( wing );
 
-  // // free drawstate
-  // free( ds );
+  // free drawstate
+  free( ds );
 
-  // // free image
-  // image_free( src );
+  // free image
+  image_free( src );
 
   return(0);
 }

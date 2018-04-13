@@ -24,6 +24,7 @@ void cylinder( Module *mod, int sides ) {
   int i;
 
   polygon_init( &p );
+  printf("init-ed\n");
   point_set3D( &xtop, 0, 1.0, 0.0 );
   point_set3D( &xbot, 0, 0.0, 0.0 );
 
@@ -40,10 +41,15 @@ void cylinder( Module *mod, int sides ) {
     point_copy( &pt[0], &xtop );
     point_set3D( &pt[1], x1, 1.0, z1 );
     point_set3D( &pt[2], x2, 1.0, z2 );
-
+    
+    printf("here?\n");
+    
     polygon_set( &p, 3, pt );
+    printf("lplp\n");
     module_polygon( mod, &p );
-
+    
+    printf("here!\n");
+    
     point_copy( &pt[0], &xbot );
     point_set3D( &pt[1], x1, 0.0, z1 );
     point_set3D( &pt[2], x2, 0.0, z2 );
@@ -56,11 +62,14 @@ void cylinder( Module *mod, int sides ) {
     point_set3D( &pt[2], x2, 1.0, z2 );
     point_set3D( &pt[3], x1, 1.0, z1 );
     
+    printf("%d\n",i);
+    
     polygon_set( &p, 4, pt );
     module_polygon( mod, &p );
   }
 
   polygon_clear( &p );
+  printf("cleared\n");
 }
 
 // adds a cube centered on the origin of width 2x2x2 to the module
@@ -153,6 +162,7 @@ int main(int argc, char *argv[]) {
   module_scale( engine, 1.3, 6, 1.3);
   module_rotateX( engine, 0, 1 );
   cylinder( engine, 10 );
+    printf("heyehe\n");
   module_scale( engine, .8, .8, 1 );
   module_color( engine, &Flame );
   cylinder( engine, 10 );
@@ -302,7 +312,7 @@ int main(int argc, char *argv[]) {
   module_module( scene, body );
 
   // create the image and drawstate
-  src = image_create( 360, 640 );
+  src = image_create( 360, 640, 255 );
   ds = drawstate_create();
   ds->shade = ShadeFrame;
 

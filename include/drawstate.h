@@ -4,12 +4,16 @@
 
 typedef enum {			// Determines how an object is drawn into the image
 	ShadeFrame,			// Draw only borders of objects (polygons included) 
-	ShadeConstant 		// Draw object using current fg color, fill polygons
+	ShadeConstant, 		// Draw object using current fg color, fill polygons
+	ShadeDepth,
+	ShadeFlat,
+	ShadeGouraud,
+	ShadePhong
 } ShadeMethod;
 
 typedef struct {		// Specifies how object is drawn into the image
 	Color color;		// Foreground color, used in the default drawing mode
-	ShadeMethod method;	
+	ShadeMethod shade;	
 	Point *viewer;		// Point representing the view location in 3D (Like 					VRP in 3D)
 } DrawState;			
 

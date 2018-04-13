@@ -140,6 +140,21 @@ void line_copy(Line *to, Line *from) {
   to->b = from->b;    
 }
 
+void line_print(Line *line, FILE *fp) {
+  if (fp == NULL) {
+    fprintf(stderr, "Can't open output file!\n");
+    exit(1);
+  }
+    
+  fprintf(fp, "Drawing line (%lf, %lf, %lf) to (%lf, %lf, %lf)\n", 
+  line->a.val[0],
+  line->a.val[1],
+  line->a.val[2],
+  line->b.val[0],
+  line->b.val[1],
+  line->b.val[2]);
+}
+
 // – draw the line into src using color c and the z-buffer, if appropriate.
 void line_draw(Line *line, Image *src, Color color) {
   // check if line points are in Image boundaries

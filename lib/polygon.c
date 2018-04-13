@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "line.h"
 #include "polygon.h"
+#include "drawstate.h"
+#include "lighting.h"
 
 Polygon *polygon_create() {
   Polygon *p = malloc(sizeof(Polygon));
@@ -210,26 +212,26 @@ void polygon_zBuffer(Polygon *p, int flag) {
 void polygon_copy(Polygon *to, Polygon *from) {
   int i;
   int nVertex = from->nVertex;
-  
-  // check if there's already memory allocated for the vertex field
-  if (!to->vertex) {
-    to->vertex = malloc(sizeof(Point) * nVertex);
-  }
-  else {
-    free(to->vertex);
-    to->vertex = malloc(sizeof(Point) * nVertex);
-  }
-
-  // check if there's already memory allocated for the color field  
-  if (!to->color) {
-//     printf("here\n");
-    to->color = malloc(sizeof(Color) * nVertex);
-  }
-  else {
-//   	printf("ho\n");
-    free(to->color);
-    to->color = malloc(sizeof(Color) * nVertex);
-  }
+//   
+//   // check if there's already memory allocated for the vertex field
+//   if (!to->vertex) {
+//     to->vertex = malloc(sizeof(Point) * nVertex);
+//   }
+//   else {
+//     free(to->vertex);
+//     to->vertex = malloc(sizeof(Point) * nVertex);
+//   }
+// 
+//   // check if there's already memory allocated for the color field  
+//   if (!to->color) {
+// //     printf("here\n");
+//     to->color = malloc(sizeof(Color) * nVertex);
+//   }
+//   else {
+// //   	printf("ho\n");
+//     free(to->color);
+//     to->color = malloc(sizeof(Color) * nVertex);
+//   }
   
 //   printf("%d\n",nVertex);
   // copy content from source
@@ -537,4 +539,35 @@ void polygon_drawFillBGradient(Polygon *p, Image *src, Color c1, Color c2, Color
       image_setc(src, (int)cur_y, (int)cur_x, 2, c1.c[2]*alpha + c2.c[2]*beta + c3.c[2]*gamma);
     }
   }
+}
+
+void polygon_drawShade(Polygon *p, Image *src, DrawState *ds, Lighting *light) {
+  switch (ds->shade) {
+    case ShadeFrame: 
+      {
+        polygon_draw(p, src, ds->color);
+        break;
+      }
+    case ShadeConstant: 
+      {
+        break;
+      }
+    case ShadeDepth: 
+      {
+        break;
+      }
+    case ShadeFlat: 
+      {
+        break;
+      }
+    case ShadeGouraud:
+      {
+        break;
+      }
+    case ShadePhong: 
+      {
+        break;
+      }
+  }
+
 }
