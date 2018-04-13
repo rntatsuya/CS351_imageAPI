@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
   DrawState *ds;
   Image *src;
 
-	srand48(42);
+  srand48(42);
 
   // setup gtm
   matrix_identity( &gtm );
@@ -65,6 +65,7 @@ int main(int argc, char *argv[]) {
   // setup vtm
   point_set2D( &vrp, 0, 0 );
   vector_set( &xaxis, 1, 0, 0 );
+  
   view2D_set( &view, &vrp, 2, &xaxis, 640, 360 );
   matrix_setView2D( &vtm, &view );
 
@@ -148,37 +149,36 @@ int main(int argc, char *argv[]) {
   // make a scene
   scene = module_create();
   module_scale2D( scene, 0.1, 0.1 );
-  module_translate2D( scene, 0.2, 0 );
+  module_translate2D( scene, 0.2, 0.0 );
   module_module( scene, formation );
   
-	// draw stars into the scene
+  // draw stars into the scene
   module_identity(scene);
   for(i=0;i<30;i++) {
     point_set2D( &(p[0]), drand48()*2 - 1, drand48()*1 - 0.5 );
     module_point( scene, &(p[0]) );
   }
 
-
-	// create the image and draw the module
-  src = image_create( view.screeny, view.screenx );
+  // create the image and draw the module
+  src = image_create( view.screeny, view.screenx, 255 );
   ds = drawstate_create(); // default color is white
   module_draw( scene, &vtm, &gtm, ds, NULL, src );
 
-	// write out the image
-  image_write( src, "xwings.ppm" );
+  // write out the image
+  // image_write( src, "xwings.ppm" );
 
-	// free modules
-  module_delete( scene );
-  module_delete( formation );
-  module_delete( xwing );
-  module_delete( body );
-  module_delete( wing );
+  // // free modules
+  // module_delete( scene );
+  // module_delete( formation );
+  // module_delete( xwing );
+  // module_delete( body );
+  // module_delete( wing );
 
-	// free drawstate
-  free( ds );
+  // // free drawstate
+  // free( ds );
 
-	// free image
-  image_free( src );
+  // // free image
+  // image_free( src );
 
   return(0);
 }

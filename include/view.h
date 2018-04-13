@@ -28,7 +28,11 @@ typedef struct {
 // Sets vtm to be the view transformation defined by the 2DView structure.
 void matrix_setView2D(Matrix *vtm, View2D *view);
 
+// Sets up the properties in View2D   
+void view2D_set( View2D *view, Point *vrp, int dx, Vector *x, int screenx, int screeny);
+
 // Implements the 3D perspective pipeline
 void matrix_setView3D( Matrix *vtm, View3D *view );
+
 
 #endif

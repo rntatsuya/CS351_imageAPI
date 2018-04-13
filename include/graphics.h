@@ -12,6 +12,9 @@
 #include "vector.h"
 #include "matrix.h"
 #include "view.h"
+#include "module.h"
+#include "drawstate.h"
+#include "lighting.h"
 
 /* "Higher level code that didn't/couldn't belong elsewhere" */
 

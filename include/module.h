@@ -2,6 +2,9 @@
 
 #define MODULE_H
 
+#include "lighting.h"
+#include "drawstate.h"
+
 typedef enum { 		// Type of elements possible	
 	ObjNone,		// Modules can be made up of a combination of
 	ObjLine,		// primitives, transformations, attributes, etc
@@ -18,14 +21,6 @@ typedef enum { 		// Type of elements possible
 	ObjModule
 } ObjectType;
 
-// Feel free to swap out if you set up element differently
-// typedef struct {		// Element struct using void * option
-// 	ObjectType type; 	// Type of object stored in the obj pointer
-// 	void *obj;			// pointer to the object
-// 	void *next; 		// next pointer
-// } Element;
-
-// option 2 for Element structure (union option)
 typedef union {
 	Point point;
 	Line line;
@@ -53,10 +48,10 @@ typedef struct {		// Linked list of elements
 // General Module + Element Functions //
 ////////////////////////////////////////
 
-Element *element_create();
+Element *element_create( void );
 Element *element_init( ObjectType type, void *obj );
 void element_delete( Element *e );
-Module *module_create();
+Module *module_create( void );
 void module_clear( Module *md );
 void module_delete( Module *md );
 void module_insert( Module *md, Element *e );
@@ -66,7 +61,7 @@ void module_line( Module *md, Line *p );
 void module_polyline( Module *md, Polyline *p );
 void module_polygon( Module *md, Polygon *p );
 void module_identity( Module *md );
-// void module_color(Module *md, Color *c);
+void module_color(Module *md, Color *c);
 
 /////////////////////////
 // 2D Module Functions //

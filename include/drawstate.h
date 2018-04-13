@@ -7,7 +7,7 @@ typedef enum {			// Determines how an object is drawn into the image
 	ShadeConstant 		// Draw object using current fg color, fill polygons
 } ShadeMethod;
 
-typedef {				// Specifies how object is drawn into the image
+typedef struct {		// Specifies how object is drawn into the image
 	Color color;		// Foreground color, used in the default drawing mode
 	ShadeMethod method;	
 	Point *viewer;		// Point representing the view location in 3D (Like 					VRP in 3D)

@@ -3,11 +3,15 @@
  * module.c
  */
 
+#include "graphics.h"
+#include <stdio.h>
+#include <stdlib.h>
+
 ////////////////////////////////////////
 // General Module + Element Functions //
 ////////////////////////////////////////
 
-Element *element_create() {
+Element *element_create( void ) {
 	Element *e = malloc(sizeof(Element));
 	
 	if (!e) {
@@ -15,89 +19,191 @@ Element *element_create() {
     	exit(-1);
 	}
 	
-// 	e->type = NULL;
-// 	e->obj = NULL;
-// 	e->next = NULL;
+	e->type = ObjNone;
+	e->obj = (Object)NULL; // dunno if casting nulls makes any sense...
+	e->next = NULL;
 	
 	return e;
 }
 
 Element *element_init( ObjectType type, void *obj ) {
-	Element *e = element_create();
+	Element *e = malloc(sizeof(Element));
+	
+	if (!e) {
+    	printf("Ran out of memory while mallocing Element pointer in element_create!\n");
+    	exit(-1);
+	}
+
 	// make copy of original obj
 	Object copyObj;
-	
-	switch(type) {
-		case Point :
-// 			copyObj.point. = obj;
-			point_copy(&copyObj.point, &obj);
-			break;
-		case Line :
-// 			copyObj.line = obj->line;
-			line_copy(&copyObj.line, &obj);
-			break;
-		case Polyline :
-// 			copyObj.polyline = obj->polyline;
-			polyline_copy(&copyObj.polyline, &obj);
-			break;
-		case Polygon :
-// 			copyObj.polygon = obj->polygon;
-			polygon_copy(&copyObj.polygon, &obj)
-			break;
-		case Matrix :
-//			copyObj.matrix = obj->matrix;
-			matrix_copy( &copyObj.matrix, &obj );
-			break;
-		case Color :
-//			obj.color = obj->color;
-			copyObj.color.c[0] = obj->c[0];
-			copyObj.color.c[1] = obj->c[1];
-			copyObj.color.c[2] = obj->c[2];
-			break;
-		case float :
-			copyObj.coeff = *obj;
-			break;
-		case void* : // module case
-			copyObj.module = obj;
-			break;
+
+	switch (type) {
+		case ObjNone :
+			{
+				copyObj = (Object)NULL;
+				break;
+			}
+		
+		case ObjPoint :
+			{
+				point_copy( &copyObj.point, obj );
+				break;
+			}
+		
+		case ObjLine :
+			{
+				line_copy( &copyObj.line, obj );
+				break;
+			}
+			
+		case ObjPolyline :
+			{
+				polyline_copy( &copyObj.polyline, obj);
+				break;
+			}
+		
+		case ObjPolygon :
+			{
+				polygon_copy( &copyObj.polygon, obj);
+				break;
+			}
+		
+		case ObjIdentity :
+			{
+				matrix_identity( &copyObj.matrix );
+				break;
+			}
+		
+		case ObjMatrix :
+			{
+				matrix_copy( &copyObj.matrix, obj );
+				break;
+			}
+
+		case ObjColor :
+			{
+				color_set( &copyObj.color, 
+					((Color *)obj)->c[0], 
+					((Color *)obj)->c[1], 
+					((Color *)obj)->c[2] );
+				break;
+			}
+		
+		case ObjBodyColor :
+			{
+				color_set( &copyObj.color, 
+					((Color *)obj)->c[0], 
+					((Color *)obj)->c[1], 
+					((Color *)obj)->c[2] );
+				break;
+			}
+		
+		case ObjSurfaceColor :
+			{
+				color_set( &copyObj.color, 
+					((Color *)obj)->c[0], 
+					((Color *)obj)->c[1], 
+					((Color *)obj)->c[2] );
+				break;
+			}
+		
+		case ObjSurfaceCoeff :
+			{
+				copyObj.coeff = *(float*)obj; 
+				break;
+			}
+		
+		case ObjLight :
+			{
+				// Not sure how to implement
+				copyObj = (Object)NULL; 
+				break;
+			}
+
+		case ObjModule :
+			{
+				// No duplicate module needed
+				copyObj = (Object)NULL;
+				break;
+			}
 	}
 	
 	e->type = type;
+	e->next = NULL; 
 	e->obj = copyObj;
 	
 	return e;
 }
 
 void element_delete( Element *e ) {
+	// Free element and object it contains
 	switch(e->type) {
-		case Point :
+		case ObjNone:
+			// Not sure what to free here
+			break;
+		
+		case ObjPoint:
+			{
+				free(&(e->obj.point));
+				break;
+			}
+		
+		case ObjLine:
+			{
+				free(&(e->obj.line));
+				break;
+			}
+		
+		case ObjPolyline:
+			{
+				polyline_clear(&(e->obj.polyline));
+				break;
+			}
+		
+		case ObjPolygon:
+			{
+				polygon_clear(&(e->obj.polygon));
+				break;
+			}
+		
+		case ObjIdentity: case ObjMatrix:
+			{
+				free(&(e->obj.matrix));
+				break;
+			}
+		
+		case ObjColor: case ObjBodyColor: case ObjSurfaceColor:
+			{
+				free(&(e->obj.color));
+				break;
+			}
+		
+		case ObjSurfaceCoeff:
+			{
+				free(&(e->obj.coeff));
+				break;
+			}
+		
+		case ObjLight:
+			{
+				// if (e->obj.polyline) 
+					// No light property in Object 
+					// free(e->obj.light);
+				break;
+			}
 
-			break;
-		case Line :
-			
-			break;
-		case Polyline :
-
-			break;
-		case Polygon :
-
-			break;
-		case Matrix :
-
-			break;
-		case Color :
-
-			break;
-		case float :
-
-			break;
-		case void* : // module case
-
-			break;
+		case ObjModule:
+			{
+				free(&(e->obj.module));
+				break;
+			}
 	}
+
+	if (e) 
+		free(e);
 }
 
-Module *module_create() {
+Module *module_create( void ) {
 	Module *md = malloc(sizeof(Module));
 	
 	md->head = NULL;
@@ -108,7 +214,7 @@ Module *module_create() {
 
 void module_clear( Module *md ) {
 	Element *cur_e = md->head;
-	Element *temp
+	Element *temp;
 	
 	// loop till we get a NULL for the next pointer
 	while (cur_e->next) {
@@ -120,7 +226,18 @@ void module_clear( Module *md ) {
 }
 
 void module_delete( Module *md ) {
+	// Free memory associated with module (including memory pointed to by md)
+	Element *temp;
+	Element *cur_e = md->head;
 
+	while ( cur_e ) {
+		temp = cur_e->next;
+		free(cur_e);
+		cur_e = temp;
+	}
+
+	free(md);
+	return;
 }
 
 void module_insert( Module *md, Element *e ) {
@@ -129,6 +246,7 @@ void module_insert( Module *md, Element *e ) {
 		md->tail = e;
 		return;
 	}
+
 	Element *cur_e = md->head;
 	
 	// loop till we get a NULL for the next pointer
@@ -136,21 +254,22 @@ void module_insert( Module *md, Element *e ) {
 		cur_e = cur_e->next;
 	}
 	
+	printf("adding element type %d\n", e->type );
 	cur_e->next = e;
 	md->tail = e;
 }
 
 void module_module( Module *md, Module *sub ) {
 	Element *e;
-	void *p = &sub;
-	e = element_init( ObjModule, p );
+	// void *p = &sub;
+	e = element_init( ObjModule, sub );
 
 	module_insert( md, e );
 }
 
 void module_point( Module *md, Point *p ) {
 	Element *e;
-	e = element_init( ObjLine, p );
+	e = element_init( ObjPoint, p );
 
 	module_insert( md, e );
 }
@@ -178,16 +297,24 @@ void module_polygon( Module *md, Polygon *p ) {
 
 void module_identity( Module *md ) {
 	Element *e;
-	Matrix *m;
+	Matrix m;
 
-	matrix_identity( m );
-	e = element_init( ObjIdentity, m );
+	matrix_identity( &m );
+	e = element_init( ObjIdentity, &m );
 
 	module_insert( md, e );
 }
 
 void module_color(Module *md, Color *c) { 
+	// Adds fg color value to tail of module LL
+	Element *e;
+	Color tempColor;
 
+	color_set( &tempColor, c->c[0], c->c[1], c->c[2] );
+	e = element_init( ObjBodyColor, &tempColor );
+	// e = element_init( ObjSurfaceColor, &tempColor );
+
+	module_insert( md, e );
 }
 
 
@@ -197,46 +324,149 @@ void module_color(Module *md, Color *c) {
 
 void module_translate2D( Module *md, double tx, double ty ) {
 	Element *e;
-	Matrix *m;
+	Matrix m;
+	matrix_identity(&m);
 
-	matrix_translate2D( m, tx, ty );
-	e = element_init( ObjMatrix, m );
+	matrix_translate2D( &m, tx, ty );
+	e = element_init( ObjMatrix, &m );
+
+	// printf("module translate %f %f\n", tx, ty);
+	// matrix_print( &m, stdout );
 
 	module_insert( md, e );
 }
 
 void module_scale2D( Module *md, double sx, double sy ) {
 	Element *e;
-	Matrix *m;
+	Matrix m;
+	matrix_identity(&m);
 
-	matrix_scale2D( m, sx, sy );
-	e = element_init( ObjMatrix, m );
+	matrix_scale2D( &m, sx, sy );
+	e = element_init( ObjMatrix, &m );
 
+	// printf("module scaling %f %f\n", sx, sy);
+	// matrix_print( &m, stdout );
+	
 	module_insert( md, e );
 }
 
-void matrix_rotateZ( Module *md, double cth, double sth ) {
+void module_rotateZ( Module *md, double cth, double sth ) {
 	Element *e;
-	Matrix *m;
+	Matrix m;
+	matrix_identity(&m);
 
-	matrix_scale2D( m, cth, sth );
-	e = element_init( ObjMatrix, m );
+	matrix_rotateZ( &m, cth, sth );
+	e = element_init( ObjMatrix, &m );
 
 	module_insert( md, e );
 }
 
 void module_shear2D( Module *md, double shx, double shy ) {
 	Element *e;
-	Matrix *m;
+	Matrix m;
+	matrix_identity(&m);
 
-	matrix_shear2D( m, shx, shy );
-	e = element_init( ObjMatrix, m );
+	matrix_shear2D( &m, shx, shy );
+	e = element_init( ObjMatrix, &m );
 
 	module_insert( md, e );
 }
 
 void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting *lighting, Image *src ) {
+	printf("\nMODULE DRAW\n");
+	Matrix LTM;
+	matrix_identity( &LTM );
 	
+	printf("md is null %d\n", (md == NULL));
+	Element *cur_e = md->head;
+	
+	printf("going into while loop\n");
+	while ( cur_e->next ) { // Break when pointer reaches end of LL
+		switch( cur_e->type ) {
+			case ObjColor:
+				{
+					printf("color\n");
+					ds->color = cur_e->obj.color;
+					break;
+				}
+
+			case ObjPoint:
+				{
+					printf("point\n");
+					Point temp;
+					point_copy( &temp, &(cur_e->obj.point) );
+					matrix_xformPoint( &LTM, &temp, &temp );
+					matrix_xformPoint( GTM, &temp, &temp );
+					matrix_xformPoint( VTM, &temp, &temp );
+					point_normalize( &temp );
+					point_draw( &temp, src, ds->color );
+					break;
+				}
+
+			case ObjLine:
+				{
+					printf("line\n");
+					Line temp;
+					line_copy( &temp, &(cur_e->obj.line) );
+					matrix_xformLine( &LTM, &temp );
+					matrix_xformLine( GTM, &temp );
+					matrix_xformLine( VTM, &temp );
+					line_normalize( &temp );
+					line_draw( &temp, src, ds->color );
+					break;
+				}
+
+			case ObjPolygon:
+				{
+					printf("polygon\n");
+					Polygon temp;
+					polygon_copy( &temp, &(cur_e->obj.polygon) );
+					matrix_xformPolygon( &LTM, &temp );
+					matrix_xformPolygon( GTM, &temp );
+					matrix_xformPolygon( VTM, &temp );
+					polygon_normalize( &temp );
+
+					if ( ds->method == ShadeFrame ) // Outline polygon
+						polygon_drawFrame( &temp, src, ds->color );
+					else 							// Fill polygon
+						polygon_drawFill( &temp, src, ds->color );
+					break;
+				}
+
+			case ObjMatrix:
+				{
+					printf("matrix\n");
+					matrix_multiply( &(cur_e->obj.matrix), &LTM, &LTM ); 
+					break;
+				}
+
+			case ObjIdentity:
+				{
+					printf("identity\n");
+					matrix_identity( &LTM );
+					break;
+				}
+
+			case ObjModule:
+				{
+					printf("module\n");
+					Matrix tempGTM;
+					matrix_multiply( GTM, &LTM, &tempGTM );
+					
+					DrawState tempDS;
+
+					module_draw( cur_e->obj.module, VTM, &tempGTM, &tempDS, lighting, src );
+					break;
+				}
+
+			default:
+				break;
+		}
+
+		// Move pointer to next element in LL 
+		printf("moving pointer to next element\n");
+		cur_e = cur_e->next; 
+	}
 }
 
 
@@ -246,50 +476,55 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 
 void module_translate( Module *md, double tx, double ty, double tz ) {
 	Element *e;
-	Matrix *m;
+	Matrix m;
+	matrix_identity(&m);
 
-	matrix_translate( m, tx, ty, tz );
-	e = element_init( ObjMatrix, m );
+	matrix_translate( &m, tx, ty, tz );
+	e = element_init( ObjMatrix, &m );
 
 	module_insert( md, e );
 }
 
 void module_scale( Module *md, double sx, double sy, double sz ) {
 	Element *e;
-	Matrix *m;
+	Matrix m;
+	matrix_identity(&m);
 
-	matrix_scale( m, sx, sy, sz );
-	e = element_init( ObjMatrix, m );
+	matrix_scale( &m, sx, sy, sz );
+	e = element_init( ObjMatrix, &m );
 
 	module_insert( md, e );
 }
 
 void module_rotateX( Module *md, double cth, double sth ) {
 	Element *e;
-	Matrix *m;
+	Matrix m;
+	matrix_identity(&m);
 
-	matrix_rotateX( m, cth, sth );
-	e = element_init( ObjMatrix, m );
+	matrix_rotateX( &m, cth, sth );
+	e = element_init( ObjMatrix, &m );
 
 	module_insert( md, e );
 }
 
 void module_rotateY( Module *md, double cth, double sth ) {
 	Element *e;
-	Matrix *m;
+	Matrix m;
+	matrix_identity(&m);
 
-	matrix_rotateY( m, cth, sth );
-	e = element_init( ObjMatrix, m );
+	matrix_rotateY( &m, cth, sth );
+	e = element_init( ObjMatrix, &m );
 
 	module_insert( md, e );
 }
 
 void module_rotateXYZ( Module *md, Vector *u, Vector *v, Vector *w ) {
 	Element *e;
-	Matrix *m;
+	Matrix m;
+	matrix_identity(&m);
 
-	matrix_rotateXYZ( m, u, v, w );
-	e = element_init( ObjMatrix, m );
+	matrix_rotateXYZ( &m, u, v, w );
+	e = element_init( ObjMatrix, &m );
 
 	module_insert( md, e );
 }
