@@ -64,7 +64,7 @@ Element *element_init( ObjectType type, void *obj ) {
 		
 		case ObjPolygon :
 			{
-				printf("copying\n");
+// 				printf("in element_init, copying polygon\n");
 				polygon_copy( &copyObj.polygon, obj);
 				break;
 			}
@@ -251,13 +251,13 @@ void module_insert( Module *md, Element *e ) {
 
 	Element *cur_e = md->head;
 	
-	printf("hey\n");
+// 	printf("in module_insert, going to traverse down\n");
 	// loop till we get a NULL for the next pointer
 	while (cur_e->next) {
 		cur_e = cur_e->next;
 	}
 	
-	
+// 	printf("in module_insert, setting last element in md to new element\n");
 	cur_e->next = e;
 	md->tail = e;
 }
@@ -293,8 +293,10 @@ void module_polyline( Module *md, Polyline *p ) {
 
 void module_polygon( Module *md, Polygon *p ) {
 	Element *e;
+// 	printf("in module_polygon, initializing e\n");
 	e = element_init( ObjPolygon, p );
-
+	
+// 	printf("in module_polygon, inserting e into md\n");
 	module_insert( md, e );
 }
 
@@ -314,8 +316,7 @@ void module_color(Module *md, Color *c) {
 	Color tempColor;
 
 	color_set( &tempColor, c->c[0], c->c[1], c->c[2] );
-	e = element_init( ObjBodyColor, &tempColor );
-	// e = element_init( ObjSurfaceColor, &tempColor );
+	e = element_init( ObjColor, &tempColor );
 
 	module_insert( md, e );
 }
@@ -429,8 +430,10 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 					matrix_xformPolygon( GTM, &temp );
 					matrix_xformPolygon( VTM, &temp );
 					polygon_normalize( &temp );
-
+					
 					polygon_drawShade(&temp, src, ds, lighting);
+					printf("Drawing polygon at: ");
+					polygon_print(&temp, stdout);
 					break;
 				}
 

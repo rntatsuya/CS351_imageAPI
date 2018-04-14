@@ -162,7 +162,6 @@ int main(int argc, char *argv[]) {
   module_scale( engine, 1.3, 6, 1.3);
   module_rotateX( engine, 0, 1 );
   cylinder( engine, 10 );
-    printf("heyehe\n");
   module_scale( engine, .8, .8, 1 );
   module_color( engine, &Flame );
   cylinder( engine, 10 );
@@ -315,6 +314,7 @@ int main(int argc, char *argv[]) {
   src = image_create( 360, 640, 255 );
   ds = drawstate_create();
   ds->shade = ShadeFrame;
+  
 
   // draw into the scene
   module_draw( scene, &vtm, &gtm, ds, NULL, src );

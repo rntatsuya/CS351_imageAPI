@@ -100,10 +100,11 @@ void polygon_set(Polygon *p, int numV, Point *vlist) {
     free(p);
     exit(-1);
   }
-  
+//   printf("in polygon_set, setting %d vertices\n", numV);
   int i;
   for (i=0; i<numV; i++) {
     p->vertex[i] = vlist[i];
+//     printf("%d\n", i);
   }
   
   p->zBuffer = 1;
@@ -215,6 +216,7 @@ void polygon_copy(Polygon *to, Polygon *from) {
 //   
 //   // check if there's already memory allocated for the vertex field
 //   if (!to->vertex) {
+//     printf("here\n");
 //     to->vertex = malloc(sizeof(Point) * nVertex);
 //   }
 //   else {
@@ -234,9 +236,13 @@ void polygon_copy(Polygon *to, Polygon *from) {
 //   }
   
 //   printf("%d\n",nVertex);
+//   printf("%.2f\n", to->vertex[0]);
+  // need to make sure enough memory is allocated to vertex list field
+  to->vertex = malloc(sizeof(Point) * nVertex);
+  
+//   printf("in polygon_copy, copying polygon\n");
   // copy content from source
   for (i=0; i<nVertex; i++) {
-
     to->vertex[i].val[0] = from->vertex[i].val[0];
     to->vertex[i].val[1] = from->vertex[i].val[1];
     to->vertex[i].val[2] = from->vertex[i].val[2];
@@ -244,6 +250,7 @@ void polygon_copy(Polygon *to, Polygon *from) {
 //     to->color[i] = from->color[i];     
   }
   
+//   printf("in polygon_copy, finished copying polygon\n");
   to->nVertex = nVertex;
   to->zBuffer = from->zBuffer;
   
@@ -542,9 +549,12 @@ void polygon_drawFillBGradient(Polygon *p, Image *src, Color c1, Color c2, Color
 }
 
 void polygon_drawShade(Polygon *p, Image *src, DrawState *ds, Lighting *light) {
+  printf("in drawshade %d\n", ds->shade);
+  color_print(&ds->color, stdout);
   switch (ds->shade) {
     case ShadeFrame: 
       {
+        printf("drawing!\n");
         polygon_draw(p, src, ds->color);
         break;
       }
@@ -566,6 +576,11 @@ void polygon_drawShade(Polygon *p, Image *src, DrawState *ds, Lighting *light) {
       }
     case ShadePhong: 
       {
+        break;
+      }
+    default:
+      {
+        printf("default\n");
         break;
       }
   }
