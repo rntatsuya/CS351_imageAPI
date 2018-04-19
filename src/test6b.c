@@ -17,6 +17,7 @@ Draws three 3D X-wings as line drawings
   Takes in the number of subdivisions to use when creating the cylinder
  */
 void cylinder( Module *mod, int sides );
+
 void cylinder( Module *mod, int sides ) {
   Polygon p;
   Point xtop, xbot;
@@ -74,6 +75,7 @@ void cylinder( Module *mod, int sides ) {
 
 // adds a cube centered on the origin of width 2x2x2 to the module
 void cube( Module *mod );
+
 void cube( Module *mod ) {
   Point pt[4];
   Polygon p;

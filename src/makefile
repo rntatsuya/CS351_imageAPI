@@ -32,10 +32,10 @@ _DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h grap
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test6a test6b kimberly_required1 kimberly_required2 
+EXECUTABLES = test6a test6b kimberly_required1 kimberly_required2 kimberly_required3 extension
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test6a.o test6b.o kimberly_required1.o kimberly_required2.o 
+_OBJ = test6a.o test6b.o kimberly_required1.o kimberly_required2.o kimberly_required3.o extension.o
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -67,6 +67,12 @@ kimberly_required1: $(ODIR)/kimberly_required1.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
 kimberly_required2: $(ODIR)/kimberly_required2.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+kimberly_required3: $(ODIR)/kimberly_required3.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+extension: $(ODIR)/extension.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 .PHONY: clean

@@ -155,6 +155,7 @@ int main(int argc, char *argv[]) {
   // draw stars into the scene
   module_identity(scene);
   for(i=0;i<30;i++) {
+    
     point_set2D( &(p[0]), drand48()*2 - 1, drand48()*1 - 0.5 );
     module_point( scene, &(p[0]) );
   }

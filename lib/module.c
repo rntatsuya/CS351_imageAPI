@@ -20,7 +20,7 @@ Element *element_create( void ) {
 	}
 	
 	e->type = ObjNone;
-	e->obj = (Object)NULL; // dunno if casting nulls makes any sense...
+	e->obj = (Object)NULL; 
 	e->next = NULL;
 	
 	return e;
@@ -116,7 +116,6 @@ Element *element_init( ObjectType type, void *obj ) {
 		
 		case ObjLight :
 			{
-				// Not sure how to implement
 				copyObj = (Object)NULL; 
 				break;
 			}
@@ -242,7 +241,6 @@ void module_delete( Module *md ) {
 }
 
 void module_insert( Module *md, Element *e ) {
-	printf("adding element type %d\n", e->type );
 	if (!md->head) {
 		md->head = e;
 		md->tail = e;
@@ -264,7 +262,6 @@ void module_insert( Module *md, Element *e ) {
 
 void module_module( Module *md, Module *sub ) {
 	Element *e;
-	// void *p = &sub;
 	e = element_init( ObjModule, sub );
 
 	module_insert( md, e );
@@ -377,25 +374,21 @@ void module_shear2D( Module *md, double shx, double shy ) {
 }
 
 void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting *lighting, Image *src ) {
-	printf("\nMODULE DRAW\n");
 	Matrix LTM;
 	matrix_identity( &LTM );
 	
 	Element *cur_e = md->head;
 	
 	while ( cur_e ) { // Break when pointer reaches end of LL
-		printf("Handling type %d\n", cur_e->type);
 		switch( cur_e->type ) {
 			case ObjColor:
 				{
-// 					printf("color\n");
 					ds->color = cur_e->obj.color;
 					break;
 				}
 
 			case ObjPoint:
 				{
-// 					printf("point\n");
 					Point temp1, temp2;
 					matrix_xformPoint( &LTM, &(cur_e->obj.point), &temp1 );
 					matrix_xformPoint( GTM, &temp1, &temp2 );
@@ -409,7 +402,6 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 
 			case ObjLine:
 				{
-// 					printf("line\n");
 					Line temp;
 					line_copy( &temp, &(cur_e->obj.line) );
 					matrix_xformLine( &LTM, &temp );
@@ -423,7 +415,6 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 
 			case ObjPolygon:
 				{
-// 					printf("polygon\n");
 					Polygon temp;
 					polygon_copy( &temp, &(cur_e->obj.polygon) );
 					matrix_xformPolygon( &LTM, &temp );
@@ -439,21 +430,18 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 
 			case ObjMatrix:
 				{
-// 					printf("matrix\n");
 					matrix_multiply( &(cur_e->obj.matrix), &LTM, &LTM ); 
 					break;
 				}
 
 			case ObjIdentity:
 				{
-// 					printf("identity\n");
 					matrix_identity( &LTM );
 					break;
 				}
 
 			case ObjModule:
 				{
-// 					printf("module\n");
 					Matrix tempGTM;
 					matrix_multiply( GTM, &LTM, &tempGTM );
 					
