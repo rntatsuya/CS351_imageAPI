@@ -26,16 +26,16 @@ LIBS = -lm -limageIO
 LFLAGS = -L$(LIBDIR)
 
 # put all of the relevant include files here
-_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h graphics.h vector.h matrix.h view.h module.h drawstate.h lighting.h
+_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h graphics.h vector.h matrix.h view.h module.h drawstate.h lighting.h bezier.h
 
 # convert them to point to the right place
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test6a test6b kimberly_required1 kimberly_required2 kimberly_required3 extension
+EXECUTABLES = test7a test7b test7c kha1 kha2 ext
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test6a.o test6b.o kimberly_required1.o kimberly_required2.o kimberly_required3.o extension.o
+_OBJ = test7a.o test7b.o test7c.o kha1.o kha2.o ext.o
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -57,22 +57,22 @@ all:
 
 # put the specific executable rules here
 
-test6a: $(ODIR)/test6a.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-	
-test6b: $(ODIR)/test6b.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-	
-kimberly_required1: $(ODIR)/kimberly_required1.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-	
-kimberly_required2: $(ODIR)/kimberly_required2.o
+test7a: $(ODIR)/test7a.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
-kimberly_required3: $(ODIR)/kimberly_required3.o
+test7b: $(ODIR)/test7c.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+	
+test7c: $(ODIR)/test7c.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+	
+kha1: $(ODIR)/kha1.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+	
+kha2: $(ODIR)/kha2.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
-extension: $(ODIR)/extension.o
+ext: $(ODIR)/ext.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 .PHONY: clean
