@@ -15,6 +15,7 @@
 #include "module.h"
 #include "drawstate.h"
 #include "lighting.h"
+#include "bezier.h"
 
 /* "Higher level code that didn't/couldn't belong elsewhere" */
 

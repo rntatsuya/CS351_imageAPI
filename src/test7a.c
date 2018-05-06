@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 	Color blue;
 	Point p[4];
 	BezierCurve bc;
-	Image *src = image_create(300, 400);
+	Image *src = image_create(300, 400, 255);
 
 	// set up four points
 	point_set2D(&p[0], 50, 200);
