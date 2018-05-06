@@ -60,7 +60,7 @@ all:
 test7a: $(ODIR)/test7a.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
-test7b: $(ODIR)/test7c.o
+test7b: $(ODIR)/test7b.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
 test7c: $(ODIR)/test7c.o

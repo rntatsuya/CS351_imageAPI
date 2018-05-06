@@ -18,6 +18,8 @@ void bezierCurve_set( BezierCurve *b, Point *vlist );
 void bezierSurface_set( BezierSurface *b, Point *vlist );
 void bezierCurve_zBuffer( BezierCurve *b, int flag );
 void bezierSurface_zBuffer( BezierSurface *b, int flag );
+double ret_frac(double n1, double n2, float u);
 void bezierCurve_draw( BezierCurve *b, Image *src, Color c );
+
 
 #endif BEZIER_H

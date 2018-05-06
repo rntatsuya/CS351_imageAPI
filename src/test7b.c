@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 	Matrix VTM, GTM;
 	int divisions = 4;
 	int rows = 300, cols = 400;
-	Image *src = image_create(rows, cols);
+	Image *src = image_create(rows, cols, 255);
 
 	// grab the command line argument, if one exists
 	if(argc > 1) {
@@ -93,14 +93,13 @@ int main(int argc, char *argv[]) {
 	matrix_setView3D( &VTM, &view );
 	matrix_identity( &GTM );
 
+	printf("Creating Animation\n");
 	// Create the animation by adjusting the GTM
 	for(frame=0;frame<60;frame++) {
 		char buffer[256];
-		
 		matrix_rotateY(&GTM, cos(M_PI/30.0), sin(M_PI/30.0) );
 		module_draw( curves, &VTM, &GTM, &ds, NULL, src );
-
-		sprintf(buffer, "bez3d-frame%03d.ppm", frame);
+		sprintf(buffer, "0bez3d-frame%03d.ppm", frame);
 		image_write(src, buffer);
 		image_reset(src);
 	}

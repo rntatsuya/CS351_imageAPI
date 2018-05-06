@@ -318,6 +318,101 @@ void module_color(Module *md, Color *c) {
 	module_insert( md, e );
 }
 
+void module_bezierCurve(Module *md, BezierCurve *b, int divisions) {
+	printf("divisions %d\n", divisions);
+	if (divisions == 0) {
+		// no more subdivisions, just connect the control points
+		Line l;
+		
+		line_set2D(&l, b->cpt[0].val[0], b->cpt[0].val[1], b->cpt[1].val[0], b->cpt[1].val[1]);
+		module_line( md, &l );
+		line_set2D(&l, b->cpt[1].val[0], b->cpt[1].val[1], b->cpt[2].val[0], b->cpt[2].val[1]);
+		module_line( md, &l );
+		line_set2D(&l, b->cpt[2].val[0], b->cpt[2].val[1], b->cpt[3].val[0], b->cpt[3].val[1]);
+		module_line( md, &l );
+		return;
+	}
+	
+	// create two new bezier curves from original
+	BezierCurve b1;
+	BezierCurve b2;
+	Point p[7];
+	Point p_n[7];
+	float u = 0.5;
+	int i;
+	
+	// P0 
+	point_set2D(&p[0], b->cpt[0].val[0], b->cpt[0].val[1]); 
+	// P1
+	point_set2D(&p[2], b->cpt[1].val[0], b->cpt[1].val[1]);
+	// P2
+	point_set2D(&p[4], b->cpt[2].val[0], b->cpt[2].val[1]);
+	// P3
+	point_set2D(&p[6], b->cpt[3].val[0], b->cpt[3].val[1]);
+	// point between P0 and P1 => F0
+	point_set2D(&p[1], ret_frac(p[0].val[0], p[2].val[0], u), ret_frac(p[0].val[1], p[2].val[1], u));
+	// point between P1 and P2 => F1
+	point_set2D(&p[3], ret_frac(p[2].val[0], p[4].val[0], u), ret_frac(p[2].val[1], p[4].val[1], u));
+	// point between P2 and P3 => F2
+	point_set2D(&p[5], ret_frac(p[4].val[0], p[6].val[0], u), ret_frac(p[4].val[1], p[6].val[1], u));
+
+	// P0 => A0
+	point_copy(&p_n[0], &p[0]);
+	// F1 => A1
+	point_copy(&p_n[1], &p[1]);
+	// between A1 and F1 => A2
+	point_set2D(&p_n[2], ret_frac(p_n[1].val[0], p[3].val[0], u),  ret_frac(p_n[1].val[1], p[3].val[1], u));
+	// start making points from other side 
+	// P3 => B3
+	point_copy(&p_n[6], &p[6]);
+	// F2 => B2
+	point_copy(&p_n[5], &p[5]);
+	// between B2 and F1 => B1
+	point_set2D(&p_n[4], ret_frac(p_n[5].val[0], p[3].val[0], u),  ret_frac(p_n[5].val[1], p[3].val[1], u));
+	// between A2 and B1 => A3 & B0
+	point_set2D(&p_n[3], ret_frac(p_n[4].val[0], p_n[2].val[0], u),  ret_frac(p_n[4].val[1], p_n[2].val[1], u));
+	
+	printf("Original Points\n");
+	for (i=0; i<4; i++) {
+		point_print(&b->cpt[i], stdout);
+	}
+	printf("Original + Half Points\n");
+	for (i=0; i<7; i++) {
+		point_print(&p[i], stdout);
+	}
+	printf("Subdivided Points\n");
+	for (i=0; i<7; i++) {
+		point_print(&p_n[i], stdout);
+	}
+
+	bezierCurve_set( &b1, &p_n[0] );
+	bezierCurve_set( &b2, &p_n[3] );	
+	module_bezierCurve(md, &b1, divisions-1);
+	module_bezierCurve(md, &b2, divisions-1);
+}
+
+void module_bezierSurface(Module *m, BezierSurface *b, int divisions, int solid) {
+	printf("divisions %d\n", divisions);
+	if (divisions == 0) {
+		// no more subdivisions, just connect the control points
+		Polygon p;
+		// make vlist with only the 4 corners of the control points
+		Point p[4];
+		p[0] =  b->cpt[0];
+		p[1] =  b->cpt[3];
+		p[2] =  b->cpt[12];
+		p[3] =  b->cpt[15];
+		
+		// make two triangles
+		polygon_set(&p, 3, &p[0])
+		module_line( md, &p );
+		polygon_set(&p, 3, &p[1])
+		module_line( md, &p );
+		return;
+	}
+	
+	
+}
 
 /////////////////////////
 // 2D Module Functions //
@@ -379,7 +474,10 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 	
 	Element *cur_e = md->head;
 	
+	
 	while ( cur_e ) { // Break when pointer reaches end of LL
+// 		printf("Drawing type %d\n", cur_e->type);
+		
 		switch( cur_e->type ) {
 			case ObjColor:
 				{
@@ -402,6 +500,7 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 
 			case ObjLine:
 				{
+					line_print(&(cur_e->obj.line), stdout);
 					Line temp;
 					line_copy( &temp, &(cur_e->obj.line) );
 					matrix_xformLine( &LTM, &temp );
@@ -409,7 +508,7 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 					matrix_xformLine( VTM, &temp );
 					line_normalize( &temp );
 					line_draw( &temp, src, ds->color );
-					line_print( &temp, stdout );
+// 					line_print( &temp, stdout );
 					break;
 				}
 
@@ -423,8 +522,8 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 					polygon_normalize( &temp );
 					
 					polygon_drawShade(&temp, src, ds, lighting);
-					printf("Drawing polygon at: ");
-					polygon_print(&temp, stdout);
+// 					printf("Drawing polygon at: ");
+// 					polygon_print(&temp, stdout);
 					break;
 				}
 
@@ -458,9 +557,10 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 		}
 
 		// Move pointer to next element in LL 
-//		printf("moving pointer to next element\n");
+// 		printf("moving pointer to next element\n");
 		cur_e = cur_e->next; 
 	}
+// 	printf("done\n");
 }
 
 

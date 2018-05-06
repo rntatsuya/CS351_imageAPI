@@ -48,7 +48,6 @@ void bezierSurface_zBuffer( BezierSurface *b, int flag ) {
 	b->zbuff = flag;
 } 
 
-double ret_frac(double n1, double n2, float u);
 double ret_frac(double n1, double n2, float u) {
 // 	printf("(%.2f + %.2f) * %.2f = %.2f\n", n1, n2, u, (n1 + n2) * u);
 	return (n1 + n2) * u;
@@ -93,7 +92,6 @@ void bezierCurve_draw( BezierCurve *b, Image *src, Color c ) {
 	Point p_n[7];
 	float u = 0.5;
 	
-// 	for (u=0; u<1; u+=0.05) {
 	// P0 
 	point_set2D(&p[0], b->cpt[0].val[0], b->cpt[0].val[1]); 
 	// P1
@@ -144,7 +142,6 @@ void bezierCurve_draw( BezierCurve *b, Image *src, Color c ) {
 	bezierCurve_set( &b2, &p_n[3] );
 	bezierCurve_draw( &b1, src, c);
 	bezierCurve_draw( &b2, src, c);	
-// 	}
 	
 
 } 
