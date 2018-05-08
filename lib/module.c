@@ -342,35 +342,35 @@ void module_bezierCurve(Module *md, BezierCurve *b, int divisions) {
 	int i;
 	
 	// P0 
-	point_set2D(&p[0], b->cpt[0].val[0], b->cpt[0].val[1]); 
+	point_copy(&p[0], &b->cpt[0]);
 	// P1
-	point_set2D(&p[2], b->cpt[1].val[0], b->cpt[1].val[1]);
+	point_copy(&p[2], &b->cpt[1]);
 	// P2
-	point_set2D(&p[4], b->cpt[2].val[0], b->cpt[2].val[1]);
+	point_copy(&p[4], &b->cpt[2]);
 	// P3
-	point_set2D(&p[6], b->cpt[3].val[0], b->cpt[3].val[1]);
+	point_copy(&p[6], &b->cpt[3]);
 	// point between P0 and P1 => F0
-	point_set2D(&p[1], ret_frac(p[0].val[0], p[2].val[0], u), ret_frac(p[0].val[1], p[2].val[1], u));
+	point_setFraction(&p[1], &p[0], &p[2], u);
 	// point between P1 and P2 => F1
-	point_set2D(&p[3], ret_frac(p[2].val[0], p[4].val[0], u), ret_frac(p[2].val[1], p[4].val[1], u));
+	point_setFraction(&p[3], &p[2], &p[4], u);
 	// point between P2 and P3 => F2
-	point_set2D(&p[5], ret_frac(p[4].val[0], p[6].val[0], u), ret_frac(p[4].val[1], p[6].val[1], u));
+	point_setFraction(&p[5], &p[4], &p[6], u);
 
 	// P0 => A0
 	point_copy(&p_n[0], &p[0]);
 	// F1 => A1
 	point_copy(&p_n[1], &p[1]);
 	// between A1 and F1 => A2
-	point_set2D(&p_n[2], ret_frac(p_n[1].val[0], p[3].val[0], u),  ret_frac(p_n[1].val[1], p[3].val[1], u));
+	point_setFraction(&p_n[2], &p_n[1], &p[3], u);
 	// start making points from other side 
 	// P3 => B3
 	point_copy(&p_n[6], &p[6]);
 	// F2 => B2
 	point_copy(&p_n[5], &p[5]);
 	// between B2 and F1 => B1
-	point_set2D(&p_n[4], ret_frac(p_n[5].val[0], p[3].val[0], u),  ret_frac(p_n[5].val[1], p[3].val[1], u));
+	point_setFraction(&p_n[4], &p_n[5], &p[3], u);
 	// between A2 and B1 => A3 & B0
-	point_set2D(&p_n[3], ret_frac(p_n[4].val[0], p_n[2].val[0], u),  ret_frac(p_n[4].val[1], p_n[2].val[1], u));
+	point_setFraction(&p_n[3], &p_n[4], &p_n[2], u);
 	
 	printf("Original Points\n");
 	for (i=0; i<4; i++) {
@@ -391,27 +391,104 @@ void module_bezierCurve(Module *md, BezierCurve *b, int divisions) {
 	module_bezierCurve(md, &b2, divisions-1);
 }
 
-void module_bezierSurface(Module *m, BezierSurface *b, int divisions, int solid) {
+void module_bezierSurface(Module *md, BezierSurface *b, int divisions, int solid) {
 	printf("divisions %d\n", divisions);
 	if (divisions == 0) {
 		// no more subdivisions, just connect the control points
-		Polygon p;
+		Polygon poly;
 		// make vlist with only the 4 corners of the control points
 		Point p[4];
-		p[0] =  b->cpt[0];
-		p[1] =  b->cpt[3];
-		p[2] =  b->cpt[12];
-		p[3] =  b->cpt[15];
+		int i,j;
 		
-		// make two triangles
-		polygon_set(&p, 3, &p[0])
-		module_line( md, &p );
-		polygon_set(&p, 3, &p[1])
-		module_line( md, &p );
+		for (i=0; i<3; i++) {
+			for (j=0; j<3; j++) {
+				p[0] =  b->cpt[i*4+j];
+				p[1] =  b->cpt[i*4+j+1];
+				p[2] =  b->cpt[(i+1)*4+j+1];
+				p[3] =  b->cpt[(i+1)*4+j];
+
+				// make two triangles
+// 				polygon_set(&poly, 3, &p[0]);
+// 				module_polygon( md, &poly );
+// 				polygon_set(&poly, 3, &p[1]);
+// 				module_polygon( md, &poly );
+				
+				// make a quadralateral
+				polygon_set(&poly, 4, &p[0]);
+				printf("Adding polygon: ");
+				polygon_print(&poly, stdout);
+				module_polygon( md, &poly );
+
+			}
+		}
+		printf("division %d is done\n", divisions);
 		return;
 	}
 	
+	// create four new bezier surfaces by subdivision
+	BezierSurface b1;
+	Point p[49];
+	Point vlist[16];
+	float u = 0.5;
+	int base_idx, i,j,k,l,m;
 	
+	// subdivide points horizontally
+	for (i=0; i<4; i++) {
+		for (j=0; j<3; j++) {
+			printf("p[%d] from b->cpt[%d]\n", i*14 + j*2, i*4+j);
+			printf("p[%d] from half of b->cpt[%d] and b->cpt[%d]\n", i*14 + j*2+1, i*4+j, i*4+j+1);
+			point_copy(&p[i*14 + j*2], &b->cpt[i*4+j]);
+			point_setFraction(&p[i*14 + j*2+1], &b->cpt[i*4+j], &b->cpt[i*4+j+1], u);
+		}
+		printf("Last col: p[%d] from b->cpt[%d]\n", i*14 + j*2, i*4+j);
+		point_copy(&p[i*14 + j*2], &b->cpt[i*4+j]);// make sure we get the last column
+		
+	}
+	
+	// subdivide points vertically 
+	for (i=0; i<3; i++) { // don't do last row
+		for (j=0; j<3; j++) { 
+			printf("p[%d] from half of b->cpt[%d] and b->cpt[%d]\n", i*14 + j*2+7, i*4+j, (i+1)*4+j);
+			printf("p[%d] from half of p[%d] and p[%d]\n", i*14 + j*2+1+7, i*14 + j*2+1, (i+1)*14 + j*2+1);
+			point_setFraction(&p[i*14 + j*2+7], &b->cpt[i*4+j], &b->cpt[(i+1)*4+j], u);
+			point_setFraction(&p[i*14 + j*2+1+7], &p[i*14 + j*2+1], &p[(i+1)*14 + j*2+1], u);
+		}
+		printf("Last col: p[%d] from half of b->cpt[%d] and b->cpt[%d]\n", i*14 + j*2+7, i*4+j, (i+1)*4+j);
+		point_setFraction(&p[i*14 + j*2+7], &b->cpt[i*4+j], &b->cpt[(i+1)*4+j], u);// make sure we get the last column
+	}
+	
+	// make 16 point vlist 4 times
+	for (i=0; i<2; i++) {
+		for (j=0; j<2; j++) {
+			base_idx = i*21 + j*3;
+			for (k=0; k<4; k++) {
+				for (l=0; l<4; l++) {
+					printf("vlist[%d] = p[%d]\n", k*4+l, base_idx+k*7+l);
+					vlist[k*4+l] = p[base_idx+k*7+l];
+				}
+			}
+			
+			printf("\nOriginal Points\n");
+			for (m=0; m<16; m++) {
+				printf("b->cpt[%d] is ", m);
+				point_print(&b->cpt[m], stdout);
+			}
+// 			printf("Original + Half Points\n");
+// 			for (i=0; i<7; i++) {
+// 				point_print(&p[i], stdout);
+// 			}
+			printf("Subdivided Points\n");
+			for (m=0; m<16; m++) {
+				printf("vlist[%d] is ", m);
+				point_print(&vlist[m], stdout);
+			}
+			
+			bezierSurface_set( &b1, &vlist[0] );
+			module_bezierSurface(md, &b1, divisions-1, solid);
+			printf("Done with surface %d\n", i*2+j);
+		}
+	}
+	printf("division %d is done\n", divisions);
 }
 
 /////////////////////////
@@ -476,7 +553,7 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 	
 	
 	while ( cur_e ) { // Break when pointer reaches end of LL
-// 		printf("Drawing type %d\n", cur_e->type);
+		printf("Drawing type %d\n", cur_e->type);
 		
 		switch( cur_e->type ) {
 			case ObjColor:
@@ -520,10 +597,11 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 					matrix_xformPolygon( GTM, &temp );
 					matrix_xformPolygon( VTM, &temp );
 					polygon_normalize( &temp );
-					
+
+					printf("Drawing polygon at: ");
+					polygon_print(&temp, stdout);					
 					polygon_drawShade(&temp, src, ds, lighting);
-// 					printf("Drawing polygon at: ");
-// 					polygon_print(&temp, stdout);
+
 					break;
 				}
 

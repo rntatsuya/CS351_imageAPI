@@ -4,6 +4,7 @@
 
 #include "lighting.h"
 #include "drawstate.h"
+#include "bezier.h"
 
 typedef enum { 		// Type of elements possible	
 	ObjNone,		// Modules can be made up of a combination of
@@ -62,6 +63,8 @@ void module_polyline( Module *md, Polyline *p );
 void module_polygon( Module *md, Polygon *p );
 void module_identity( Module *md );
 void module_color(Module *md, Color *c);
+void module_bezierCurve(Module *md, BezierCurve *b, int divisions);
+void module_bezierSurface(Module *md, BezierSurface *b, int divisions, int solid);
 
 /////////////////////////
 // 2D Module Functions //

@@ -49,7 +49,7 @@ void bezierSurface_zBuffer( BezierSurface *b, int flag ) {
 } 
 
 double ret_frac(double n1, double n2, float u) {
-// 	printf("(%.2f + %.2f) * %.2f = %.2f\n", n1, n2, u, (n1 + n2) * u);
+	printf("(%.2f + %.2f) * %f = %.2f\n", n1, n2, u, (n1 + n2) * u);
 	return (n1 + n2) * u;
 }
 

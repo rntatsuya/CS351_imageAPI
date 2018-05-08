@@ -37,6 +37,8 @@ void point_set2D(Point *point, double x, double y);
 
 void point_set3D(Point *point, double x, double y, double z);
 
+void point_setFraction(Point *point, Point *p1, Point *p2, float u);
+
 void point_set(Point *p, double x, double y, double z, double h);
 
 void point_normalize(Point *point);

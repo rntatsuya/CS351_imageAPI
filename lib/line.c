@@ -41,6 +41,15 @@ void point_set3D(Point *point, double x, double y, double z) {
   point->val[3] = 1.0;
 }
 
+void point_setFraction(Point *point, Point *p1, Point *p2, float u) {
+//   printf("Taking fraction %.2f of: \n", u);
+//   point_print(p1, stdout);
+//   point_print(p2, stdout);
+  point_set3D(point, (p1->val[0]+p2->val[0])*u,  (p1->val[1]+p2->val[1])*u, (p1->val[2]+p2->val[2])*u);
+//   printf("Got\n");
+//   point_print(point, stdout);
+}
+
 // set the four values of the vector to x, y, z, and h, respectively.
 void point_set(Point *point, double x, double y, double z, double h) {
   point->val[0] = x;
@@ -219,7 +228,7 @@ void line_draw(Line *line, Image *src, Color color) {
       q_k = q4;    
     }       
      
-    if (p_k == 0 && q_k < 0) {
+    if (p_k == 0 && q_k <= 0) {
 //       printf("Discard %d: pk %.2f qk %.2f\n", k, p_k, q_k);
       return; // discard this line
     }
@@ -238,9 +247,9 @@ void line_draw(Line *line, Image *src, Color color) {
   }
   
   Line new_line; 
-  line_set2D(&new_line, a_x + t0*v_x, a_y + t0*v_y, a_x + t_f*v_x, a_y + t_f*v_y);
+  line_set2D(&new_line, a_x + t0*v_x, a_y + t0*v_y-0.1, a_x + t_f*v_x, a_y + t_f*v_y-0.1);
   
-//   printf("Drawing (%.2f %.2f) (%.2f %.2f)\n", a_x + t0*v_x, a_y + t0*v_y, a_x + t_f*v_x, a_y + t_f*v_y);
+  printf("Drawing (%.2f %.2f) (%.2f %.2f)\n", a_x + t0*v_x, a_y + t0*v_y, a_x + t_f*v_x, a_y + t_f*v_y);
   // always start at the bottom and end at the top
   int c1;
   int r1;

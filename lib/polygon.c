@@ -298,15 +298,16 @@ void polygon_draw(Polygon *p, Image *src, Color c) {
   
   // connect all points except for first and last
   for (i=0; i<numVertex-1; i++) {
-//     printf("%d, %d\n", i, i+1);
+    printf("%d, %d\n", i, i+1);
     line_set(&line, p->vertex[i], p->vertex[i+1]);
     line_draw(&line, src, c);
   }
   
   // connect first and last points
+  printf("connecting here\n");
   line_set(&line, p->vertex[0], p->vertex[i]);
   line_draw(&line, src, c);
-  
+  printf("done\n");  
 }
 
 void polygon_drawFrame( Polygon *p, Image *src, Color c ) {
