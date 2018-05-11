@@ -49,14 +49,14 @@ void bezierSurface_zBuffer( BezierSurface *b, int flag ) {
 } 
 
 double ret_frac(double n1, double n2, float u) {
-	printf("(%.2f + %.2f) * %f = %.2f\n", n1, n2, u, (n1 + n2) * u);
+	// printf("(%.2f + %.2f) * %f = %.2f\n", n1, n2, u, (n1 + n2) * u);
 	return (n1 + n2) * u;
 }
 
 void bezierCurve_draw( BezierCurve *b, Image *src, Color c ) {
 	// check if bounding box of control points is less than 10
 	// draw if so
-	printf("hey\n");
+	// printf("hey\n");
 	int i;
 	float min_x = b->cpt[0].val[0];
 	float max_x = b->cpt[0].val[0];
@@ -125,18 +125,18 @@ void bezierCurve_draw( BezierCurve *b, Image *src, Color c ) {
 	point_set2D(&p_n[3], ret_frac(p_n[4].val[0], p_n[2].val[0], u),  ret_frac(p_n[4].val[1], p_n[2].val[1], u));
 	
 
-	printf("Original Points\n");
-	for (i=0; i<4; i++) {
-		point_print(&b->cpt[i], stdout);
-	}
-	printf("Original + Half Points\n");
-	for (i=0; i<7; i++) {
-		point_print(&p[i], stdout);
-	}
-	printf("Subdivided Points\n");
-	for (i=0; i<7; i++) {
-		point_print(&p_n[i], stdout);
-	}
+	// printf("Original Points\n");
+	// for (i=0; i<4; i++) {
+	// 	point_print(&b->cpt[i], stdout);
+	// }
+	// printf("Original + Half Points\n");
+	// for (i=0; i<7; i++) {
+	// 	point_print(&p[i], stdout);
+	// }
+	// printf("Subdivided Points\n");
+	// for (i=0; i<7; i++) {
+	// 	point_print(&p_n[i], stdout);
+	// }
 
 	bezierCurve_set( &b1, &p_n[0] );
 	bezierCurve_set( &b2, &p_n[3] );
@@ -145,5 +145,3 @@ void bezierCurve_draw( BezierCurve *b, Image *src, Color c ) {
 	
 
 } 
-
- 

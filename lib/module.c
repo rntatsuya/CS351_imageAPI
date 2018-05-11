@@ -7,6 +7,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+void drawTriangle( Module *mod, Point a, Point b, Point c );
+Point getMidPoint( Point p1, Point p2 );
+void subdivide( Module *mod, Point p1, Point p2, Point p3, int lvl );
+Point getMidPoint2( Point p1, Point p2 );
+void subdivide2( Module *mod, Point p1, Point p2, Point p3, int lvl );
+
 ////////////////////////////////////////
 // General Module + Element Functions //
 ////////////////////////////////////////
@@ -701,6 +708,378 @@ void module_rotateXYZ( Module *md, Vector *u, Vector *v, Vector *w ) {
 	module_insert( md, e );
 }
 
-void module_cube( Module *md, int solid ) {
+/////////////////////
+// Unit Primitives //
+/////////////////////
 
+/**
+ * Code from Bruce
+ */
+void module_cube( Module *md, int solid ) {
+	// Point pt[4];
+	// Polygon p;
+
+	// polygon_init( &p );
+	// point_set3D( &pt[0], -1, -1, -1 );
+	// point_set3D( &pt[1], -1, -1,  1 );
+	// point_set3D( &pt[2], -1,  1,  1 );
+	// point_set3D( &pt[3], -1,  1, -1 );
+	// polygon_set( &p, 4, pt );
+	// module_polygon( md, &p );
+
+	// point_set3D( &pt[0], 1, -1, -1 );
+	// point_set3D( &pt[1], 1, -1,  1 );
+	// point_set3D( &pt[2], 1,  1,  1 );
+	// point_set3D( &pt[3], 1,  1, -1 );
+	// polygon_set( &p, 4, pt );
+	// module_polygon( md, &p );
+
+	// point_set3D( &pt[0], -1, -1, -1 );
+	// point_set3D( &pt[1], -1, -1,  1 );
+	// point_set3D( &pt[2],  1, -1,  1 );
+	// point_set3D( &pt[3],  1, -1, -1 );
+	// polygon_set( &p, 4, pt );
+	// module_polygon( md, &p );
+
+	// point_set3D( &pt[0], -1, 1, -1 );
+	// point_set3D( &pt[1], -1, 1,  1 );
+	// point_set3D( &pt[2],  1, 1,  1 );
+	// point_set3D( &pt[3],  1, 1, -1 );
+	// polygon_set( &p, 4, pt );
+	// module_polygon( md, &p );
+
+	// point_set3D( &pt[0], -1, -1, -1 );
+	// point_set3D( &pt[1], -1,  1, -1 );
+	// point_set3D( &pt[2],  1,  1, -1 );
+	// point_set3D( &pt[3],  1, -1, -1 );
+	// polygon_set( &p, 4, pt );
+	// module_polygon( md, &p );
+
+	// point_set3D( &pt[0], -1, -1, 1 );
+	// point_set3D( &pt[1], -1,  1, 1 );
+	// point_set3D( &pt[2],  1,  1, 1 );
+	// point_set3D( &pt[3],  1, -1, 1 );
+	// polygon_set( &p, 4, pt );
+	// module_polygon( md, &p );
+}
+
+/**
+ * Code from Bruce
+ */
+void module_cylinder( Module *mod, int sides ) {
+
+	if (sides < 3) {
+		printf("Please specify subdivision greater than or equal to 3 for a cylinder\n");
+		exit(-1);
+	}
+
+	Polygon p;
+	Point xtop, xbot;
+	double x1, x2, z1, z2;
+	int i;
+
+	polygon_init( &p );
+	point_set3D( &xtop, 0, 1.0, 0.0 );
+	point_set3D( &xbot, 0, 0.0, 0.0 );
+
+	// make a fan for the top and bottom sides
+	// and quadrilaterals for the sides
+	for(i=0;i<sides;i++) {
+		Point pt[4];
+
+		x1 = cos( i * M_PI * 2.0 / sides );
+		z1 = sin( i * M_PI * 2.0 / sides );
+		x2 = cos( ( (i+1)%sides ) * M_PI * 2.0 / sides );
+		z2 = sin( ( (i+1)%sides ) * M_PI * 2.0 / sides );
+
+		point_copy( &pt[0], &xtop );
+		point_set3D( &pt[1], x1, 1.0, z1 );
+		point_set3D( &pt[2], x2, 1.0, z2 );
+
+		polygon_set( &p, 3, pt );
+		module_polygon( mod, &p );
+
+		point_copy( &pt[0], &xbot );
+		point_set3D( &pt[1], x1, 0.0, z1 );
+		point_set3D( &pt[2], x2, 0.0, z2 );
+
+		polygon_set( &p, 3, pt );
+		module_polygon( mod, &p );
+
+		point_set3D( &pt[0], x1, 0.0, z1 );
+		point_set3D( &pt[1], x2, 0.0, z2 );
+		point_set3D( &pt[2], x2, 1.0, z2 );
+		point_set3D( &pt[3], x1, 1.0, z1 );
+
+		polygon_set( &p, 4, pt );
+		module_polygon( mod, &p );
+	}
+
+	polygon_clear( &p );
+}
+
+void module_pyramid( Module *mod, int sides ) {
+	if (sides < 3) {
+		printf("Please specify subdivision greater than or equal to 3 for a pyramid\n");
+		exit(-1);
+	}
+
+	Polygon p, b;
+	Point top;
+	Point basePt[sides];
+	double x1, x2, z1, z2;
+	int i;
+
+	polygon_init( &p );
+	point_set3D( &top, 0.0, 1.0, 0.0 );
+
+	for(i=0;i<sides;i++) {
+		Point pt[4];
+
+		// Generate 2 base points of pyramid face
+		x1 = cos( i * M_PI * 2.0 / sides );
+		z1 = sin( i * M_PI * 2.0 / sides );
+		x2 = cos( ( (i+1)%sides ) * M_PI * 2.0 / sides );
+		z2 = sin( ( (i+1)%sides ) * M_PI * 2.0 / sides );
+
+		// Add point to base polygon 
+		point_set3D( &basePt[i], x1, 0.0, z1 );
+
+		// Create one face of pyramid
+		point_copy( &pt[0], &top );
+		point_set3D( &pt[1], x1, 0.0, z1 );
+		point_set3D( &pt[2], x2, 0.0, z2 );
+		polygon_set( &p, 3, pt );
+		module_polygon( mod, &p );
+	}
+
+	// Create base of pyramid
+	polygon_set( &b, sides, basePt );
+	module_polygon( mod, &b );
+
+	// Clean up
+	polygon_clear( &p );
+	polygon_clear( &b );
+}
+
+void drawTriangle( Module *mod, Point a, Point b, Point c ) {
+	Point pt[3];
+	Polygon p; 
+	point_copy( &pt[0], &a );
+	point_copy( &pt[1], &b );
+	point_copy( &pt[2], &c );
+	polygon_set( &p, 3, &pt );
+	module_polygon( mod, &p );
+}
+
+Point *buildIcosahedron( Module *mod ) {
+	// Golden ratio
+	float t = (1 +sqrt(5))/ 2;
+	int size = 1; 
+	Polygon p;
+	Point *vList[12]; 
+
+	// Define 12 points on icosahedron 
+	Point pt[12];
+	point_set3D( &pt[0], -size, t*size, 0 );
+	point_set3D( &pt[1], size, t*size, 0 );
+	point_set3D( &pt[2], -size, -t*size, 0 );
+	point_set3D( &pt[3], size, -t*size, 0 );
+	point_set3D( &pt[4], 0, -size, t*size );
+	point_set3D( &pt[5], 0, size, t*size );
+	point_set3D( &pt[6], 0, -size, -t*size );
+	point_set3D( &pt[7], 0, size, -t*size );
+	point_set3D( &pt[8], t*size, 0, -size );
+	point_set3D( &pt[9], t*size, 0, size );
+	point_set3D( &pt[10], -t*size, 0, -size );
+	point_set3D( &pt[11], -t*size, 0, size );
+
+	// Add points to list of vertices 
+	for ( size = 0; size < 12; size++ ) {
+		point_copy( vList[size], &pt[size] );
+	}
+
+	// 5 faces around point 0
+	drawTriangle( mod, pt[0], pt[11], pt[5] );
+	drawTriangle( mod, pt[0], pt[5], pt[1] );
+	drawTriangle( mod, pt[0], pt[1], pt[7] );
+	drawTriangle( mod, pt[0], pt[7], pt[10] );
+	drawTriangle( mod, pt[0], pt[10], pt[11] );
+
+	// 5 adjacent faces
+	drawTriangle( mod, pt[1], pt[5], pt[9] );
+	drawTriangle( mod, pt[5], pt[11], pt[4] );
+	drawTriangle( mod, pt[11], pt[10], pt[2] );
+	drawTriangle( mod, pt[10], pt[7], pt[6] );
+	drawTriangle( mod, pt[7], pt[1], pt[8] );
+
+	// 5 faces around point 3
+	drawTriangle( mod, pt[3], pt[9], pt[4] );
+	drawTriangle( mod, pt[3], pt[4], pt[2] );
+	drawTriangle( mod, pt[3], pt[2], pt[6] );
+	drawTriangle( mod, pt[3], pt[6], pt[8] );
+	drawTriangle( mod, pt[3], pt[8], pt[9] );
+
+	// 5 adjacent faces
+	drawTriangle( mod, pt[4], pt[9], pt[5] );
+	drawTriangle( mod, pt[2], pt[4], pt[11] );
+	drawTriangle( mod, pt[6], pt[2], pt[10] );
+	drawTriangle( mod, pt[8], pt[6], pt[7] );
+	drawTriangle( mod, pt[9], pt[8], pt[1]) ;	
+
+	return vList;
+}
+
+/**
+ * Get midpoint between 2 points and normalize
+ */
+Point getMidPoint( Point p1, Point p2 ) {
+	Point midPt;
+	point_set3D( &midPt, 
+		(p2.val[0]+p1.val[0])*0.5,
+		(p2.val[1]+p1.val[1])*0.5,
+		(p2.val[2]+p1.val[2])*0.5 );
+
+	// Offset point using normalized vector of midPoint 
+	double l = sqrt( 
+		midPt.val[0]*midPt.val[0]+
+		midPt.val[1]*midPt.val[1]+
+		midPt.val[2]*midPt.val[2] );
+
+	point_set3D( &midPt, 
+		midPt.val[0]/l,
+		midPt.val[1]/l,
+		midPt.val[2]/l );
+
+	return midPt;
+}
+
+/**
+ * Helper function for subdivision
+ */
+void subdivide( Module *mod, Point p1, Point p2, Point p3, int lvl ) {
+	if ( lvl == 0 ) {
+		drawTriangle( mod, p1, p2, p3 );
+		return;
+	} else {
+		int i;
+		Point mp12, mp23, mp31;
+		mp12 = getMidPoint( p1, p2 );
+		mp23 = getMidPoint( p2, p3 );
+		mp31 = getMidPoint( p3, p1 );
+
+		subdivide( mod, p1, mp12, mp31, lvl-1 );
+		subdivide( mod, p2, mp23, mp12, lvl-1 );
+		subdivide( mod, p3, mp31, mp23, lvl-1 );
+		subdivide( mod, mp12, mp23, mp31, lvl-1 );
+	}
+}
+
+void module_sphere( Module *mod, int lvl ) {
+	Polygon p;
+	Point top, btm;
+	double x1, x2, z1, z2;
+	int i, sides = 4;
+
+	polygon_init( &p );
+	point_set3D( &top, 0.0, 1.0, 0.0 );
+	point_set3D( &btm, 0.0, -1.0, 0.0 );
+
+	for ( i = sides; i > 0; i-- ) {
+		Point pt[3];
+		x1 = cos( i * M_PI * 2.0 / sides );
+		z1 = sin( i * M_PI * 2.0 / sides );
+		x2 = cos( ( (i+1)%sides ) * M_PI * 2.0 / sides );
+		z2 = sin( ( (i+1)%sides ) * M_PI * 2.0 / sides );
+
+		// Create upper half
+		point_copy( &pt[0], &top );
+		point_set3D( &pt[1], x1, 0.0, z1 );
+		point_set3D( &pt[2], x2, 0.0, z2 );
+		subdivide( mod, pt[0], pt[1], pt[2], lvl );
+		
+		// Create bottom half
+		point_copy( &pt[0], &btm );
+		point_set3D( &pt[1], x1, 0.0, z1 );
+		point_set3D( &pt[2], x2, 0.0, z2 );
+		subdivide( mod, pt[0], pt[1], pt[2], lvl );
+	}
+}
+
+/**
+ * Get midpoint between 2 points and normalize
+ */
+Point getMidPoint2( Point p1, Point p2 ) {
+	Point midPt;
+	
+	//The golden ratio
+	float t = (1 + sqrt(5)) / 2;
+
+	point_set3D( &midPt, 
+		(p2.val[0]+p1.val[0])*0.5,
+		(p2.val[1]+p1.val[1])*0.5,
+		(p2.val[2]+p1.val[2])*0.5 );
+
+	// Normalize using homogenous coordinate
+	point_normalize( &midPt );
+	
+	// To get other random shape
+	int size = 3; 
+	midPt.val[0] *= sqrt(t*t+1)*size;
+	midPt.val[1] *= sqrt(t*t+1)*size;
+	midPt.val[2] *= sqrt(t*t+1)*size;
+
+	return midPt;
+}
+
+/**
+ * Helper function for subdivision
+ */
+void subdivide2( Module *mod, Point p1, Point p2, Point p3, int lvl ) {
+	if ( lvl == 0 ) {
+		drawTriangle( mod, p1, p2, p3 );
+		return;
+	} else {
+		int i;
+		Point mp12, mp23, mp31;
+		mp12 = getMidPoint2( p1, p2 );
+		mp23 = getMidPoint2( p2, p3 );
+		mp31 = getMidPoint2( p3, p1 );
+
+		subdivide2( mod, p1, mp12, mp31, lvl-1 );
+		subdivide2( mod, p2, mp23, mp12, lvl-1 );
+		subdivide2( mod, p3, mp31, mp23, lvl-1 );
+		subdivide2( mod, mp12, mp23, mp31, lvl-1 );
+	}
+}
+
+void module_sphere2( Module *mod, int lvl ) {
+	Polygon p;
+	Point top, btm;
+	double x1, x2, z1, z2;
+	int i, sides = 4;
+
+	polygon_init( &p );
+	point_set3D( &top, 0.0, 1.0, 0.0 );
+	point_set3D( &btm, 0.0, -1.0, 0.0 );
+
+	for ( i = sides; i > 0; i-- ) {
+		Point pt[3];
+		x1 = cos( i * M_PI * 2.0 / sides );
+		z1 = sin( i * M_PI * 2.0 / sides );
+		x2 = cos( ( (i+1)%sides ) * M_PI * 2.0 / sides );
+		z2 = sin( ( (i+1)%sides ) * M_PI * 2.0 / sides );
+
+		// Create upper half
+		point_copy( &pt[0], &top );
+		point_set3D( &pt[1], x1, 0.0, z1 );
+		point_set3D( &pt[2], x2, 0.0, z2 );
+		subdivide2( mod, pt[0], pt[1], pt[2], lvl );
+		
+		// Create bottom half
+		point_copy( &pt[0], &btm );
+		point_set3D( &pt[1], x1, 0.0, z1 );
+		point_set3D( &pt[2], x2, 0.0, z2 );
+		subdivide2( mod, pt[0], pt[1], pt[2], lvl );
+	}
 }
