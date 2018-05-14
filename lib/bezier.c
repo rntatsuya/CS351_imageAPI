@@ -7,7 +7,7 @@
 
 
 void bezierCurve_init( BezierCurve *b ) {
-	b->zbuff = 1;
+	b->zbuff = 1.0;
 	Point cpt[4]; 		// Control points
 	
 	int i;
@@ -18,7 +18,7 @@ void bezierCurve_init( BezierCurve *b ) {
 } 
 
 void bezierSurface_init( BezierSurface *b ) {
-	b->zbuff = 1;
+	b->zbuff = 1.0;
 	Point cpt[4]; 		// Control points
 	
 	int i,j;
@@ -40,11 +40,11 @@ void bezierSurface_set( BezierSurface *b, Point *vlist ) {
 		b->cpt[i] = vlist[i];
 } 
 
-void bezierCurve_zBuffer( BezierCurve *b, int flag ) {
+void bezierCurve_zBuffer( BezierCurve *b, double flag ) {
 	b->zbuff = flag;
 } 
 
-void bezierSurface_zBuffer( BezierSurface *b, int flag ) {
+void bezierSurface_zBuffer( BezierSurface *b, double flag ) {
 	b->zbuff = flag;
 } 
 

@@ -15,8 +15,8 @@ typedef struct {
   int nVertex;
   Point *vertex;  // vertex information
   Color *color;  //  color information for each vertex
-//   Vector *normal; //  surface normal information for each vertex.
-  int zBuffer;
+  Vector *normal; //  surface normal information for each vertex.
+  double zBuffer;
 } Polygon;
 
 // returns an allocated Polygon pointer initialized 

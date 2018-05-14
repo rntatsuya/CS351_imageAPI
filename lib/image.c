@@ -41,6 +41,12 @@ Image *image_create(int rows, int cols, float maxval) {
     free(src);
     return NULL;
   }
+  
+  // initialize z-buffer to 1.0
+  for (i=0; i<rows*cols; i++) {
+    src->data[i].z = 1.0;
+  }
+  
   return src;
 }
 

@@ -13,7 +13,7 @@ Polygon *polygon_create() {
     exit(-1);
   }
   
-  p->zBuffer = 1;
+  p->zBuffer = 1.0;
   p->nVertex = 0;
   p->vertex = NULL;
   p->color = NULL;
@@ -49,7 +49,7 @@ Polygon *polygon_createp(int numV, Point *vlist) {
     p->vertex[i] = vlist[i];
   }
   
-  p->zBuffer = 1;
+  p->zBuffer = 1.0;
   p->nVertex = numV;
   p->color = NULL;
 //   p->normal = NULL;
@@ -79,7 +79,7 @@ void polygon_free(Polygon *p) {
 
 
 void polygon_init(Polygon *p) {
-  p->zBuffer = 1;
+  p->zBuffer = 1.0;
   p->nVertex = 0;
   p->vertex = NULL;
   p->color = NULL;
@@ -107,7 +107,7 @@ void polygon_set(Polygon *p, int numV, Point *vlist) {
 //     printf("%d\n", i);
   }
   
-  p->zBuffer = 1;
+  p->zBuffer = 1.0;
   p->nVertex = numV;  
   p->color = NULL;
 //   p->normal = NULL;
@@ -130,7 +130,7 @@ void polygon_clear(Polygon *p) {
 //     p->normal = NULL;
 //   }
   
-  p->zBuffer = 1;
+  p->zBuffer = 1.0;
   p->nVertex = 0;
   p->oneSided = 1;
 }
@@ -159,54 +159,54 @@ void polygon_setColors(Polygon *p, int numV, Color *clist) {
     p->color[i] = clist[i];
   }
 }
-// 
-// void polygon_setNormals(Polygon *p, int numV, Vector *nlist) {
-//   if (numV < 0) {
-//     printf("numVertex cannot be negative in polygon_setNormals!\n");
-//     exit(-1);    
-//   }
-//   
-//   p->normal = malloc(sizeof(Vector) * numV);
-//   
-//   if (!p->normal) {
-//     printf("Ran out of memory while mallocing normals pointer in polygon_setNormals!\n");
-//     exit(-1);
-//   }
-//   
-//   int i;
-//   for (i=0; i<numV; i++) {
-//     p->normal[i] = nlist[i];
-//   }
-// }
 
-// void polygon_setAll(Polygon *p, int numV, Point *vlist, Color *clist, Vector *nlist, int zBuffer, int oneSided) {
-//   if (numV < 0) {
-//     printf("numVertex cannot be negative in polygon_setNormals!\n");
-//     exit(-1);    
-//   }
-//   
-//   p->vertex = malloc(sizeof(Point) * numV);
-//   p->normal = malloc(sizeof(Vector) * numV);
-//   p->colors = malloc(sizeof(Color) * numV);
-//   
-//   if (!p->vertex || !p->normal || !p->colors) {
-//     printf("Ran out of memory while mallocing in polygon_setAll!\n");
-//     exit(-1);
-//   }
-//   
-//   int i;
-//   for (i=0; i<numV; i++) {
-//     p->vertex[i] = vlist[i];
-//     p->normal[i] = nlist[i];
-//     p->colors[i] = clist[i];
-//   }
-//   
-//   p->zBuffer = zBuffer;
-//   p->nVertex = numV;
-//   p->oneSided = oneSided;
-// }
+void polygon_setNormals(Polygon *p, int numV, Vector *nlist) {
+  if (numV < 0) {
+    printf("numVertex cannot be negative in polygon_setNormals!\n");
+    exit(-1);    
+  }
+  
+  p->normal = malloc(sizeof(Vector) * numV);
+  
+  if (!p->normal) {
+    printf("Ran out of memory while mallocing normals pointer in polygon_setNormals!\n");
+    exit(-1);
+  }
+  
+  int i;
+  for (i=0; i<numV; i++) {
+    p->normal[i] = nlist[i];
+  }
+}
 
-void polygon_zBuffer(Polygon *p, int flag) {
+void polygon_setAll(Polygon *p, int numV, Point *vlist, Color *clist, Vector *nlist, double zBuffer, int oneSided) {
+  if (numV < 0) {
+    printf("numVertex cannot be negative in polygon_setNormals!\n");
+    exit(-1);    
+  }
+  
+  p->vertex = malloc(sizeof(Point) * numV);
+  p->normal = malloc(sizeof(Vector) * numV);
+  p->colors = malloc(sizeof(Color) * numV);
+  
+  if (!p->vertex || !p->normal || !p->colors) {
+    printf("Ran out of memory while mallocing in polygon_setAll!\n");
+    exit(-1);
+  }
+  
+  int i;
+  for (i=0; i<numV; i++) {
+    p->vertex[i] = vlist[i];
+    p->normal[i] = nlist[i];
+    p->colors[i] = clist[i];
+  }
+  
+  p->zBuffer = zBuffer;
+  p->nVertex = numV;
+  p->oneSided = oneSided;
+}
+
+void polygon_zBuffer(Polygon *p, double flag) {
   p->zBuffer = flag;
 }
 

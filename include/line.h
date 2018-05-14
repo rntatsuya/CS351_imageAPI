@@ -18,13 +18,13 @@ typedef struct {
 } Point;
 
 typedef struct {
-  int zBuffer;
+  double zBuffer;
   Point a;
   Point b;
 } Line;
 
 typedef struct {
-  int zBuffer;
+  double zBuffer;
   int numVertex;
   Point *vertex;
 } Polyline;
@@ -55,7 +55,7 @@ void line_set2D(Line *line, double x1, double y1, double x2, double y2);
 
 // void line_set(Line *line, Point start, Point end);
 
-void line_zBuffer(Line *l, int flag);
+void line_zBuffer(Line *l, double flag);
 
 void line_normalize(Line *l);
 
@@ -83,7 +83,7 @@ void polyline_set( Polyline *pLine, int numVertex, Point *point );
 
 void polyline_clear( Polyline *pLine );
 
-void polyline_zBuffer(Polyline *p, int flag);
+void polyline_zBuffer(Polyline *p, double flag);
 
 void polyline_copy(Polyline *to, Polyline *from);
 
