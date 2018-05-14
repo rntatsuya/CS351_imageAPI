@@ -123,6 +123,24 @@ void line_set2D(Line *line, double x1, double y1, double x2, double y2) {
   line->b = end;
 } // end of line_set
 
+// void line_set (Line *line, Point start, Point end) {
+//   Point tmp1;
+//   Point tmp2;
+
+//   tmp1.val[0] = start.val[0];
+//   tmp1.val[1] = start.val[1];
+//   tmp1.val[2] = start.val[2];
+//   tmp1.val[3] = start.val[3];
+
+//   tmp2.val[0] = end.val[0];
+//   tmp2.val[1] = end.val[1];
+//   tmp2.val[2] = end.val[2];
+//   tmp2.val[3] = end.val[3];
+
+//   line->a = tmp1;
+//   line->b = tmp2;
+// }
+
 //  initialize a line to ta and tb.
 // void line_set(Line *line, Point start, Point end) {
 //   line->a = start;

@@ -4,7 +4,6 @@
 
 #include "color.h"
 #include "line.h"
-#include "drawstate.h"
 
 typedef enum {			// Determines how an object is drawn into the image
 	ShadeFrame,			// Draw only borders of objects (polygons included) 

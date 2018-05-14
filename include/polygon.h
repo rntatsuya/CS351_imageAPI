@@ -5,18 +5,19 @@
 
 #include <stdio.h>
 #include "line.h"
+#include "vector.h"
 #include "image.h"
 #include "color.h"
 #include "drawstate.h"
 #include "lighting.h"
 
 typedef struct {
-  int oneSided; // whether to consider the polygon one-sided (1) or two-sided (0) for shading
+  int oneSided; 
   int nVertex;
-  Point *vertex;  // vertex information
-  Color *color;  //  color information for each vertex
-//   Vector *normal; //  surface normal information for each vertex.
+  Point *vertex;  
+  Color *color;  
   int zBuffer;
+  Vector *normal; 
 } Polygon;
 
 // returns an allocated Polygon pointer initialized 
@@ -70,7 +71,7 @@ void polygon_draw(Polygon *p, Image *src, Color c);
 
 void polygon_drawFrame( Polygon *p, Image *src, Color c );
 
-// draw the filled polygon using color c with the scanline z-buffer rendering algorithm.
+void polygon_drawState(Polygon *p, Image *src, DrawState *ds );
 void polygon_drawFill(Polygon *p, Image *src, Color c);
 
 void polygon_drawFillGradient(Polygon *p, Image *src, Color c1, Color c2, Point a, Point b );
@@ -84,5 +85,7 @@ void polygon_drawFillBGradient(Polygon *p, Image *src, Color c1, Color c2, Color
 // determines how the polygon should be rendered. The Lighting parameter should be NULL 
 // unless you are doing Phong shading
 // void polygon_drawShade(Polygon *p, Image *src, DrawState *ds, Lighting *light);
+
+void polygon_setNormals(Polygon *p, int numV, Vector *nlist);
 
 #endif

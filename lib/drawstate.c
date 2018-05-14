@@ -3,7 +3,6 @@
  * drawstate.c
  */
 
-#include "color.h"
 #include "drawstate.h"
 
 DrawState *drawstate_create( void ) {
@@ -21,7 +20,7 @@ DrawState *drawstate_create( void ) {
 	ds->shade = ShadeFrame;
 	
 	printf("shade is %d\n", ds->shade);
-	printf("%d\n", ShadeFrame);
+	// printf("%d\n", ShadeFrame);
 	
 	return ds;
 }

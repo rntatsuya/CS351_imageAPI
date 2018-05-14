@@ -2,7 +2,7 @@
 
 #define LINE_H
 
-#define line_set(line, s, e)({\
+#define line_set(line, s, e)({
   (line)->a = (s);\
   (line)->b = (e);\
 })

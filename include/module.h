@@ -90,10 +90,10 @@ void module_rotateXYZ( Module *md, Vector *u, Vector *v, Vector *w );
 // Unit Primitives //
 /////////////////////
 
-void module_cube( Module *md, int solid );
+void module_cube(Module *md, int solid);
 void module_cylinder( Module *mod, int sides );
 void module_pyramid( Module *mod, int sides );
 void module_sphere( Module *mod, int lvl );
-void module_sphere( Module *mod, int lvl );
+void module_sphere2( Module *mod, int lvl );
 
 #endif

@@ -555,28 +555,35 @@ void polygon_drawShade(Polygon *p, Image *src, DrawState *ds, Lighting *light) {
   switch (ds->shade) {
     case ShadeFrame: 
       {
-        printf("drawing!\n");
+        printf("drawing shade frame!\n");
         polygon_draw(p, src, ds->color);
         break;
       }
     case ShadeConstant: 
       {
+        printf("drawing shade constant!\n");
+        polygon_drawState( p, src, ds );
         break;
       }
     case ShadeDepth: 
       {
+        printf("drawing shade depth!\n");
+        polygon_drawState( p, src, ds );
         break;
       }
     case ShadeFlat: 
       {
+        printf("drawing shade flat!\n");
         break;
       }
     case ShadeGouraud:
       {
+        printf("drawing shade gouraud!\n");
         break;
       }
     case ShadePhong: 
       {
+        printf("drawing shade phong!\n");
         break;
       }
     default:
@@ -586,4 +593,12 @@ void polygon_drawShade(Polygon *p, Image *src, DrawState *ds, Lighting *light) {
       }
   }
 
+}
+
+// initializes the normal array to the vectors in nlist.
+void polygon_setNormals(Polygon *p, int numV, Vector *nlist) {
+  // set polygon normal to vectors in nlist (maccloc)
+  p->normal = malloc(numV*sizeof(Vector));
+  for ( int i = 0; i < numV; i++ ) 
+    vector_copy( &p->normal[i], &nlist[i] );
 }
