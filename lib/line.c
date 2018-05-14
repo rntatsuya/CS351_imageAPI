@@ -121,6 +121,7 @@ void line_set2D(Line *line, double x1, double y1, double x2, double y2) {
   
   line->a = start;
   line->b = end;
+  line->zBuffer = 1.0;
 } // end of line_set
 
 // void line_set (Line *line, Point start, Point end) {
@@ -271,8 +272,10 @@ void line_draw(Line *line, Image *src, Color color) {
   // always start at the bottom and end at the top
   int c1;
   int r1;
+  double z1;
   int c2;
   int r2;
+  double z2;
   int reversed;
   
 //   printf("%d\n",offset);
@@ -282,15 +285,19 @@ void line_draw(Line *line, Image *src, Color color) {
   if (new_line.a.val[1] < new_line.b.val[1]) {
     c1 = new_line.b.val[0];
     r1 = new_line.b.val[1];
+    z1 = new_line.b.zBuffer;
     c2 = new_line.a.val[0];
     r2 = new_line.a.val[1];
+    z2 = new_line.a.zBuffer;
     reversed = 1;
   }
   else {
     c1 = new_line.a.val[0];
     r1 = new_line.a.val[1];
+    z1 = new_line.a.zBuffer;
     c2 = new_line.b.val[0];
     r2 = new_line.b.val[1];
+    z2 = new_line.b.zBuffer;
     reversed = 0;
   }
 //   printf("reversed: %d\n", reversed);
@@ -301,6 +308,8 @@ void line_draw(Line *line, Image *src, Color color) {
     
   int dx = c2 - c1;
   int dy = r1 - r2; // not r2 - r1 b/c dy is flipped in image coords
+  double d_1byZ;
+  double init_z;
   int dx2;
   int dy2;
   float m;
@@ -339,9 +348,16 @@ void line_draw(Line *line, Image *src, Color color) {
     
     if (m > 1) { // second octant
 //       printf("Second octant\n");
+      init_z = src->data[r1*src->cols + c1].z; //// isn't taking into account clipping
+      d_1byz = (1/z1 - 1/z2)/dy2; ///// or is it dy2?????
       e = 3*dx - dy2;
       for (i=dy; i--;) {
-	    image_setColor(src, r1, c1, color);
+	    if ( init_z > src->data[r1*src->cols + c1].z ) {
+	      src->data[r1*src->cols + c1].z = init_z;
+	      image_setColor(src, r1, c1, color);
+	    }
+	    init_z = init_z + d_1byz;
+	    
 	    if (e > 0) { // step across
 	      c1 = c1 + 1;
 	      e = e - dy2;
@@ -352,9 +368,16 @@ void line_draw(Line *line, Image *src, Color color) {
     }
     else if (m > 0) { // not > 1 but positive so first octant 
 //       printf("First octant\n");
+      init_z = src->data[r1*src->cols + c1].z;
+      d_1byz = (1/z1 - 1/z2)/dx2; ///// or is it dx2?????
       e = 3*dy - dx2;
       for (i=dx; i--;) {
-	    image_setColor(src, r1, c1, color);
+        if ( init_z > src->data[r1*src->cols + c1].z ) {
+	      src->data[r1*src->cols + c1].z = init_z;
+	      image_setColor(src, r1, c1, color);
+	    }
+	    init_z = init_z + d_1byz;
+	    
 	    if (e > 0) { // step up
 	      r1 = r1 - 1;
 	      e = e - dx2;
@@ -365,9 +388,16 @@ void line_draw(Line *line, Image *src, Color color) {
     }
     else if (m < -1) { // third octant
 //       printf("Third octant\n");
+      init_z = src->data[r2*src->cols + c2].z;
+      d_1byz = (1/z1 - 1/z2)/dy2; ///// or is it dx2?????
       e = -3*dx - dy2;
       for (i=dy; i--; ) {
-	    image_setColor(src, r2, c2, color);
+	    if ( init_z > src->data[r2*src->cols + c2].z ) {
+	      src->data[r2*src->cols + c2].z = init_z;
+	      image_setColor(src, r2, c2, color);
+	    }
+	    init_z = init_z + d_1byz;
+	    
 	    if (e > 0) { // step across
 	      c2 = c2 + 1;
 	      e = e - dy2;
@@ -379,9 +409,16 @@ void line_draw(Line *line, Image *src, Color color) {
     // fourth octant
     else if (m < 0) {
 //       printf("Fourth octant\n");
+      init_z = src->data[r1*src->cols + c1].z;
+      d_1byz = (1/z1 - 1/z2)/dx2; ///// or is it dx2?????
       e = 3*dy + dx2;
       for (i=-dx; i--;) {
-	    image_setColor(src, r1, c1, color);
+	    if ( init_z > src->data[r1*src->cols + c1].z ) {
+	      src->data[r1*src->cols + c1].z = init_z;
+	      image_setColor(src, r1, c1, color);
+	    }
+	    init_z = init_z + d_1byz;
+
 	    if (e > 0) { // step across
 	      r1 = r1 - 1;
 	      e = e + dx2;
@@ -765,7 +802,7 @@ Polyline *polyline_create() {
     exit(-1);
   }
   
-  pline->zBuffer = 1;
+  pline->zBuffer = 1.0;
   pline->numVertex = 0;
   pline->vertex = NULL;
   
@@ -800,7 +837,7 @@ Polyline *polyline_createp( int numV, Point *vlist ) {
     pline->vertex[i] = vlist[i];
   }
   
-  pline->zBuffer = 1;
+  pline->zBuffer = 1.0;
   pline->numVertex = numV;
   
   return pline;
@@ -822,7 +859,7 @@ void polyline_free(Polyline *p) {
 // initializes the pre-existing Polyline to an empty Polyline
 void polyline_init( Polyline *pline ) {
   pline->numVertex = 0;
-  pline->zBuffer = 1;
+  pline->zBuffer = 1.0;
   pline->vertex = NULL;
 }
 
@@ -842,7 +879,7 @@ void polyline_set( Polyline *pline, int numV, Point *vlist ) {
   }
   int i;
   
-  pline->zBuffer = 1;
+  pline->zBuffer = 1.0;
   pline->numVertex = numV;
   for (i=0; i<numV; i++) {
     pline->vertex[i] = vlist[i];
@@ -858,7 +895,7 @@ void polyline_clear(Polyline *p) {
   }
   
   p->numVertex = 0;
-  p->zBuffer = 1;
+  p->zBuffer = 1.0;
   p->vertex = NULL;
 }
 

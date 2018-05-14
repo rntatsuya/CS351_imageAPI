@@ -8,8 +8,8 @@
 */
 
 #include <stdio.h>
-#include <math.h>
 #include <stdlib.h>
+#include <math.h>
 #include <string.h>
 #include "graphics.h"
 
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
   cube = module_create();
   module_scale( cube, 3, 1, 2 );
   module_color( cube, &Grey );
-  module_cube( cube, 1 );
+  module_cube( cube, 1);
 
   ds = drawstate_create();
   ds->shade = ShadeDepth;
@@ -71,4 +71,5 @@ int main(int argc, char *argv[]) {
   
 
   return(0);
+
 }

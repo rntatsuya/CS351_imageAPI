@@ -14,10 +14,10 @@
 typedef struct {
   int oneSided; 
   int nVertex;
-  Point *vertex;  
-  Color *color;  
-  int zBuffer;
-  Vector *normal; 
+  Point *vertex;  // vertex information
+  Color *color;  //  color information for each vertex
+  Vector *normal; //  surface normal information for each vertex.
+  double zBuffer;
 } Polygon;
 
 // returns an allocated Polygon pointer initialized 
