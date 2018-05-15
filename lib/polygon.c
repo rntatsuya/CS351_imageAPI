@@ -187,9 +187,9 @@ void polygon_setAll(Polygon *p, int numV, Point *vlist, Color *clist, Vector *nl
   
   p->vertex = malloc(sizeof(Point) * numV);
   p->normal = malloc(sizeof(Vector) * numV);
-  p->colors = malloc(sizeof(Color) * numV);
+  p->color = malloc(sizeof(Color) * numV);
   
-  if (!p->vertex || !p->normal || !p->colors) {
+  if (!p->vertex || !p->normal || !p->color) {
     printf("Ran out of memory while mallocing in polygon_setAll!\n");
     exit(-1);
   }
@@ -198,7 +198,7 @@ void polygon_setAll(Polygon *p, int numV, Point *vlist, Color *clist, Vector *nl
   for (i=0; i<numV; i++) {
     p->vertex[i] = vlist[i];
     p->normal[i] = nlist[i];
-    p->colors[i] = clist[i];
+    p->color[i] = clist[i];
   }
   
   p->zBuffer = zBuffer;
@@ -596,9 +596,9 @@ void polygon_drawShade(Polygon *p, Image *src, DrawState *ds, Lighting *light) {
 }
 
 // initializes the normal array to the vectors in nlist.
-void polygon_setNormals(Polygon *p, int numV, Vector *nlist) {
-  // set polygon normal to vectors in nlist (maccloc)
-  p->normal = malloc(numV*sizeof(Vector));
-  for ( int i = 0; i < numV; i++ ) 
-    vector_copy( &p->normal[i], &nlist[i] );
-}
+// void polygon_setNormals(Polygon *p, int numV, Vector *nlist) {
+//   // set polygon normal to vectors in nlist (maccloc)
+//   p->normal = malloc(numV*sizeof(Vector));
+//   for ( int i = 0; i < numV; i++ ) 
+//     vector_copy( &p->normal[i], &nlist[i] );
+// }

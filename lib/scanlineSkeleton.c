@@ -69,11 +69,11 @@ static Edge *makeEdgeRec( Point start, Point end, Image *src)
 	Edge *edge = malloc( sizeof(Edge) );
 	edge->x0 = start.val[0];
 	edge->y0 = start.val[1];
-	edge->z0 = start.val[2];
+	edge->z0 = 1/start.val[2];
 
 	edge->x1 = end.val[0];
 	edge->y1 = end.val[1];
-	edge->z1 = end.val[2];
+	edge->z1 = 1/end.val[2];
 
 	// Check if the starting row is below the image or the end row is
 	// above the image and skip the edge if either is true
@@ -99,17 +99,17 @@ static Edge *makeEdgeRec( Point start, Point end, Image *src)
 	// Calculate the slope, dxPerScan for z and x
 	float dscan = end.val[1] - start.val[1]; 
 	edge->dxPerScan = (end.val[0] - start.val[0]) / dscan;
-	edge->dzPerScan = (1/end.val[2] - 1/start.val[2]) / dscan;
+	edge->dzPerScan = (end.val[2] - start.val[2]) / dscan;
 
 	// Calculate xIntersect, adjusting for the fraction of the point in the pixel.
 	// Scanlines go through the middle of pixels
 	// Move the edge to the first scanline it crosses
 	if (edge->y1 - (int)edge->y1 >= 0.5) {
 		edge->xIntersect = edge->x0 + (edge->yStart + 0.5 - edge->y0) * edge->dxPerScan;
-		edge->zIntersect = 1/edge->z0 + (edge->yStart + 0.5 - edge->y0) * edge->dzPerScan;
+		edge->zIntersect = edge->z0 + (edge->yStart + 0.5 - edge->y0) * edge->dzPerScan;
 	} else {
 		edge->xIntersect = edge->x0 + (edge->yStart + 1.5 - edge->y0) * edge->dxPerScan;
-		edge->zIntersect = 1/edge->z0 + (edge->yStart + 1.5 - edge->y0) * edge->dzPerScan;
+		edge->zIntersect = edge->z0 + (edge->yStart + 1.5 - edge->y0) * edge->dzPerScan;
 	}
 	
 	// Move the intersections down to scanline zero
@@ -137,7 +137,6 @@ static Edge *makeEdgeRec( Point start, Point end, Image *src)
 	// return the newly created edge data structure
 	return(edge);
 }
-
 
 /*
 	Returns a list of all the edges in the polygon in sorted order by
@@ -209,7 +208,7 @@ static void fillScan( int scan, LinkedList *active, Image *src, DrawState *ds ) 
 			continue;
 		}
 
-		float dzPerColumn = (p2->zIntersect - p1->zIntersect)/(p2->xIntersect-p1->xIntersect);
+		float dzPerColumn = (p2->zIntersect-p1->zIntersect)/(p2->xIntersect-p1->xIntersect);
 		float curZ = 1/p1->zIntersect;
 
 		// Identify the starting column
@@ -226,15 +225,13 @@ static void fillScan( int scan, LinkedList *active, Image *src, DrawState *ds ) 
 		if ( end >= src->cols )
 			end = src->cols - 1;
 
-		// float z = 1/curZ;
 		// Loop from start to end and color in the pixels
 	  	for ( int i = start ; i < end; i++ ) {
-	  		printf("curZ:%.5f z-buff:%.5f\n",curZ, image_getz(src, scan, i) );
-
 	  		if ( curZ > image_getz(src, scan, i) ) {
 	  			if (ds->shade == ShadeConstant) {
 		  			image_setColorFunc( src, scan, i, ds->color );
 	  			} else if (ds->shade == ShadeDepth) {
+	  				printf("curZ:%.5f\n", curZ );
 		  			image_fillrgb( src, 
 		  				curZ*ds->color.c[0], 
 		  				curZ*ds->color.c[1], 

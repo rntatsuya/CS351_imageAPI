@@ -2,10 +2,10 @@
 
 #define LINE_H
 
-#define line_set(line, s, e)({
-  (line)->a = (s);\
-  (line)->b = (e);\
-})
+// #define line_set(line, s, e)({\
+//   (line)->a = (s);\
+//   (line)->b = (e);\
+// })
 
 // #define mult_2(a)(a<<1)
 
@@ -53,7 +53,7 @@ void point_print(Point *p, FILE *fp);
 
 void line_set2D(Line *line, double x1, double y1, double x2, double y2);
 
-// void line_set(Line *line, Point start, Point end);
+void line_set(Line *line, Point start, Point end);
 
 void line_zBuffer(Line *l, double flag);
 

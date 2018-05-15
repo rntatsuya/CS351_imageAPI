@@ -32,10 +32,10 @@ _DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h grap
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test7a test7b test7c kha1 kha2 ext cylinder pyramid sphere test8a 
+EXECUTABLES = test7a test7b test7c kha1 kha2 ext cylinder pyramid sphere test8a cubism
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test7a.o test7b.o test7c.o kha1.o kha2.o ext.o pyramid.o cylinder.o  sphere.o test8a.o
+_OBJ = test7a.o test7b.o test7c.o kha1.o kha2.o ext.o pyramid.o cylinder.o  sphere.o test8a.o cubism.o
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -85,6 +85,9 @@ sphere: $(ODIR)/sphere.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 test8a: $(ODIR)/test8a.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+cubism: $(ODIR)/cubism.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 .PHONY: clean

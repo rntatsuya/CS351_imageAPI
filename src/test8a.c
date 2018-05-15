@@ -6,7 +6,6 @@
 
   C Version
 */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -56,6 +55,7 @@ int main(int argc, char *argv[]) {
   module_color( cube, &Grey );
   module_cube( cube, 1);
 
+
   ds = drawstate_create();
   ds->shade = ShadeDepth;
 
@@ -71,5 +71,4 @@ int main(int argc, char *argv[]) {
   
 
   return(0);
-
 }

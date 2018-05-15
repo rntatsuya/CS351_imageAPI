@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 	color_set( &Blue, 50/255.0, 60/255.0, 200/255.0 );
 
   // initialize the image
-  src = image_create(rows, cols);
+  src = image_create(rows, cols, 255);
 
   // initialize matrices
   matrix_identity(&GTM);

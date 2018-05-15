@@ -124,32 +124,30 @@ void line_set2D(Line *line, double x1, double y1, double x2, double y2) {
   line->zBuffer = 1.0;
 } // end of line_set
 
-// void line_set (Line *line, Point start, Point end) {
-//   Point tmp1;
-//   Point tmp2;
+void line_set (Line *line, Point start, Point end) {
+  printf("line set\n");
+  point_print( &start, stdout );
+  point_print( &end, stdout );
+  printf("\n");
+  Point tmp1;
+  Point tmp2;
 
-//   tmp1.val[0] = start.val[0];
-//   tmp1.val[1] = start.val[1];
-//   tmp1.val[2] = start.val[2];
-//   tmp1.val[3] = start.val[3];
+  tmp1.val[0] = start.val[0];
+  tmp1.val[1] = start.val[1];
+  tmp1.val[2] = start.val[2];
+  tmp1.val[3] = start.val[3];
 
-//   tmp2.val[0] = end.val[0];
-//   tmp2.val[1] = end.val[1];
-//   tmp2.val[2] = end.val[2];
-//   tmp2.val[3] = end.val[3];
+  tmp2.val[0] = end.val[0];
+  tmp2.val[1] = end.val[1];
+  tmp2.val[2] = end.val[2];
+  tmp2.val[3] = end.val[3];
 
-//   line->a = tmp1;
-//   line->b = tmp2;
-// }
-
-//  initialize a line to ta and tb.
-// void line_set(Line *line, Point start, Point end) {
-//   line->a = start;
-//   line->b = end;
-// } // end of line_set
+  line->a = tmp1;
+  line->b = tmp2;
+}
 
 // – set the z-buffer flag to the given value.
-void line_zBuffer(Line *l, int flag) {
+void line_zBuffer(Line *l, double flag) {
   l->zBuffer = flag;
 }
 
@@ -285,19 +283,19 @@ void line_draw(Line *line, Image *src, Color color) {
   if (new_line.a.val[1] < new_line.b.val[1]) {
     c1 = new_line.b.val[0];
     r1 = new_line.b.val[1];
-    z1 = new_line.b.zBuffer;
+    z1 = new_line.zBuffer;
     c2 = new_line.a.val[0];
     r2 = new_line.a.val[1];
-    z2 = new_line.a.zBuffer;
+    z2 = new_line.zBuffer;
     reversed = 1;
   }
   else {
     c1 = new_line.a.val[0];
     r1 = new_line.a.val[1];
-    z1 = new_line.a.zBuffer;
+    z1 = new_line.zBuffer;
     c2 = new_line.b.val[0];
     r2 = new_line.b.val[1];
-    z2 = new_line.b.zBuffer;
+    z2 = new_line.zBuffer;
     reversed = 0;
   }
 //   printf("reversed: %d\n", reversed);
@@ -349,14 +347,14 @@ void line_draw(Line *line, Image *src, Color color) {
     if (m > 1) { // second octant
 //       printf("Second octant\n");
       init_z = src->data[r1*src->cols + c1].z; //// isn't taking into account clipping
-      d_1byz = (1/z1 - 1/z2)/dy2; ///// or is it dy2?????
+      d_1byZ = (1/z1 - 1/z2)/dy2; ///// or is it dy2?????
       e = 3*dx - dy2;
       for (i=dy; i--;) {
 	    if ( init_z > src->data[r1*src->cols + c1].z ) {
 	      src->data[r1*src->cols + c1].z = init_z;
 	      image_setColor(src, r1, c1, color);
 	    }
-	    init_z = init_z + d_1byz;
+	    init_z = init_z + d_1byZ;
 	    
 	    if (e > 0) { // step across
 	      c1 = c1 + 1;
@@ -369,14 +367,14 @@ void line_draw(Line *line, Image *src, Color color) {
     else if (m > 0) { // not > 1 but positive so first octant 
 //       printf("First octant\n");
       init_z = src->data[r1*src->cols + c1].z;
-      d_1byz = (1/z1 - 1/z2)/dx2; ///// or is it dx2?????
+      d_1byZ = (1/z1 - 1/z2)/dx2; ///// or is it dx2?????
       e = 3*dy - dx2;
       for (i=dx; i--;) {
         if ( init_z > src->data[r1*src->cols + c1].z ) {
 	      src->data[r1*src->cols + c1].z = init_z;
 	      image_setColor(src, r1, c1, color);
 	    }
-	    init_z = init_z + d_1byz;
+	    init_z = init_z + d_1byZ;
 	    
 	    if (e > 0) { // step up
 	      r1 = r1 - 1;
@@ -389,14 +387,14 @@ void line_draw(Line *line, Image *src, Color color) {
     else if (m < -1) { // third octant
 //       printf("Third octant\n");
       init_z = src->data[r2*src->cols + c2].z;
-      d_1byz = (1/z1 - 1/z2)/dy2; ///// or is it dx2?????
+      d_1byZ = (1/z1 - 1/z2)/dy2; ///// or is it dx2?????
       e = -3*dx - dy2;
       for (i=dy; i--; ) {
 	    if ( init_z > src->data[r2*src->cols + c2].z ) {
 	      src->data[r2*src->cols + c2].z = init_z;
 	      image_setColor(src, r2, c2, color);
 	    }
-	    init_z = init_z + d_1byz;
+	    init_z = init_z + d_1byZ;
 	    
 	    if (e > 0) { // step across
 	      c2 = c2 + 1;
@@ -410,14 +408,14 @@ void line_draw(Line *line, Image *src, Color color) {
     else if (m < 0) {
 //       printf("Fourth octant\n");
       init_z = src->data[r1*src->cols + c1].z;
-      d_1byz = (1/z1 - 1/z2)/dx2; ///// or is it dx2?????
+      d_1byZ = (1/z1 - 1/z2)/dx2; ///// or is it dx2?????
       e = 3*dy + dx2;
       for (i=-dx; i--;) {
 	    if ( init_z > src->data[r1*src->cols + c1].z ) {
 	      src->data[r1*src->cols + c1].z = init_z;
 	      image_setColor(src, r1, c1, color);
 	    }
-	    init_z = init_z + d_1byz;
+	    init_z = init_z + d_1byZ;
 
 	    if (e > 0) { // step across
 	      r1 = r1 - 1;
@@ -900,7 +898,7 @@ void polyline_clear(Polyline *p) {
 }
 
 // sets the z-buffer flag to the given value
-void polyline_zBuffer(Polyline *p, int flag) {
+void polyline_zBuffer(Polyline *p, double flag) {
   p->zBuffer = flag;
 }
 
@@ -922,9 +920,8 @@ void polyline_copy(Polyline *to, Polyline *from) {
   to->zBuffer = from->zBuffer;
   
   
-  for (i=0; i<from->numVertex; i++) {
+  for (i=0; i<from->numVertex; i++) 
     to->vertex[i] = from->vertex[i];
-  }
   
 // free source at a higher level
 //   free(from->vertex);

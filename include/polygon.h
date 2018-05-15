@@ -52,10 +52,10 @@ void polygon_setColors(Polygon *p, int numV, Color *clist);
 // initializes the vertex list to the points in vlist, the colors to the colors in clist, 
 // the normals to the vectors in nlist, and the zBuffer and oneSided flags 
 // to their respectively values.
-// void polygon_setAll(Polygon *p, int numV, Point *vlist, Color *clist, Vector *nlist, int zBuffer, int oneSided);
+void polygon_setAll(Polygon *p, int numV, Point *vlist, Color *clist, Vector *nlist, double zBuffer, int oneSided);
 
 // sets the z-buffer flag to the given value.
-void polygon_zBuffer(Polygon *p, int flag);
+void polygon_zBuffer(Polygon *p, double flag);
 
 // De-allocates/allocates space and copies the vertex and color data from one polygon to the other.
 void polygon_copy(Polygon *to, Polygon *from);

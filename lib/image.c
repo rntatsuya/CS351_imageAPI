@@ -27,6 +27,7 @@ Image *image_create(int rows, int cols, float maxval) {
   }
   
   Image *src = malloc(sizeof(Image));
+  int i; 
   
   if (!src) {
     printf("Ran out of memory while mallocing Image struct in image_create!\n");
