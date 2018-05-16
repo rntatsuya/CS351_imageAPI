@@ -13,5 +13,7 @@ double vector_length( Vector *v );
 void vector_normalize( Vector *v );
 double vector_dot( Vector *a, Vector *b );
 void vector_cross( Vector *a, Vector *b, Vector *c );
+void vector_add( Vector *a, Vector *b, Vector *c );
+void vector_elementwise_div( Vector *a, int n );
 
 #endif

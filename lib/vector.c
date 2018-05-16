@@ -59,3 +59,15 @@ void vector_cross( Vector *a, Vector *b, Vector *c ) {
 	c->val[1] = a->val[2]*b->val[0] - a->val[0]*b->val[2];
 	c->val[2] = a->val[0]*b->val[1] - a->val[1]*b->val[0];
 }
+
+void vector_add( Vector *a, Vector *b, Vector *c ) {
+	c->val[0] = a->val[0] + b->val[0];
+	c->val[1] = a->val[1] + b->val[1];
+	c->val[2] = a->val[2] + b->val[2];
+}
+
+void vector_elementwise_div( Vector *a, int n ) {
+	a->val[0] /= n;
+	a->val[1] /= n;
+	a->val[2] /= n;
+}
