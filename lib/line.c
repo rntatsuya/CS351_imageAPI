@@ -283,19 +283,27 @@ void line_draw(Line *line, Image *src, Color color) {
   if (new_line.a.val[1] < new_line.b.val[1]) {
     c1 = new_line.b.val[0];
     r1 = new_line.b.val[1];
-    z1 = new_line.zBuffer;
+    
     c2 = new_line.a.val[0];
     r2 = new_line.a.val[1];
-    z2 = new_line.zBuffer;
+    
+    if (line->zBuffer != 0) {
+      z1 = line->b.val[2];
+      z2 = line->a.val[2];
+    }
     reversed = 1;
   }
   else {
     c1 = new_line.a.val[0];
     r1 = new_line.a.val[1];
-    z1 = new_line.zBuffer;
+    
     c2 = new_line.b.val[0];
     r2 = new_line.b.val[1];
-    z2 = new_line.zBuffer;
+    
+    if (line->zBuffer != 0) {
+      z1 = line->a.val[2];
+      z2 = line->b.val[2];
+    }
     reversed = 0;
   }
 //   printf("reversed: %d\n", reversed);
@@ -319,18 +327,42 @@ void line_draw(Line *line, Image *src, Color color) {
   
   // vertical line
   if (dx == 0) {
+    if (line->zBuffer != 0) {
+        init_z = image_getz(src, r1, c1); //// isn't taking into account clipping
+        d_1byZ = (1/z1 - 1/z2)/dy; ///// or is it dy2?????
+    }
     // vertically color the right side of the line if reversed
     if (!reversed) {
       c1 = c1-1;
       for (i=dy; i--;) {
-        image_setColor(src, r1, c1, color);
+        if (line->zBuffer != 0) {
+  	      if ( init_z > image_getz(src, r1, c1) ) {
+  	        image_setz(src, r1, c1, init_z);
+	        image_setColor(src, r1, c1, color);
+	      }
+	    
+	      init_z = init_z + d_1byZ;
+	    } 
+	    else {
+          image_setColor(src, r1, c1, color);
+        }
         r1 = r1 - 1;
       }
     }
     // vertically color the left side of the line if not reversed
     else {
       for (i=dy; i--;) {
-        image_setColor(src, r1, c1, color);
+        if (line->zBuffer != 0) {
+  	      if ( init_z > image_getz(src, r1, c1) ) {
+  	        image_setz(src, r1, c1, init_z);
+	        image_setColor(src, r1, c1, color);
+	      }
+	    
+	      init_z = init_z + d_1byZ;
+	    } 
+	    else {
+          image_setColor(src, r1, c1, color);
+        }
         r1 = r1 - 1;
       }
     }
@@ -346,16 +378,24 @@ void line_draw(Line *line, Image *src, Color color) {
     
     if (m > 1) { // second octant
 //       printf("Second octant\n");
-      init_z = src->data[r1*src->cols + c1].z; //// isn't taking into account clipping
-      d_1byZ = (1/z1 - 1/z2)/dy2; ///// or is it dy2?????
+      
+      if (line->zBuffer != 0) {
+        init_z = image_getz(src, r1, c1); //// isn't taking into account clipping
+        d_1byZ = (1/z1 - 1/z2)/dy2; ///// or is it dy2?????
+      }
       e = 3*dx - dy2;
       for (i=dy; i--;) {
-	    if ( init_z > src->data[r1*src->cols + c1].z ) {
-	      src->data[r1*src->cols + c1].z = init_z;
+	    if (line->zBuffer != 0) {
+  	      if ( init_z > image_getz(src, r1, c1) ) {
+  	        image_setz(src, r1, c1, init_z);
+	        image_setColor(src, r1, c1, color);
+	      }
+	    
+	      init_z = init_z + d_1byZ;
+	    } 
+	    else {
 	      image_setColor(src, r1, c1, color);
 	    }
-	    init_z = init_z + d_1byZ;
-	    
 	    if (e > 0) { // step across
 	      c1 = c1 + 1;
 	      e = e - dy2;
@@ -366,16 +406,22 @@ void line_draw(Line *line, Image *src, Color color) {
     }
     else if (m > 0) { // not > 1 but positive so first octant 
 //       printf("First octant\n");
-      init_z = src->data[r1*src->cols + c1].z;
-      d_1byZ = (1/z1 - 1/z2)/dx2; ///// or is it dx2?????
+      if (line->zBuffer != 0) {
+        init_z = image_getz(src, r1, c1);
+        d_1byZ = (1/z1 - 1/z2)/dx2; ///// or is it dx2?????
+      }
       e = 3*dy - dx2;
       for (i=dx; i--;) {
-        if ( init_z > src->data[r1*src->cols + c1].z ) {
-	      src->data[r1*src->cols + c1].z = init_z;
-	      image_setColor(src, r1, c1, color);
+        if (line->zBuffer != 0) {
+          if ( init_z > image_getz(src, r1, c1) ) {
+	        image_setz(src, r1, c1, init_z);
+  	        image_setColor(src, r1, c1, color);
+	      }
+	      init_z = init_z + d_1byZ;
 	    }
-	    init_z = init_z + d_1byZ;
-	    
+	    else {
+  	      image_setColor(src, r1, c1, color);
+	    }
 	    if (e > 0) { // step up
 	      r1 = r1 - 1;
 	      e = e - dx2;
@@ -386,15 +432,22 @@ void line_draw(Line *line, Image *src, Color color) {
     }
     else if (m < -1) { // third octant
 //       printf("Third octant\n");
-      init_z = src->data[r2*src->cols + c2].z;
-      d_1byZ = (1/z1 - 1/z2)/dy2; ///// or is it dx2?????
+      if (line->zBuffer != 0) {
+        init_z = image_getz(src, r2, c2);
+        d_1byZ = (1/z1 - 1/z2)/dy2; ///// or is it dx2?????
+      }
       e = -3*dx - dy2;
       for (i=dy; i--; ) {
-	    if ( init_z > src->data[r2*src->cols + c2].z ) {
-	      src->data[r2*src->cols + c2].z = init_z;
+	    if (line->zBuffer != 0) {
+  	      if ( init_z > image_getz(src, r2, c2) ) {
+	        image_setz(src, r2, c2, init_z);
+	        image_setColor(src, r2, c2, color);
+	      }
+	      init_z = init_z + d_1byZ;
+	    }
+	    else {
 	      image_setColor(src, r2, c2, color);
 	    }
-	    init_z = init_z + d_1byZ;
 	    
 	    if (e > 0) { // step across
 	      c2 = c2 + 1;
@@ -407,16 +460,22 @@ void line_draw(Line *line, Image *src, Color color) {
     // fourth octant
     else if (m < 0) {
 //       printf("Fourth octant\n");
-      init_z = src->data[r1*src->cols + c1].z;
-      d_1byZ = (1/z1 - 1/z2)/dx2; ///// or is it dx2?????
+      if (line->zBuffer != 0) {
+        init_z = image_getz(src, r1, c1);
+        d_1byZ = (1/z1 - 1/z2)/dx2; ///// or is it dx2?????
+      }
       e = 3*dy + dx2;
       for (i=-dx; i--;) {
-	    if ( init_z > src->data[r1*src->cols + c1].z ) {
-	      src->data[r1*src->cols + c1].z = init_z;
-	      image_setColor(src, r1, c1, color);
-	    }
-	    init_z = init_z + d_1byZ;
-
+	    if (line->zBuffer != 0) {
+	      if ( init_z > image_getz(src, r1, c1) ) {
+	        image_setz(src, r1, c1, init_z);
+	        image_setColor(src, r1, c1, color);
+	      }
+	      init_z = init_z + d_1byZ;
+        }
+        else {
+          image_setColor(src, r1, c1, color);
+        }
 	    if (e > 0) { // step across
 	      r1 = r1 - 1;
 	      e = e + dx2;
@@ -427,10 +486,24 @@ void line_draw(Line *line, Image *src, Color color) {
     }
     else { // horizontal line where dy == 0
 //       printf("horizontal\n");
+      if (line->zBuffer != 0) {
+        init_z = image_getz(src, r1, c1);
+        d_1byZ = (1/z1 - 1/z2)/dx; ///// or is it dx2?????
+      }
       // horizontally color the top side of the line if dx > 0
       if (dx > 0) {
         for (i=dx; i--; ) {
+        if (line->zBuffer != 0) {
+  	      if ( init_z > image_getz(src, r1, c1) ) {
+  	        image_setz(src, r1, c1, init_z);
+	        image_setColor(src, r1, c1, color);
+	      }
+	    
+	      init_z = init_z + d_1byZ;
+	    } 
+	    else {
           image_setColor(src, r1, c1, color);
+        }
           c1 = c1 + 1;
         }
       }
@@ -441,7 +514,17 @@ void line_draw(Line *line, Image *src, Color color) {
         r1 = r1 + 1;
         c1 = c1 - 1;
         for (i=-dx; i--; ) {
+        if (line->zBuffer != 0) {
+  	      if ( init_z > image_getz(src, r1, c1) ) {
+  	        image_setz(src, r1, c1, init_z);
+	        image_setColor(src, r1, c1, color);
+	      }
+	    
+	      init_z = init_z + d_1byZ;
+	    } 
+	    else {
           image_setColor(src, r1, c1, color);
+        }
           c1 = c1 - 1;
         }
       }
