@@ -32,10 +32,10 @@ _DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h grap
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test7a test7b test7c kha1 kha2 ext cylinder pyramid sphere test8a cubism
+EXECUTABLES = test7a test7b test7c kha1proj7 kha2proj7 extproj7 cylinder pyramid sphere test8a cubism kha1proj8 kha2proj8 kha1proj9 kha2proj9
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test7a.o test7b.o test7c.o kha1.o kha2.o ext.o pyramid.o cylinder.o  sphere.o test8a.o cubism.o
+_OBJ = test7a.o test7b.o test7c.o kha1proj7.o kha2proj7.o extproj7.o pyramid.o cylinder.o sphere.o test8a.o cubism.o kha1proj8.o kha2proj8.o kha1proj9.o kha2proj9.o
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -57,6 +57,7 @@ all:
 
 # put the specific executable rules here
 
+# Project 7 
 test7a: $(ODIR)/test7a.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
@@ -66,13 +67,13 @@ test7b: $(ODIR)/test7b.o
 test7c: $(ODIR)/test7c.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
-kha1: $(ODIR)/kha1.o
+kha1proj7: $(ODIR)/kha1proj7.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
-kha2: $(ODIR)/kha2.o
+kha2proj7: $(ODIR)/kha2proj7.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
-ext: $(ODIR)/ext.o
+extproj7: $(ODIR)/extproj7.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 cylinder: $(ODIR)/cylinder.o
@@ -84,10 +85,24 @@ pyramid: $(ODIR)/pyramid.o
 sphere: $(ODIR)/sphere.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
+# Project 8
 test8a: $(ODIR)/test8a.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 cubism: $(ODIR)/cubism.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+kha1proj8: $(ODIR)/kha1proj8.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+	
+kha2proj8: $(ODIR)/kha2proj8.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+# Project 9 
+kha1proj9: $(ODIR)/kha1proj9.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+	
+kha2proj9: $(ODIR)/kha2proj9.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 .PHONY: clean

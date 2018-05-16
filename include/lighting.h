@@ -14,16 +14,16 @@ typedef enum {
 
 typedef struct {
 	LightType type;
-	Color color;
-	Vector direction;
-	Point position;
+	Color *color;
+	Vector *direction;
+	Point *position;
 	float cutoff; // stores the cosine of the cutoff angle of a spotlight
 	float sharpness; // coefficient of the falloff function (power for cosine)
 } Light;
 
 typedef struct {
 	int nLights;
-	Light light[MAX_LIGHTS];
+	Light *light[MAX_LIGHTS];
 } Lighting;
 
 void light_init( Light *light );

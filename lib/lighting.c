@@ -9,9 +9,9 @@
 
 void light_init( Light *light ) {
 	light->type = LightNone;
-	light->color = (Color)NULL;
-	light->direction = (Vector)NULL;
-	light->position = (Point)NULL;
+	light->color = (Color *)NULL;
+	light->direction = (Vector *)NULL;
+	light->position = (Point *)NULL;
 	light->cutoff = 0.0;
 	light->sharpness = 0.0;
 }
@@ -31,7 +31,7 @@ Lighting *lighting_create( void ) {
 	
 	int i;
 	for (i=0; i<MAX_LIGHTS; i++) {
-		l->light[i] = (Light)NULL;
+		l->light[i] = (Light *)NULL;
 	}
 // 	l->light 
 }
@@ -39,7 +39,7 @@ void lighting_init( Lighting *l ) {
 	l->nLights = 0;
 	int i;
 	for (i=0; i<MAX_LIGHTS; i++) {
-		l->light[i] = NULL;
+		l->light[i] = (Light *)NULL;
 	}
 }
 
