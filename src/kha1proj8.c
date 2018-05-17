@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
   Image *src;
   Matrix VTM;
   Matrix GTM;
-  Module *cube;
+  Module *cube, *scene;
   int rows = 360;
   int cols = 640;
 
@@ -49,10 +49,26 @@ int main(int argc, char *argv[]) {
 
   // make a simple cube module
   cube = module_create();
-  module_scale( cube, 1.5, 1.5, 1.5 );
-  // module_color( cube, &Neon );
+  module_color( cube, &Neon );
   module_cube( cube, 1 );
 
+  scene = module_create();
+  module_module( scene, cube );
+  
+  module_identity( scene );
+  module_scale( scene, 2, 2, 2 );
+  module_translate( scene, 1.5, 1.5, 0 );
+  module_module( scene, cube );
+
+  module_identity( scene );
+  module_scale( scene, 0.5, 0.5, 0.5 );
+  module_translate( scene, 3.0, 3.0, 0 );
+  module_module( scene, cube );
+
+  module_identity( scene );
+  module_scale( scene, 3, 3, 3 );
+  module_translate( scene, 0, -2, -2 );
+  module_module( scene, cube );
 
   ds = drawstate_create();
   ds->shade = ShadeDepth;
@@ -65,16 +81,11 @@ int main(int argc, char *argv[]) {
 
     matrix_identity(&GTM);
 
-    if ( i % 2 == 0 )
-	  	module_color( cube, &Neon );
-    else 
-	  	module_color( cube, &White );
-
     matrix_rotateY(&GTM, cos(i*2*M_PI/36.0), sin(i*2*M_PI/36.0));
     matrix_rotateX(&GTM, cos(i*4*M_PI/36.0), sin(i*4*M_PI/36.0));
     matrix_rotateZ(&GTM, cos(i*2*M_PI/36.0), sin(i*2*M_PI/36.0));
 
-    module_draw(cube, &VTM, &GTM, ds, NULL, src);
+    module_draw(scene, &VTM, &GTM, ds, NULL, src);
 
     // write out the image
     sprintf(buffer, "kha1proj8-%03d.ppm", i);

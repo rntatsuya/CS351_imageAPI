@@ -9,7 +9,7 @@ typedef enum {
 	LightAmbient,
 	LightDirect,
 	LightPoint,
-	LightSpot,
+	LightSpot
 } LightType;
 
 typedef struct {
@@ -26,11 +26,12 @@ typedef struct {
 	Light *light[MAX_LIGHTS];
 } Lighting;
 
-void light_init( Light *light );
-void light_copy( Light *to, Light *from );
 Lighting *lighting_create( void );
+void light_init( Light *light );
 void lighting_init( Lighting *l );
 void lighting_add( Lighting *l, LightType type, Color *c, Vector *dir, Point *pos, float cutoff, float sharpness );
+void light_copy( Light *to, Light *from );
+// one sided - 1; two sided - 0
 void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, Color *Cs, float s, int oneSided, Color *c );
 
 #endif

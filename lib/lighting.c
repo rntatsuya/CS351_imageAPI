@@ -36,12 +36,12 @@ Lighting *lighting_create( void ) {
 
 	return l;
 }
+
 void lighting_init( Lighting *l ) {
 	l->nLights = 0;
 	int i;
-	for (i=0; i<MAX_LIGHTS; i++) {
+	for (i=0; i<MAX_LIGHTS; i++)
 		l->light[i] = (Light *)NULL;
-	}
 }
 
 void lighting_add( Lighting *l, LightType type, Color *c, Vector *dir, Point *pos, float cutoff, float sharpness ) {
@@ -62,7 +62,11 @@ void lighting_add( Lighting *l, LightType type, Color *c, Vector *dir, Point *po
 
 void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, Color *Cs, float s, int oneSided, Color *c ) {
 	int i;
-	
+
+	// idk why bruce said to normalize an already normalized vector o_O
+	vector_normalize(N);
+	vector_normalize(V);
+
 	// do some summation in a loop through each light in the lighting light array
 	for (i=0; i<MAX_LIGHTS; i++) {
 		if (!l->light[i])
@@ -93,37 +97,52 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 				
 				break;
 			}
-			case LightPoint : {				
+			case LightPoint : {	
 				// calculate light vector (vector from Point p to light source position)
-				Vector *L = malloc(sizeof(Vector));
-				vector_set( L, l->light[i]->position->val[0] - p->val[0], 
-							l->light[i]->position->val[1] - p->val[1], 
-							l->light[i]->position->val[2] - p->val[2] );
-				
+				Vector L, H;
+				vector_set( &L, 
+						l->light[i]->position->val[0] - p->val[0], 
+						l->light[i]->position->val[1] - p->val[1], 
+						l->light[i]->position->val[2] - p->val[2] );
+				vector_normalize(&L);
+
+				float sharp = l->light[i]->sharpness;
+
+				double LdotN = vector_dot( &L, N );
+				if ((LdotN < 0) && (oneSided == 1))
+					continue;
+
+				double VdotN = vector_dot( V, N  );
+				if ((LdotN<0 && VdotN>0) || (LdotN>0 && VdotN<0))
+					continue;
+
 				// calculate halfway vector H
-				Vector *H = malloc(sizeof(Vector));
-				vector_add( L, V, H );
-				vector_elementwise_div(H, 2);
-				printf("H: %.2f %.2f %.2f\n",H->val[0], H->val[1], H->val[2]);
-				
-				// what value should we use for the smoothness coefficient??
+				vector_add( &L, V, &H );
+				vector_elementwise_div(&H, 2);
+				double HdotN = vector_dot( &H, N  );
+				if (LdotN < 0) {
+					LdotN *= (-1.0);
+					HdotN *= (-1.0);
+				}
+
+				// what value should we use for the smoothness coefficient?? => Use s in param or sharpness property of light struct?
 				if (r_sum < 1.0)
-					r_sum += Cb->c[0]*l->light[i]->color->c[0]*vector_dot( L, N ) 
-						+ l->light[i]->color->c[0]*Cs->c[0]*vector_dot( H, N );
+					r_sum += (Cb->c[0])*(l->light[i]->color->c[0])*LdotN 
+						+ (l->light[i]->color->c[0])*(Cs->c[0])*pow(HdotN,s);
+
 				if (g_sum < 1.0)
-					g_sum += Cb->c[1]*l->light[i]->color->c[1]*vector_dot( L, N ) 
-						+ l->light[i]->color->c[1]*Cs->c[1]*vector_dot( H, N );
+					g_sum += (Cb->c[1])*(l->light[i]->color->c[1])*LdotN 
+						+ (l->light[i]->color->c[1])*(Cs->c[1])*pow(HdotN,s);
+
 				if (b_sum < 1.0)			
-					b_sum += Cb->c[2]*l->light[i]->color->c[2]*vector_dot( L, N ) 
-						+ l->light[i]->color->c[2]*Cs->c[2]*vector_dot( H, N );
+					b_sum += (Cb->c[2])*(l->light[i]->color->c[2])*LdotN
+						+ (l->light[i]->color->c[2])*(Cs->c[2])*pow(HdotN,s);
 				
 				printf("point light %d: %.2f %.2f %.2f\n", i, r_sum, g_sum, b_sum);
 				
 				break;
 			}
 			case LightSpot : {
-// 				if ( < ) 
-				
 				
 				break;
 			}

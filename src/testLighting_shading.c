@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
 	point_set3D(&N, 0, 1, 0); // up
 	vector_set(&V, 1, 2, 3);
 	
+
 	l = lighting_create();
 	lighting_add( l, LightAmbient, &amb, NULL, NULL, 0, 0);
 
@@ -40,7 +41,7 @@ int main(int argc, char *argv[]) {
 
 	printf("Testing ambient + point light with point light source on same side as normal\n");
 	lighting_shading( l, &N, &V, &p, &Cb, &Cs, s, 1, &c );
-	
+
 	printf("c: %.2f %.2f %.2f\n", c.c[0], c.c[1], c.c[2] );
 
 

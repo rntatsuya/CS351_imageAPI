@@ -13,14 +13,16 @@ int main(int argc, char *argv[]) {
   Image *src;
   Matrix VTM;
   Matrix GTM;
-  Module *sun, *earth, *mercury, *venus, *mars, *jupiter, *saturn, *neptune, *uranus, *pluto;
+  Module *sun, *mars, *earth, *mercury, *venus;
   int rows = 600;
   int cols = 1000;
 
   Color Grey = {{0.6, 0.62, 0.64}};
   Color Yellow = {{1.0, 1.0, 0.0}};
-  Color Brown = {{102/255.0, 51/255.0, 0/255.0}};
-  Color Blue = {{0/255.0, 102/255.0, 204/255.0}};
+  Color Brown = {{166/255.0, 100/255.0, 0/255.0}};
+  Color Blue = {{0/255.0, 102/255.0, 240/255.0}};
+  Color White = {{ 191/255.0, 191/255.0, 191/255.0}};
+  Color Red = {{ 255.0/255.0, 0/255.0, 0/255.0}};
 
   DrawState *ds;
   View3D view;
@@ -59,55 +61,25 @@ int main(int argc, char *argv[]) {
   module_scale( mercury, 0.5, 0.5, 0.5 );
   module_translate( mercury, 2, 0, 0 ); 
   module_color( mercury, &Brown );
-  module_sphere( mercury, 5 );
+  module_sphere( mercury, 3 );
 
   venus = module_create();
-  module_scale( venus, 0.75, 0.75, 0.75 );
-  module_translate( venus, 3, 0, 0 ); 
-  module_color( venus, &Brown );
-  module_sphere( venus, 4 );
+  module_scale( venus, 0.4, 0.4, 0.4 );
+  module_translate( venus, 4, 0, 0 ); 
+  module_color( venus, &Grey );
+  module_sphere( venus, 3 );
 
   earth = module_create(); 
-  module_scale( earth, 1.5, 1.5, 1.5 );
+  module_scale( earth, 0.8, 0.8, 0.8 );
   module_translate( earth, 6, 0, 0 ); 
   module_color( earth, &Blue );
-  module_sphere( earth, 4 );
+  module_sphere( earth, 3 );
 
-  // mars = module_create(); 
-  // module_scale( mars, 1/208.0, 1/208.0, 1/208.0 );
-  // module_translate( mars, 3, 0, 0 ); 
-  // module_color( mars, &Brown );
-  // module_sphere( mars, 4 );
-
-  // jupiter = module_create(); 
-  // module_scale( jupiter, 1/9.68, 1/9.68, 1/9.68 );
-  // module_translate( jupiter, 3, 0, 0 ); 
-  // module_color( jupiter, &Brown );
-  // module_sphere( jupiter, 4 );
-
-  // saturn = module_create(); 
-  // module_scale( pluto, 1/11.4, 1/11.4, 1/11.4 );
-  // module_translate( saturn, 3, 0, 0 ); 
-  // module_color( saturn, &Brown );
-  // module_sphere( saturn, 4 );
-
-  // uranus = module_create(); 
-  // module_scale( uranus, 1/26.8, 1/26.8, 1/26.8 );
-  // module_translate( uranus, 3, 0, 0 ); 
-  // module_color( uranus, &Brown );
-  // module_sphere( uranus, 4 );
-
-  // neptune = module_create(); 
-  // module_scale( neptune, 1/27.7, 1/27.7, 1/27.7 );
-  // module_translate( neptune, 3, 0, 0 ); 
-  // module_color( neptune, &Brown );
-  // module_sphere( neptune, 4 );
-
-  // pluto = module_create(); 
-  // module_scale( pluto, 1/11.4, 1/11.4, 1/11.4 );
-  // module_translate( pluto, 3, 0, 0 ); 
-  // module_color( pluto, &Brown );
-  // module_sphere( pluto, 4 );
+  mars = module_create(); 
+  module_scale( mars, 0.25, 0.25, 0.25 );
+  module_translate( mars, 3, 0, 0 ); 
+  module_color( mars, &Blue );
+  module_sphere( mars, 3 );
 
   ds = drawstate_create();
   ds->shade = ShadeDepth;
@@ -127,12 +99,16 @@ int main(int argc, char *argv[]) {
     module_draw(mercury, &VTM, &GTM, ds, NULL, src);
 
     matrix_identity(&GTM);
-    matrix_rotateY(&GTM, cos(i*4*M_PI/36.0), sin(i*4*M_PI/36.0));
-    module_draw(mercury, &VTM, &GTM, ds, NULL, src);
+    matrix_rotateY(&GTM, cos(i*3*M_PI/36.0), sin(i*3*M_PI/36.0));
+    module_draw(venus, &VTM, &GTM, ds, NULL, src);
 
     matrix_identity(&GTM);
     matrix_rotateY(&GTM, cos(i*2*M_PI/36.0), sin(i*2*M_PI/36.0));
     module_draw(earth, &VTM, &GTM, ds, NULL, src);
+
+    matrix_identity(&GTM);
+    matrix_rotateY(&GTM, cos(i*2*M_PI/36.0), sin(i*2*M_PI/36.0));
+    module_draw(mars, &VTM, &GTM, ds, NULL, src);
 
     // write out the image
     sprintf(buffer, "kha2proj8-%03d.ppm", i);
@@ -140,9 +116,10 @@ int main(int argc, char *argv[]) {
   }
 
   // free stuff here
-  module_delete( earth );
-  module_delete( mercury );
   module_delete( sun );
+  module_delete( mercury );
+  module_delete( venus );
+  module_delete( earth );
   image_free( src );
   
   printf("Done with kha2proj8\n");

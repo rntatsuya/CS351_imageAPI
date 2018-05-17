@@ -32,10 +32,10 @@ _DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h grap
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test7a test7b test7c kha1proj7 kha2proj7 extproj7 cylinder pyramid sphere test8a cubism kha1proj8 kha2proj8 kha1proj9 kha2proj9 testLighting_shading
+EXECUTABLES = test7a test7b test7c kha1proj7 kha2proj7 extproj7 cylinder pyramid sphere test8a cubism kha1proj8 kha2proj8 kha1proj9 kha2proj9 testLighting_shading test9a test9d test9b test9c plyRead
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test7a.o test7b.o test7c.o kha1proj7.o kha2proj7.o extproj7.o pyramid.o cylinder.o sphere.o test8a.o cubism.o kha1proj8.o kha2proj8.o kha1proj9.o kha2proj9.o testLighting_shading.o
+_OBJ = test7a.o test7b.o test7c.o kha1proj7.o kha2proj7.o extproj7.o pyramid.o cylinder.o sphere.o test8a.o cubism.o kha1proj8.o kha2proj8.o kha1proj9.o kha2proj9.o testLighting_shading.o test9a.o test9d.o test9b.o test9c.o plyRead
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -73,16 +73,10 @@ kha1proj7: $(ODIR)/kha1proj7.o
 kha2proj7: $(ODIR)/kha2proj7.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
-extproj7: $(ODIR)/extproj7.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-
 cylinder: $(ODIR)/cylinder.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 pyramid: $(ODIR)/pyramid.o
-	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
-
-sphere: $(ODIR)/sphere.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 # Project 8
@@ -102,10 +96,32 @@ kha2proj8: $(ODIR)/kha2proj8.o
 testLighting_shading: $(ODIR)/testLighting_shading.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
+test9a: $(ODIR)/test9a.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+test9d: $(ODIR)/test9d.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+test9b: $(ODIR)/test9b.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+	
+test9c: $(ODIR)/test9c.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+plyRead: $(ODIR)/plyRead.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+	
 kha1proj9: $(ODIR)/kha1proj9.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	
 kha2proj9: $(ODIR)/kha2proj9.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+# Project 10
+sphere: $(ODIR)/sphere.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
+extproj7: $(ODIR)/extproj7.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 .PHONY: clean
