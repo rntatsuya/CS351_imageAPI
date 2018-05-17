@@ -49,6 +49,11 @@ void vector_normalize( Vector *v ) {
 }
 
 double vector_dot( Vector *a, Vector *b ) {
+	
+	printf("x: %.2f * %.2f = %.2f\n",a->val[0],b->val[0],a->val[0]*b->val[0]);
+	printf("y: %.2f * %.2f = %.2f\n",a->val[1],b->val[1],a->val[1]*b->val[1]);
+	printf("z: %.2f * %.2f = %.2f\n",a->val[2],b->val[2],a->val[2]*b->val[2]);
+	printf("return: %.2f\n", a->val[0]*b->val[0] + a->val[1]*b->val[1] + a->val[2]*b->val[2]);
 	return ( a->val[0]*b->val[0] 
 		+ a->val[1]*b->val[1] 
 		+ a->val[2]*b->val[2] );
@@ -67,6 +72,7 @@ void vector_add( Vector *a, Vector *b, Vector *c ) {
 }
 
 void vector_elementwise_div( Vector *a, int n ) {
+	printf("dividing %.2f, %.2f, %.2f by %d\n", a->val[0],a->val[1],a->val[2],n);
 	a->val[0] /= n;
 	a->val[1] /= n;
 	a->val[2] /= n;

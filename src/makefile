@@ -32,10 +32,10 @@ _DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h grap
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test7a test7b test7c kha1proj7 kha2proj7 extproj7 cylinder pyramid sphere test8a cubism kha1proj8 kha2proj8 kha1proj9 kha2proj9
+EXECUTABLES = test7a test7b test7c kha1proj7 kha2proj7 extproj7 cylinder pyramid sphere test8a cubism kha1proj8 kha2proj8 kha1proj9 kha2proj9 testLighting_shading
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test7a.o test7b.o test7c.o kha1proj7.o kha2proj7.o extproj7.o pyramid.o cylinder.o sphere.o test8a.o cubism.o kha1proj8.o kha2proj8.o kha1proj9.o kha2proj9.o
+_OBJ = test7a.o test7b.o test7c.o kha1proj7.o kha2proj7.o extproj7.o pyramid.o cylinder.o sphere.o test8a.o cubism.o kha1proj8.o kha2proj8.o kha1proj9.o kha2proj9.o testLighting_shading.o
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
@@ -99,6 +99,9 @@ kha2proj8: $(ODIR)/kha2proj8.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 
 # Project 9 
+testLighting_shading: $(ODIR)/testLighting_shading.o
+	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
+
 kha1proj9: $(ODIR)/kha1proj9.o
 	$(CC) -o $(BINDIR)/$@ $^ $(LFLAGS) $(LIBS)
 	

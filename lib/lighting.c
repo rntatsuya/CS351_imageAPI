@@ -33,7 +33,8 @@ Lighting *lighting_create( void ) {
 	for (i=0; i<MAX_LIGHTS; i++) {
 		l->light[i] = (Light *)NULL;
 	}
-// 	l->light 
+
+	return l;
 }
 void lighting_init( Lighting *l ) {
 	l->nLights = 0;
@@ -44,24 +45,19 @@ void lighting_init( Lighting *l ) {
 }
 
 void lighting_add( Lighting *l, LightType type, Color *c, Vector *dir, Point *pos, float cutoff, float sharpness ) {
-	
-	int i;
-	for (i=0; i<MAX_LIGHTS; i++) {
-		if (l->light[i]) 
-			continue;
-		else {
-			Light *light = malloc(sizeof(Light));
-	
-			light->type = type;
-			light->color = *c;
-			light->direction = *dir;
-			light->position = *pos;
-			light->cutoff = cutoff;
-			light->sharpness = sharpness;
-			l->light[i] = &light;
-			break;
-		}
+
+	if (l->nLights < MAX_LIGHTS) {
+		Light *light = malloc(sizeof(Light));
+		light->type = type;
+		light->color = c;
+		light->direction = dir;
+		light->position = pos;
+		light->cutoff = cutoff;
+		light->sharpness = sharpness;
+		l->light[l->nLights] = light;
+		l->nLights++;
 	}
+	
 }
 
 void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, Color *Cs, float s, int oneSided, Color *c ) {
@@ -76,40 +72,53 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 		float g_sum = 0.0;
 		float b_sum = 0.0;
 		
-		switch (l->light[i].type) {
+		switch (l->light[i]->type) {
 			case LightNone : {
 				
 				break;
 			}
 			case LightAmbient : {
 				if (r_sum < 1.0)
-					r_sum += l->light[i].color.c[0] * Cb->c[0];
+					r_sum += l->light[i]->color->c[0] * Cb->c[0];
 				if (g_sum < 1.0)
-					g_sum += l->light[i].color.c[1] * Cb->c[1];
+					g_sum += l->light[i]->color->c[1] * Cb->c[1];
 				if (b_sum < 1.0)
-					b_sum += l->light[i].color.c[2] * Cb->c[2];
+					b_sum += l->light[i]->color->c[2] * Cb->c[2];
+				
+				printf("ambient light %d: %.2f %.2f %.2f\n", i, r_sum, g_sum, b_sum);
+				
 				break;
 			}
 			case LightDirect : {
 				
 				break;
 			}
-			case LightPoint : {
+			case LightPoint : {				
+				// calculate light vector (vector from Point p to light source position)
+				Vector *L = malloc(sizeof(Vector));
+				vector_set( L, l->light[i]->position->val[0] - p->val[0], 
+							l->light[i]->position->val[1] - p->val[1], 
+							l->light[i]->position->val[2] - p->val[2] );
+				
 				// calculate halfway vector H
 				Vector *H = malloc(sizeof(Vector));
-				vector_add( &l->light[i].direction, V, H );
+				vector_add( L, V, H );
 				vector_elementwise_div(H, 2);
+				printf("H: %.2f %.2f %.2f\n",H->val[0], H->val[1], H->val[2]);
 				
 				// what value should we use for the smoothness coefficient??
 				if (r_sum < 1.0)
-					r_sum += Cb->c[0]*l->light[i].color.c[0]*vector_dot( &(l->light[i].direction), N ) 
-						+ l->light[i].color.c[0]*Cs->c[0]*vector_dot( H, N );
+					r_sum += Cb->c[0]*l->light[i]->color->c[0]*vector_dot( L, N ) 
+						+ l->light[i]->color->c[0]*Cs->c[0]*vector_dot( H, N );
 				if (g_sum < 1.0)
-					g_sum += Cb->c[1]*l->light[i].color.c[1]*vector_dot( &(l->light[i].direction), N ) 
-						+ l->light[i].color.c[1]*Cs->c[1]*vector_dot( H, N );
+					g_sum += Cb->c[1]*l->light[i]->color->c[1]*vector_dot( L, N ) 
+						+ l->light[i]->color->c[1]*Cs->c[1]*vector_dot( H, N );
 				if (b_sum < 1.0)			
-					b_sum += Cb->c[2]*l->light[i].color.c[2]*vector_dot( &(l->light[i].direction), N ) 
-						+ l->light[i].color.c[2]*Cs->c[2]*vector_dot( H, N );
+					b_sum += Cb->c[2]*l->light[i]->color->c[2]*vector_dot( L, N ) 
+						+ l->light[i]->color->c[2]*Cs->c[2]*vector_dot( H, N );
+				
+				printf("point light %d: %.2f %.2f %.2f\n", i, r_sum, g_sum, b_sum);
+				
 				break;
 			}
 			case LightSpot : {
@@ -127,6 +136,10 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 			g_sum = 1.0;
 		if (b_sum > 1.0)
 			b_sum = 1.0;
+		
+		c->c[0] = r_sum;
+		c->c[1] = g_sum;
+		c->c[2] = b_sum;		
 	}
 
 }
