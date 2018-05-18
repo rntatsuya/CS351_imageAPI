@@ -801,6 +801,7 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 						polygon_shade(&temp, lighting, ds);
 					}
 					int i;
+					printf("colors from polygon_shade\n");
 					for (i=0; i<temp.nVertex; i++) {
 						color_print(&temp.color[i], stdout);
 					}
@@ -998,10 +999,14 @@ void module_cube(Module *md, int solid) {
 		printf("rotated\n");
 
 		polygon_init( &p );
-		point_set3D( &pt[0], 0, 0, 0 );
-		point_set3D( &pt[1], 1, 0, 0 );
-		point_set3D( &pt[2], 1, 1, 0 );
-		point_set3D( &pt[3], 0, 1, 0 );
+// 		point_set3D( &pt[0], 0, 0, 0 );
+// 		point_set3D( &pt[1], 1, 0, 0 );
+// 		point_set3D( &pt[2], 1, 1, 0 );
+// 		point_set3D( &pt[3], 0, 1, 0 );
+		point_set3D( &pt[0], -0.5, -0.5, -0.5 );
+		point_set3D( &pt[1], 0.5, -0.5, -0.5 );
+		point_set3D( &pt[2], 0.5, 0.5, -0.5 );
+		point_set3D( &pt[3], -0.5, 0.5, -0.5 );
 		polygon_set( &p, 4, pt );
 		for(i=0;i<4;i++) {
 			vector_set( &(n[i]), 0, 0, -1 );
@@ -1016,10 +1021,14 @@ void module_cube(Module *md, int solid) {
 
 		printf("added first\n");
 
-		point_set3D( &pt[0], 1, 0, 0 );
-		point_set3D( &pt[1], 1, 0, 1 );
-		point_set3D( &pt[2], 1, 1, 1 );
-		point_set3D( &pt[3], 1, 1, 0 );
+// 		point_set3D( &pt[0], 1, 0, 0 );
+// 		point_set3D( &pt[1], 1, 0, 1 );
+// 		point_set3D( &pt[2], 1, 1, 1 );
+// 		point_set3D( &pt[3], 1, 1, 0 );
+		point_set3D( &pt[0], 0.5, -0.5, -0.5 );
+		point_set3D( &pt[1], 0.5, -0.5, 0.5 );
+		point_set3D( &pt[2], 0.5, 0.5, 0.5 );
+		point_set3D( &pt[3], 0.5, 0.5, -0.5 );
 		polygon_set( &p, 4, pt );
 		for(i=0;i<4;i++)
 			vector_set( &(n[i]), 1, 0, 0 );
@@ -1028,10 +1037,14 @@ void module_cube(Module *md, int solid) {
 
 		printf("added 2\n");
 
-		point_set3D( &pt[0], 1, 0, 1 );
-		point_set3D( &pt[1], 0, 0, 1 );
-		point_set3D( &pt[2], 0, 1, 1 );
-		point_set3D( &pt[3], 1, 1, 1 );
+// 		point_set3D( &pt[0], 1, 0, 1 );
+// 		point_set3D( &pt[1], 0, 0, 1 );
+// 		point_set3D( &pt[2], 0, 1, 1 );
+// 		point_set3D( &pt[3], 1, 1, 1 );
+		point_set3D( &pt[0], 0.5, -0.5, 0.5 );
+		point_set3D( &pt[1], -0.5, -0.5, 0.5 );
+		point_set3D( &pt[2], -0.5, 0.5, 0.5 );
+		point_set3D( &pt[3], 0.5, 0.5, 0.5 );
 		polygon_set( &p, 4, pt );
 		for(i=0;i<4;i++)
 			vector_set( &(n[i]), 0, 0, 1 );
@@ -1040,10 +1053,14 @@ void module_cube(Module *md, int solid) {
 
 		printf("added 3\n");
 
-		point_set3D( &pt[0], 0, 0, 0 );
-		point_set3D( &pt[1], 0, 0, 1 );
-		point_set3D( &pt[2], 0, 1, 1 );
-		point_set3D( &pt[3], 0, 1, 0 );
+// 		point_set3D( &pt[0], 0, 0, 0 );
+// 		point_set3D( &pt[1], 0, 0, 1 );
+// 		point_set3D( &pt[2], 0, 1, 1 );
+// 		point_set3D( &pt[3], 0, 1, 0 );
+		point_set3D( &pt[0], -0.5, -0.5, -0.5 );
+		point_set3D( &pt[1], -0.5, -0.5, 0.5 );
+		point_set3D( &pt[2], -0.5, 0.5, 0.5 );
+		point_set3D( &pt[3], -0.5, 0.5, -0.5 );
 		polygon_set( &p, 4, pt );
 		for(i=0;i<4;i++)
 			vector_set( &(n[i]), -1, 0, 0 );
@@ -1051,10 +1068,14 @@ void module_cube(Module *md, int solid) {
 		module_polygon( md, &p );
 
 		// Top
-		point_set3D( &pt[0], 0, 1, 0 );
-		point_set3D( &pt[1], 0, 1, 1 );
-		point_set3D( &pt[2], 1, 1, 1 );
-		point_set3D( &pt[3], 1, 1, 0 );
+// 		point_set3D( &pt[0], 0, 1, 0 );
+// 		point_set3D( &pt[1], 0, 1, 1 );
+// 		point_set3D( &pt[2], 1, 1, 1 );
+// 		point_set3D( &pt[3], 1, 1, 0 );
+		point_set3D( &pt[0], -0.5, 0.5, -0.5 );
+		point_set3D( &pt[1], -0.5, 0.5, 0.5 );
+		point_set3D( &pt[2], 0.5, 0.5, 0.5 );
+		point_set3D( &pt[3], 0.5, 0.5, -0.5 );
 		polygon_set( &p, 4, pt );
 		for(i=0;i<4;i++)
 			vector_set( &(n[i]), 0, 1, 0 );
@@ -1062,10 +1083,14 @@ void module_cube(Module *md, int solid) {
 		module_polygon( md, &p );
 
 		// Bottom
-		point_set3D( &pt[0], 0, 0, 0 );
-		point_set3D( &pt[1], 1, 0, 0 );
-		point_set3D( &pt[2], 1, 0, 1 );
-		point_set3D( &pt[3], 0, 0, 1 );
+// 		point_set3D( &pt[0], 0, 0, 0 );
+// 		point_set3D( &pt[1], 1, 0, 0 );
+// 		point_set3D( &pt[2], 1, 0, 1 );
+// 		point_set3D( &pt[3], 0, 0, 1 );
+		point_set3D( &pt[0], -0.5, -0.5, -0.5 );
+		point_set3D( &pt[1], 0.5, -0.5, -0.5 );
+		point_set3D( &pt[2], 0.5, -0.5, 0.5 );
+		point_set3D( &pt[3], -0.5, -0.5, 0.5 );
 		polygon_set( &p, 4, pt );
 		for(i=0;i<4;i++)
 			vector_set( &(n[i]), 0, -1, 0 );

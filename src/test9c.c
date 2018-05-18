@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
   }
 
   // initialize the image
-  src = image_create(rows, cols);
+  src = image_create(rows, cols, 255);
 
   // initialize matrices
   matrix_identity(&GTM);

@@ -16,6 +16,7 @@
 #include "drawstate.h"
 #include "lighting.h"
 #include "bezier.h"
+#include "plyRead.h"
 
 /* "Higher level code that didn't/couldn't belong elsewhere" */
 

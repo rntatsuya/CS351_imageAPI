@@ -26,16 +26,16 @@ LIBS = -lm -limageIO
 LFLAGS = -L$(LIBDIR)
 
 # put all of the relevant include files here
-_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h graphics.h vector.h matrix.h view.h module.h drawstate.h lighting.h bezier.h 
+_DEPS = ppmIO.h image.h fractals.h color.h line.h circle.h polygon.h list.h graphics.h vector.h matrix.h view.h module.h drawstate.h lighting.h bezier.h plyRead.h
 
 # convert them to point to the right place
 DEPS = $(patsubst %,$(INCDIR)/%,$(_DEPS))
 
 # put a list of the executables here
-EXECUTABLES = test7a test7b test7c kha1proj7 kha2proj7 extproj7 cylinder pyramid sphere test8a cubism kha1proj8 kha2proj8 kha1proj9 kha2proj9 testLighting_shading test9a test9d test9b test9c plyRead
+EXECUTABLES = test7a test7b test7c kha1proj7 kha2proj7 extproj7 cylinder pyramid sphere test8a cubism kha1proj8 kha2proj8 kha1proj9 kha2proj9 testLighting_shading test9a test9d test9b test9c 
 
 # put a list of all the object files here for all executables (with .o endings)
-_OBJ = test7a.o test7b.o test7c.o kha1proj7.o kha2proj7.o extproj7.o pyramid.o cylinder.o sphere.o test8a.o cubism.o kha1proj8.o kha2proj8.o kha1proj9.o kha2proj9.o testLighting_shading.o test9a.o test9d.o test9b.o test9c.o plyRead
+_OBJ = test7a.o test7b.o test7c.o kha1proj7.o kha2proj7.o extproj7.o pyramid.o cylinder.o sphere.o test8a.o cubism.o kha1proj8.o kha2proj8.o kha1proj9.o kha2proj9.o testLighting_shading.o test9a.o test9d.o test9b.o test9c.o 
 
 # convert them to point to the right place
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))

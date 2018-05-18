@@ -381,7 +381,7 @@ int main(int argc, char *argv[]) {
   module_module( scene, body );
 
   // image
-  src = image_create( view.screeny, view.screenx );
+  src = image_create( view.screeny, view.screenx, 255 );
   ds = drawstate_create();
   point_copy(&(ds->viewer), &(view.vrp) );
   ds->shade = ShadeGouraud;

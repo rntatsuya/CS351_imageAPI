@@ -22,7 +22,7 @@ typedef struct tEdge {
 	int yStart, yEnd;               	/* start row and end row */
 	float xIntersect, dxPerScan, zIntersect, dzPerScan;    
 	struct tEdge *next;
-	Color color, cIntersect, dcPerScan;
+	Color cIntersect, dcPerScan;
 } Edge;
 
 
@@ -113,6 +113,7 @@ static Edge *makeEdgeRec( Point start, Point end, Color c1, Color c2, Image *src
 	if (edge->y1 - (int)edge->y1 >= 0.5) {
 		edge->xIntersect = edge->x0 + (edge->yStart + 0.5 - edge->y0) * edge->dxPerScan;
 		edge->zIntersect = edge->z0 + (edge->yStart + 0.5 - edge->y0) * edge->dzPerScan;
+		
 // 		edge->zIntersect = 1/(start.val[2] + (edge->yStart + 0.5 - edge->y0) * edge->dzPerScan);
 	} else {
 		edge->xIntersect = edge->x0 + (edge->yStart + 1.5 - edge->y0) * edge->dxPerScan;
@@ -123,7 +124,8 @@ static Edge *makeEdgeRec( Point start, Point end, Color c1, Color c2, Image *src
 	edge->cIntersect.c[1] = c1.c[1] / start.val[2];
 	edge->cIntersect.c[2] = c1.c[2] / start.val[2];
 	
-// 	printf("edge->zIntersect: %.5f\n",edge->zIntersect);
+	printf("edge->cIntersect: ");
+	color_print(&edge->cIntersect, stdout);
 	
 	// Move the intersections down to scanline zero
 	if ( edge->y0 < 0 ) {
@@ -192,6 +194,7 @@ static LinkedList *setupEdgeList( Polygon *p, Image *src, DrawState *ds ) {
 				ll_insert( edges, edge, compYStart );
 		}
 		v1 = v2;
+		c1 = c2;
 	}
 
 	// check for empty edges (like nothing in the viewport)
@@ -209,6 +212,7 @@ static LinkedList *setupEdgeList( Polygon *p, Image *src, DrawState *ds ) {
  */
 static void fillScan( int scan, LinkedList *active, Image *src, DrawState *ds ) {
   Edge *p1, *p2;
+  Color actualColor;
 
 	// loop over the list
   p1 = ll_head( active );
@@ -240,6 +244,9 @@ static void fillScan( int scan, LinkedList *active, Image *src, DrawState *ds ) 
 		int start = p1->xIntersect;
 		if ( start < 0 ) {
 			curZ += dzPerColumn*start;
+// 			curC.c[0] = curC.c[0]/curZ + dcPerColumn_R*start;
+// 			curC.c[1] = curC.c[1]/curZ + dcPerColumn_G*start;
+// 			curC.c[2] = curC.c[2]/curZ + dcPerColumn_B*start;		
 			curC.c[0] += dcPerColumn_R*start;
 			curC.c[1] += dcPerColumn_G*start;
 			curC.c[2] += dcPerColumn_B*start;
@@ -265,7 +272,14 @@ static void fillScan( int scan, LinkedList *active, Image *src, DrawState *ds ) 
 //                   image_setc(src, scan, i, 1, 1-1/curZ);
 //                   image_setc(src, scan, i, 2, 1-1/curZ);
 		  		} else if (ds->shade == ShadeGouraud) {
-		  			image_setColorFunc(src, scan, i, curC);
+		  			actualColor.c[0] = curC.c[0] / curZ;
+		  			actualColor.c[1] = curC.c[1] / curZ;
+		  			actualColor.c[2] = curC.c[2] / curZ;
+// 		  			actualColor.c[0] = curC.c[0] * curZ;
+// 		  			actualColor.c[1] = curC.c[1] * curZ;
+// 		  			actualColor.c[2] = curC.c[2] * curZ;
+
+		  			image_setColorFunc(src, scan, i, actualColor);
 		  		}
 		  		image_setz(src, scan, i, curZ);
 		  	}
@@ -375,6 +389,9 @@ static int processEdgeList( LinkedList *edges, Image *src, DrawState *ds ) {
 				// update the edge information with the dPerScan values
 				tedge->xIntersect += tedge->dxPerScan;
 				tedge->zIntersect += tedge->dzPerScan;
+				tedge->cIntersect.c[0] += tedge->dcPerScan.c[0];
+				tedge->cIntersect.c[1] += tedge->dcPerScan.c[1];
+				tedge->cIntersect.c[2] += tedge->dcPerScan.c[2];
 
 				// adjust in the case of partial overlap
 				if( tedge->dxPerScan < 0.0 && tedge->xIntersect < tedge->x1 ) {
