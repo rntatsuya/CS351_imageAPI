@@ -16,12 +16,21 @@ typedef enum {			// Determines how an object is drawn into the image
 
 typedef struct {		// Specifies how object is drawn into the image
 	Color color;		// Foreground color, used in the default drawing mode
-	ShadeMethod shade;	
-	Point *viewer;		// Point representing the view location in 3D (Like VRP in 3D)
+	Color flatColor;
+	Color body;
+	Color surface; 
+	float surfaceCoeff;
+	ShadeMethod shade;
+	int zBufferFlag;	
+	Point viewer;		// Point representing the view location in 3D (Like VRP in 3D)
 } DrawState;			
 
 DrawState *drawstate_create( void );
 void drawstate_setColor( DrawState *s, Color c );
+void drawstate_setBody( DrawState *s, Color c );
+void drawstate_setSurface( DrawState *s, Color c );
+void drawstate_setSurfaceCoeff( DrawState *s, float f );
 void drawstate_copy( DrawState *to, DrawState *from );
+
 
 #endif

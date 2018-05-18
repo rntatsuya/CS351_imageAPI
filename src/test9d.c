@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 	point_set(&V, 0.0, 4.0, 0.0, 1.0);
 	point_set(&lp, 1.0, 5.0, 1.0, 1.0);
 
-  src = image_create(rows, cols);
+  src = image_create(rows, cols, 255);
 
   // add an ambient light and a point light, slightly below and to the right of the viewer
   l = lighting_create();

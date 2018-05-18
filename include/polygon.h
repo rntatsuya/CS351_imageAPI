@@ -81,6 +81,8 @@ void polygon_drawFillB(Polygon *p, Image *src, Color c);
 
 void polygon_drawFillBGradient(Polygon *p, Image *src, Color c1, Color c2, Color c3);
 
+void polygon_shade(Polygon *p, Lighting *lighting, DrawState *ds);
+
 // draw the filled polygon using the given DrawState. The shade field of the DrawState 
 // determines how the polygon should be rendered. The Lighting parameter should be NULL 
 // unless you are doing Phong shading

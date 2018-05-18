@@ -20,22 +20,22 @@ void subdivide2( Module *mod, Point p1, Point p2, Point p3, int lvl );
 
 Element *element_create( void ) {
 	Element *e = malloc(sizeof(Element));
-	
+
 	if (!e) {
     	printf("Ran out of memory while mallocing Element pointer in element_create!\n");
     	exit(-1);
 	}
-	
+
 	e->type = ObjNone;
-	e->obj = (Object)NULL; 
+	e->obj = (Object)NULL;
 	e->next = NULL;
-	
+
 	return e;
 }
 
 Element *element_init( ObjectType type, void *obj ) {
 	Element *e = malloc(sizeof(Element));
-	
+
 	if (!e) {
     	printf("Ran out of memory while mallocing Element pointer in element_create!\n");
     	exit(-1);
@@ -50,38 +50,39 @@ Element *element_init( ObjectType type, void *obj ) {
 				copyObj = (Object)NULL;
 				break;
 			}
-		
+
 		case ObjPoint :
 			{
 				point_copy( &copyObj.point, obj );
 				break;
 			}
-		
+
 		case ObjLine :
 			{
 				line_copy( &copyObj.line, obj );
 				break;
 			}
-			
+
 		case ObjPolyline :
 			{
 				polyline_copy( &copyObj.polyline, obj);
 				break;
 			}
-		
+
 		case ObjPolygon :
 			{
-// 				printf("in element_init, copying polygon\n");
+				printf("in element_init, copying polygon\n");
 				polygon_copy( &copyObj.polygon, obj);
+				printf("done copying\n");
 				break;
 			}
-		
+
 		case ObjIdentity :
 			{
 				matrix_identity( &copyObj.matrix );
 				break;
 			}
-		
+
 		case ObjMatrix :
 			{
 				matrix_copy( &copyObj.matrix, obj );
@@ -90,40 +91,42 @@ Element *element_init( ObjectType type, void *obj ) {
 
 		case ObjColor :
 			{
-				color_set( &copyObj.color, 
-					((Color *)obj)->c[0], 
-					((Color *)obj)->c[1], 
+				color_set( &copyObj.color,
+					((Color *)obj)->c[0],
+					((Color *)obj)->c[1],
 					((Color *)obj)->c[2] );
 				break;
 			}
-		
+
 		case ObjBodyColor :
 			{
-				color_set( &copyObj.color, 
-					((Color *)obj)->c[0], 
-					((Color *)obj)->c[1], 
+				printf("hsiais\n");
+				color_set( &copyObj.color,
+					((Color *)obj)->c[0],
+					((Color *)obj)->c[1],
 					((Color *)obj)->c[2] );
 				break;
 			}
-		
+
 		case ObjSurfaceColor :
 			{
-				color_set( &copyObj.color, 
-					((Color *)obj)->c[0], 
-					((Color *)obj)->c[1], 
+
+				color_set( &copyObj.color,
+					((Color *)obj)->c[0],
+					((Color *)obj)->c[1],
 					((Color *)obj)->c[2] );
 				break;
 			}
-		
+
 		case ObjSurfaceCoeff :
 			{
-				copyObj.coeff = *(float*)obj; 
+				copyObj.coeff = *(float*)obj;
 				break;
 			}
-		
+
 		case ObjLight :
 			{
-				copyObj = (Object)NULL; 
+				copyObj = (Object)NULL;
 				break;
 			}
 
@@ -134,11 +137,11 @@ Element *element_init( ObjectType type, void *obj ) {
 				break;
 			}
 	}
-	
+
 	e->type = type;
-	e->next = NULL; 
+	e->next = NULL;
 	e->obj = copyObj;
-	
+
 	return e;
 }
 
@@ -148,53 +151,53 @@ void element_delete( Element *e ) {
 		case ObjNone:
 			// Not sure what to free here
 			break;
-		
+
 		case ObjPoint:
 			{
 				free(&(e->obj.point));
 				break;
 			}
-		
+
 		case ObjLine:
 			{
 				free(&(e->obj.line));
 				break;
 			}
-		
+
 		case ObjPolyline:
 			{
 				polyline_clear(&(e->obj.polyline));
 				break;
 			}
-		
+
 		case ObjPolygon:
 			{
 				polygon_clear(&(e->obj.polygon));
 				break;
 			}
-		
+
 		case ObjIdentity: case ObjMatrix:
 			{
 				free(&(e->obj.matrix));
 				break;
 			}
-		
+
 		case ObjColor: case ObjBodyColor: case ObjSurfaceColor:
 			{
 				free(&(e->obj.color));
 				break;
 			}
-		
+
 		case ObjSurfaceCoeff:
 			{
 				free(&(e->obj.coeff));
 				break;
 			}
-		
+
 		case ObjLight:
 			{
-				// if (e->obj.polyline) 
-					// No light property in Object 
+				// if (e->obj.polyline)
+					// No light property in Object
 					// free(e->obj.light);
 				break;
 			}
@@ -206,28 +209,28 @@ void element_delete( Element *e ) {
 			}
 	}
 
-	if (e) 
+	if (e)
 		free(e);
 }
 
 Module *module_create( void ) {
 	Module *md = malloc(sizeof(Module));
-	
+
 	md->head = NULL;
 	md->tail = NULL;
-	
+
 	return md;
 }
 
 void module_clear( Module *md ) {
 	Element *cur_e = md->head;
 	Element *temp;
-	
+
 	// loop till we get a NULL for the next pointer
 	while (cur_e->next) {
 		temp = cur_e;
-		
-		
+
+
 		cur_e = temp->next;
 	}
 }
@@ -254,14 +257,16 @@ void module_insert( Module *md, Element *e ) {
 		return;
 	}
 
+	printf("in module_insert\n");
+
 	Element *cur_e = md->head;
-	
+
 // 	printf("in module_insert, going to traverse down\n");
 	// loop till we get a NULL for the next pointer
 	while (cur_e->next) {
 		cur_e = cur_e->next;
 	}
-	
+
 // 	printf("in module_insert, setting last element in md to new element\n");
 	cur_e->next = e;
 	md->tail = e;
@@ -284,7 +289,7 @@ void module_point( Module *md, Point *p ) {
 void module_line( Module *md, Line *p ) {
 	Element *e;
 	e = element_init( ObjLine, p );
-	
+
 	module_insert( md, e );
 }
 
@@ -297,10 +302,10 @@ void module_polyline( Module *md, Polyline *p ) {
 
 void module_polygon( Module *md, Polygon *p ) {
 	Element *e;
-// 	printf("in module_polygon, initializing e\n");
+	printf("in module_polygon, initializing e\n");
 	e = element_init( ObjPolygon, p );
-	
-// 	printf("in module_polygon, inserting e into md\n");
+
+	printf("in module_polygon, inserting e into md\n");
 	module_insert( md, e );
 }
 
@@ -314,7 +319,7 @@ void module_identity( Module *md ) {
 	module_insert( md, e );
 }
 
-void module_color(Module *md, Color *c) { 
+void module_color(Module *md, Color *c) {
 	// Adds fg color value to tail of module LL
 	Element *e;
 	Color tempColor;
@@ -325,12 +330,43 @@ void module_color(Module *md, Color *c) {
 	module_insert( md, e );
 }
 
+void module_bodyColor(Module *md, Color *c) {
+	Element *e;
+	Color tempColor;
+
+printf("in module_bodyColor\n");
+	color_set( &tempColor, c->c[0], c->c[1], c->c[2] );
+	e = element_init( ObjBodyColor, &tempColor );
+
+	module_insert( md, e );
+}
+
+void module_surfaceColor(Module *md, Color *c) {
+	Element *e;
+	Color tempColor;
+printf("in module_surfaceColor\n");
+	color_set( &tempColor, c->c[0], c->c[1], c->c[2] );
+	e = element_init( ObjSurfaceColor, &tempColor );
+printf("inserint surf color\n");
+	module_insert( md, e );
+printf("done\n");
+
+}
+
+void module_surfaceCoeff(Module *md, float coeff) {
+	Element *e;
+	e = element_init( ObjSurfaceCoeff, &coeff );
+
+	module_insert( md, e );
+
+}
+
 void module_bezierCurve(Module *md, BezierCurve *b, int divisions) {
 	printf("divisions %d\n", divisions);
 	if (divisions == 0) {
 		// no more subdivisions, just connect the control points
 		Line l;
-		
+
 		line_set2D(&l, b->cpt[0].val[0], b->cpt[0].val[1], b->cpt[1].val[0], b->cpt[1].val[1]);
 		module_line( md, &l );
 		line_set2D(&l, b->cpt[1].val[0], b->cpt[1].val[1], b->cpt[2].val[0], b->cpt[2].val[1]);
@@ -339,7 +375,7 @@ void module_bezierCurve(Module *md, BezierCurve *b, int divisions) {
 		module_line( md, &l );
 		return;
 	}
-	
+
 	// create two new bezier curves from original
 	BezierCurve b1;
 	BezierCurve b2;
@@ -347,8 +383,8 @@ void module_bezierCurve(Module *md, BezierCurve *b, int divisions) {
 	Point p_n[7];
 	float u = 0.5;
 	int i;
-	
-	// P0 
+
+	// P0
 	point_copy(&p[0], &b->cpt[0]);
 	// P1
 	point_copy(&p[2], &b->cpt[1]);
@@ -369,7 +405,7 @@ void module_bezierCurve(Module *md, BezierCurve *b, int divisions) {
 	point_copy(&p_n[1], &p[1]);
 	// between A1 and F1 => A2
 	point_setFraction(&p_n[2], &p_n[1], &p[3], u);
-	// start making points from other side 
+	// start making points from other side
 	// P3 => B3
 	point_copy(&p_n[6], &p[6]);
 	// F2 => B2
@@ -378,7 +414,7 @@ void module_bezierCurve(Module *md, BezierCurve *b, int divisions) {
 	point_setFraction(&p_n[4], &p_n[5], &p[3], u);
 	// between A2 and B1 => A3 & B0
 	point_setFraction(&p_n[3], &p_n[4], &p_n[2], u);
-	
+
 	printf("Original Points\n");
 	for (i=0; i<4; i++) {
 		point_print(&b->cpt[i], stdout);
@@ -393,7 +429,7 @@ void module_bezierCurve(Module *md, BezierCurve *b, int divisions) {
 	}
 
 	bezierCurve_set( &b1, &p_n[0] );
-	bezierCurve_set( &b2, &p_n[3] );	
+	bezierCurve_set( &b2, &p_n[3] );
 	module_bezierCurve(md, &b1, divisions-1);
 	module_bezierCurve(md, &b2, divisions-1);
 }
@@ -406,7 +442,7 @@ void module_bezierSurface(Module *md, BezierSurface *b, int divisions, int solid
 		// make vlist with only the 4 corners of the control points
 		Point p[4];
 		int i,j;
-		
+
 		for (i=0; i<3; i++) {
 			for (j=0; j<3; j++) {
 				p[0] =  b->cpt[i*4+j];
@@ -419,7 +455,7 @@ void module_bezierSurface(Module *md, BezierSurface *b, int divisions, int solid
 // 				module_polygon( md, &poly );
 // 				polygon_set(&poly, 3, &p[1]);
 // 				module_polygon( md, &poly );
-				
+
 				// make a quadralateral
 				polygon_set(&poly, 4, &p[0]);
 				printf("Adding polygon: ");
@@ -431,14 +467,14 @@ void module_bezierSurface(Module *md, BezierSurface *b, int divisions, int solid
 		printf("division %d is done\n", divisions);
 		return;
 	}
-	
+
 	// create four new bezier surfaces by subdivision
 	BezierSurface b1;
 	Point p[49];
 	Point vlist[16];
 	float u = 0.5;
 	int base_idx, i,j,k,l,m;
-	
+
 	// subdivide points horizontally
 	for (i=0; i<4; i++) {
 		for (j=0; j<3; j++) {
@@ -449,12 +485,12 @@ void module_bezierSurface(Module *md, BezierSurface *b, int divisions, int solid
 		}
 		printf("Last col: p[%d] from b->cpt[%d]\n", i*14 + j*2, i*4+j);
 		point_copy(&p[i*14 + j*2], &b->cpt[i*4+j]);// make sure we get the last column
-		
+
 	}
-	
-	// subdivide points vertically 
+
+	// subdivide points vertically
 	for (i=0; i<3; i++) { // don't do last row
-		for (j=0; j<3; j++) { 
+		for (j=0; j<3; j++) {
 			printf("p[%d] from half of b->cpt[%d] and b->cpt[%d]\n", i*14 + j*2+7, i*4+j, (i+1)*4+j);
 			printf("p[%d] from half of p[%d] and p[%d]\n", i*14 + j*2+1+7, i*14 + j*2+1, (i+1)*14 + j*2+1);
 			point_setFraction(&p[i*14 + j*2+7], &b->cpt[i*4+j], &b->cpt[(i+1)*4+j], u);
@@ -463,7 +499,7 @@ void module_bezierSurface(Module *md, BezierSurface *b, int divisions, int solid
 		printf("Last col: p[%d] from half of b->cpt[%d] and b->cpt[%d]\n", i*14 + j*2+7, i*4+j, (i+1)*4+j);
 		point_setFraction(&p[i*14 + j*2+7], &b->cpt[i*4+j], &b->cpt[(i+1)*4+j], u);// make sure we get the last column
 	}
-	
+
 	// make 16 point vlist 4 times
 	for (i=0; i<2; i++) {
 		for (j=0; j<2; j++) {
@@ -474,7 +510,7 @@ void module_bezierSurface(Module *md, BezierSurface *b, int divisions, int solid
 					vlist[k*4+l] = p[base_idx+k*7+l];
 				}
 			}
-			
+
 			printf("\nOriginal Points\n");
 			for (m=0; m<16; m++) {
 				printf("b->cpt[%d] is ", m);
@@ -489,7 +525,7 @@ void module_bezierSurface(Module *md, BezierSurface *b, int divisions, int solid
 				printf("vlist[%d] is ", m);
 				point_print(&vlist[m], stdout);
 			}
-			
+
 			bezierSurface_set( &b1, &vlist[0] );
 			module_bezierSurface(md, &b1, divisions-1, solid);
 			printf("Done with surface %d\n", i*2+j);
@@ -526,7 +562,7 @@ void module_scale2D( Module *md, double sx, double sy ) {
 
 	// printf("module scaling %f %f\n", sx, sy);
 	// matrix_print( &m, stdout );
-	
+
 	module_insert( md, e );
 }
 
@@ -555,20 +591,34 @@ void module_shear2D( Module *md, double shx, double shy ) {
 void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting *lighting, Image *src ) {
 	Matrix LTM;
 	matrix_identity( &LTM );
-	
+
 	Element *cur_e = md->head;
-	
-	
+
+
 	while ( cur_e ) { // Break when pointer reaches end of LL
 		// printf("Drawing type %d\n", cur_e->type);
-		
+
 		switch( cur_e->type ) {
 			case ObjColor:
 				{
-					ds->color = cur_e->obj.color;
+					drawstate_setColor( ds, cur_e->obj.color );
 					break;
 				}
-
+			case ObjBodyColor:
+				{
+					drawstate_setBody( ds, cur_e->obj.color );
+					break;
+				}
+			case ObjSurfaceColor:
+				{
+					drawstate_setSurface( ds, cur_e->obj.color );
+					break;
+				}
+			case ObjSurfaceCoeff:
+				{
+					drawstate_setSurfaceCoeff( ds, cur_e->obj.coeff );
+					break;
+				}
 			case ObjPoint:
 				{
 					Point temp1, temp2;
@@ -602,19 +652,30 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 					polygon_copy( &temp, &(cur_e->obj.polygon) );
 					matrix_xformPolygon( &LTM, &temp );
 					matrix_xformPolygon( GTM, &temp );
+
+					printf("setting shade\n");
+					if (ds->shade == ShadeGouraud)  {
+						polygon_shade(&temp, lighting, ds);
+					}
+					int i;
+					for (i=0; i<temp.nVertex; i++) {
+						color_print(&temp.color[i], stdout);
+					}
+					printf("done setting shade\n");
 					matrix_xformPolygon( VTM, &temp );
 					polygon_normalize( &temp );
 
 					printf("Drawing polygon at: ");
-					polygon_print(&temp, stdout);					
+					polygon_print(&temp, stdout);
 					polygon_drawShade(&temp, src, ds, lighting);
+
 
 					break;
 				}
 
 			case ObjMatrix:
 				{
-					matrix_multiply( &(cur_e->obj.matrix), &LTM, &LTM ); 
+					matrix_multiply( &(cur_e->obj.matrix), &LTM, &LTM );
 					break;
 				}
 
@@ -628,9 +689,9 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 				{
 					Matrix tempGTM;
 					matrix_multiply( GTM, &LTM, &tempGTM );
-					
+
 					DrawState tempDS;
-					
+
 					drawstate_copy( &tempDS, ds );
 
 					module_draw( cur_e->obj.module, VTM, &tempGTM, &tempDS, lighting, src );
@@ -641,9 +702,9 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 				break;
 		}
 
-		// Move pointer to next element in LL 
+		// Move pointer to next element in LL
 // 		printf("moving pointer to next element\n");
-		cur_e = cur_e->next; 
+		cur_e = cur_e->next;
 	}
 // 	printf("done\n");
 }
@@ -720,7 +781,7 @@ void module_cube(Module *md, int solid) {
 	Point p2[2];
 	Polygon p;
 	Vector n[4];
-	Line l; 
+	Line l;
 	int i;
 
 	if (solid == 0) {
@@ -765,8 +826,8 @@ void module_cube(Module *md, int solid) {
 		point_set3D( &p2[1], 1, 0, 1 );
 		line_set( &l, p2[0], p2[1] );
 		module_line( md, &l );
-		
-		// NS 
+
+		// NS
 		point_set3D( &p2[0], 0, 0, 0 );
 		point_set3D( &p2[1], 0, 1, 0 );
 		line_set( &l, p2[0], p2[1] );
@@ -787,9 +848,11 @@ void module_cube(Module *md, int solid) {
 		line_set( &l, p2[0], p2[1] );
 		module_line( md, &l );
 	} else {
-		// Sides 
+		// Sides
 		module_rotateZ( md, -1, 0 );
 		module_rotateX( md, -1, 0 );
+
+		printf("rotated\n");
 
 		polygon_init( &p );
 		point_set3D( &pt[0], 0, 0, 0 );
@@ -797,10 +860,18 @@ void module_cube(Module *md, int solid) {
 		point_set3D( &pt[2], 1, 1, 0 );
 		point_set3D( &pt[3], 0, 1, 0 );
 		polygon_set( &p, 4, pt );
-		for(i=0;i<4;i++)
+		for(i=0;i<4;i++) {
 			vector_set( &(n[i]), 0, 0, -1 );
+			vector_print(&n[i], stdout);
+		}
+		printf("osjo\n");
 		polygon_setNormals( &p, 4, n );
+		printf("Polygon normal in module: ");
+		vector_print(&p.normal[0], stdout);
+		printf("here\n");
 		module_polygon( md, &p );
+
+		printf("added first\n");
 
 		point_set3D( &pt[0], 1, 0, 0 );
 		point_set3D( &pt[1], 1, 0, 1 );
@@ -812,6 +883,8 @@ void module_cube(Module *md, int solid) {
 		polygon_setNormals( &p, 4, n );
 		module_polygon( md, &p );
 
+		printf("added 2\n");
+
 		point_set3D( &pt[0], 1, 0, 1 );
 		point_set3D( &pt[1], 0, 0, 1 );
 		point_set3D( &pt[2], 0, 1, 1 );
@@ -821,6 +894,8 @@ void module_cube(Module *md, int solid) {
 			vector_set( &(n[i]), 0, 0, 1 );
 		polygon_setNormals( &p, 4, n );
 		module_polygon( md, &p );
+
+		printf("added 3\n");
 
 		point_set3D( &pt[0], 0, 0, 0 );
 		point_set3D( &pt[1], 0, 0, 1 );
@@ -854,7 +929,7 @@ void module_cube(Module *md, int solid) {
 		polygon_setNormals( &p, 4, n );
 		module_polygon( md, &p );
 	}
-	
+
 }
 
 /**
@@ -936,7 +1011,7 @@ void module_pyramid( Module *mod, int sides ) {
 		x2 = cos( ( (i+1)%sides ) * M_PI * 2.0 / sides );
 		z2 = sin( ( (i+1)%sides ) * M_PI * 2.0 / sides );
 
-		// Add point to base polygon 
+		// Add point to base polygon
 		point_set3D( &basePt[i], x1, 0.0, z1 );
 
 		// Create one face of pyramid
@@ -958,7 +1033,7 @@ void module_pyramid( Module *mod, int sides ) {
 
 void drawTriangle( Module *mod, Point a, Point b, Point c ) {
 	Point pt[3];
-	Polygon p; 
+	Polygon p;
 	point_copy( &pt[0], &a );
 	point_copy( &pt[1], &b );
 	point_copy( &pt[2], &c );
@@ -969,11 +1044,11 @@ void drawTriangle( Module *mod, Point a, Point b, Point c ) {
 Point *buildIcosahedron( Module *mod ) {
 	// Golden ratio
 	float t = (1 +sqrt(5))/ 2;
-	int size = 1; 
+	int size = 1;
 	Polygon p;
-	Point *vList[12]; 
+	Point *vList[12];
 
-	// Define 12 points on icosahedron 
+	// Define 12 points on icosahedron
 	Point pt[12];
 	point_set3D( &pt[0], -size, t*size, 0 );
 	point_set3D( &pt[1], size, t*size, 0 );
@@ -988,7 +1063,7 @@ Point *buildIcosahedron( Module *mod ) {
 	point_set3D( &pt[10], -t*size, 0, -size );
 	point_set3D( &pt[11], -t*size, 0, size );
 
-	// Add points to list of vertices 
+	// Add points to list of vertices
 	for ( size = 0; size < 12; size++ ) {
 		point_copy( vList[size], &pt[size] );
 	}
@@ -1019,7 +1094,7 @@ Point *buildIcosahedron( Module *mod ) {
 	drawTriangle( mod, pt[2], pt[4], pt[11] );
 	drawTriangle( mod, pt[6], pt[2], pt[10] );
 	drawTriangle( mod, pt[8], pt[6], pt[7] );
-	drawTriangle( mod, pt[9], pt[8], pt[1]) ;	
+	drawTriangle( mod, pt[9], pt[8], pt[1]) ;
 
 	return vList;
 }
@@ -1029,18 +1104,18 @@ Point *buildIcosahedron( Module *mod ) {
  */
 Point getMidPoint( Point p1, Point p2 ) {
 	Point midPt;
-	point_set3D( &midPt, 
+	point_set3D( &midPt,
 		(p2.val[0]+p1.val[0])*0.5,
 		(p2.val[1]+p1.val[1])*0.5,
 		(p2.val[2]+p1.val[2])*0.5 );
 
-	// Offset point using normalized vector of midPoint 
-	double l = sqrt( 
+	// Offset point using normalized vector of midPoint
+	double l = sqrt(
 		midPt.val[0]*midPt.val[0]+
 		midPt.val[1]*midPt.val[1]+
 		midPt.val[2]*midPt.val[2] );
 
-	point_set3D( &midPt, 
+	point_set3D( &midPt,
 		midPt.val[0]/l,
 		midPt.val[1]/l,
 		midPt.val[2]/l );
@@ -1091,7 +1166,7 @@ void module_sphere( Module *mod, int lvl ) {
 		point_set3D( &pt[1], x1, 0.0, z1 );
 		point_set3D( &pt[2], x2, 0.0, z2 );
 		subdivide( mod, pt[0], pt[1], pt[2], lvl );
-		
+
 		// Create bottom half
 		point_copy( &pt[0], &btm );
 		point_set3D( &pt[1], x1, 0.0, z1 );
@@ -1105,20 +1180,20 @@ void module_sphere( Module *mod, int lvl ) {
  */
 Point getMidPoint2( Point p1, Point p2 ) {
 	Point midPt;
-	
+
 	//The golden ratio
 	float t = (1 + sqrt(5)) / 2;
 
-	point_set3D( &midPt, 
+	point_set3D( &midPt,
 		(p2.val[0]+p1.val[0])*0.5,
 		(p2.val[1]+p1.val[1])*0.5,
 		(p2.val[2]+p1.val[2])*0.5 );
 
 	// Normalize using homogenous coordinate
 	point_normalize( &midPt );
-	
+
 	// To get other random shape
-	int size = 3; 
+	int size = 3;
 	midPt.val[0] *= sqrt(t*t+1)*size;
 	midPt.val[1] *= sqrt(t*t+1)*size;
 	midPt.val[2] *= sqrt(t*t+1)*size;
@@ -1169,7 +1244,7 @@ void module_sphere2( Module *mod, int lvl ) {
 		point_set3D( &pt[1], x1, 0.0, z1 );
 		point_set3D( &pt[2], x2, 0.0, z2 );
 		subdivide2( mod, pt[0], pt[1], pt[2], lvl );
-		
+
 		// Create bottom half
 		point_copy( &pt[0], &btm );
 		point_set3D( &pt[1], x1, 0.0, z1 );

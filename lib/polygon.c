@@ -18,7 +18,7 @@ Polygon *polygon_create() {
   p->vertex = NULL;
   p->color = NULL;
 //   p->normal = NULL;
-  p->oneSided = 1;
+  p->oneSided = 0;
   
   return p;
 }
@@ -53,7 +53,7 @@ Polygon *polygon_createp(int numV, Point *vlist) {
   p->nVertex = numV;
   p->color = NULL;
 //   p->normal = NULL;
-  p->oneSided = 1;
+  p->oneSided = 0;
   
   return p;
 }
@@ -83,8 +83,8 @@ void polygon_init(Polygon *p) {
   p->nVertex = 0;
   p->vertex = NULL;
   p->color = NULL;
-//   p->normal = NULL;
-  p->oneSided = 1;
+  p->normal = NULL;
+  p->oneSided = 0;
 }
 
 void polygon_set(Polygon *p, int numV, Point *vlist) {
@@ -100,6 +100,11 @@ void polygon_set(Polygon *p, int numV, Point *vlist) {
     free(p);
     exit(-1);
   }
+  
+  p->color = malloc(sizeof(Color) * numV);
+  
+  p->normal = malloc(sizeof(Vector) * numV);
+  
 //   printf("in polygon_set, setting %d vertices\n", numV);
   int i;
   for (i=0; i<numV; i++) {
@@ -109,9 +114,9 @@ void polygon_set(Polygon *p, int numV, Point *vlist) {
   
   p->zBuffer = 1.0;
   p->nVertex = numV;  
-  p->color = NULL;
+//   p->color = NULL;
 //   p->normal = NULL;
-  p->oneSided = 1;
+  p->oneSided = 0;
 }
 
 
@@ -125,10 +130,10 @@ void polygon_clear(Polygon *p) {
     free(p->color);
     p->color = NULL;
   }
-//   if (p->normal) {
-//     free(p->normal);
-//     p->normal = NULL;
-//   }
+  if (p->normal) {
+    free(p->normal);
+    p->normal = NULL;
+  }
   
   p->zBuffer = 1.0;
   p->nVertex = 0;
@@ -156,7 +161,8 @@ void polygon_setColors(Polygon *p, int numV, Color *clist) {
   
   int i;
   for (i=0; i<numV; i++) {
-    p->color[i] = clist[i];
+//     p->color[i] = clist[i];
+    color_set( &p->color[i], clist[i].c[0], clist[i].c[1], clist[i].c[2]);
   }
 }
 
@@ -175,7 +181,7 @@ void polygon_setNormals(Polygon *p, int numV, Vector *nlist) {
   
   int i;
   for (i=0; i<numV; i++) {
-    p->normal[i] = nlist[i];
+    vector_copy( &p->normal[i], &nlist[i]);
   }
 }
 
@@ -239,21 +245,30 @@ void polygon_copy(Polygon *to, Polygon *from) {
 //   printf("%.2f\n", to->vertex[0]);
   // need to make sure enough memory is allocated to vertex list field
   to->vertex = malloc(sizeof(Point) * nVertex);
-  
+  to->color = malloc(sizeof(Color) * nVertex);
+  to->normal = malloc(sizeof(Vector) * nVertex);
 //   printf("in polygon_copy, copying polygon\n");
   // copy content from source
   for (i=0; i<nVertex; i++) {
+    printf("copying %d\n", i);
     to->vertex[i].val[0] = from->vertex[i].val[0];
     to->vertex[i].val[1] = from->vertex[i].val[1];
     to->vertex[i].val[2] = from->vertex[i].val[2];
     to->vertex[i].val[3] = from->vertex[i].val[3];
-//     to->color[i] = from->color[i];     
+    
+    to->color[i].c[0] = from->color[i].c[0];
+    to->color[i].c[1] = from->color[i].c[1];
+    to->color[i].c[2] = from->color[i].c[2];
+    vector_copy( &to->normal[i], &from->normal[i] );
   }
   
-//   printf("in polygon_copy, finished copying polygon\n");
+  printf("in polygon_copy, finished copying polygon\n");
   to->nVertex = nVertex;
+  printf("z\n");
   to->zBuffer = from->zBuffer;
-  
+  printf("one\n");
+  to->oneSided = from->oneSided;
+  printf("done\n");
   // free memory at a higher level
 //   free(from->vertex);
 //   free(from);
@@ -579,6 +594,10 @@ void polygon_drawShade(Polygon *p, Image *src, DrawState *ds, Lighting *light) {
     case ShadeGouraud:
       {
         printf("drawing shade gouraud!\n");
+        // scanline fill with color interpolation
+        
+        
+        polygon_drawState( p, src, ds );
         break;
       }
     case ShadePhong: 
@@ -595,10 +614,54 @@ void polygon_drawShade(Polygon *p, Image *src, DrawState *ds, Lighting *light) {
 
 }
 
-// initializes the normal array to the vectors in nlist.
-// void polygon_setNormals(Polygon *p, int numV, Vector *nlist) {
-//   // set polygon normal to vectors in nlist (maccloc)
-//   p->normal = malloc(numV*sizeof(Vector));
-//   for ( int i = 0; i < numV; i++ ) 
-//     vector_copy( &p->normal[i], &nlist[i] );
-// }
+// For the ShadeFlat and ShadeGouraud cases of the shade field of DrawState, calculate colors at each 
+// vertex and create and fill out the color array of the Polygon data structure. 
+// For ShadeFlat, use the average surface normal and average polygon location to calculate 
+// one color and set the color at each vertex to the calculated value. 
+// For ShadeGouraud use the surface normals and locations of each vertex.
+void polygon_shade(Polygon *p, Lighting *lighting, DrawState *ds) {
+  printf("Inside polygon_shade \n");
+  int i;
+  
+  switch (ds->shade) {
+    case ShadeFlat: 
+      {
+        printf("drawing ShadeFlat!\n");
+        break;
+      }
+    case ShadeGouraud: 
+      {
+		  Color clist[p->nVertex];
+          Vector V;
+		  for (i=0; i<p->nVertex; i++) {
+		    printf("%d\n",i);
+		    printf("%.2f\n", ds->viewer.val[0]);
+			vector_set(&V, ds->viewer.val[0] - p->vertex[i].val[0], 
+							ds->viewer.val[1] - p->vertex[i].val[1], 
+							ds->viewer.val[2] - p->vertex[i].val[2]);
+			printf("Polygon normal: ");
+			vector_print(&p->normal[i], stdout);
+			printf("done setting vector V\n");
+			lighting_shading( lighting, &p->normal[i], &V, &p->vertex[i], &ds->body, &ds->surface, ds->surfaceCoeff, p->oneSided, &clist[i] );
+		    color_print( &clist[i], stdout );
+		  }
+		  printf("setting colors\n");
+		  polygon_setColors(p, p->nVertex, clist);
+		  
+		  int i;
+		  printf("$$$$$$$$$$\n");
+		  for (i=0; i<p->nVertex; i++) {
+		    color_print(&p->color[i], stdout);
+		  }
+		  
+// 		  exit(-1);
+		  
+		  break;
+      }
+  }
+  
+
+  
+}
+
+

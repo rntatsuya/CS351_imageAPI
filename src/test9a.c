@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 	color_set( &DkGrey, 0.1, 0.1, 0.1 );
 
   // initialize the image
-  src = image_create(rows, cols);
+  src = image_create(rows, cols, 255);
 
   // initialize matrices
   matrix_identity(&GTM);
@@ -59,24 +59,29 @@ int main(int argc, char *argv[]) {
 
   // make a simple cube module
   cube = module_create();
+printf("awawd\n");
   module_scale( cube, 3, 1, 2 );
 
   // this would color the cube in ShadeConstant mode
+printf("awawd\n");
   module_color( cube, &Grey );
 
   // the example cube is blue (Y/-Y), red (Z/-Z), yellow (X/-X)
   // these colors should be the body colors
+printf("awawd\n");
   module_cube( cube, 1);
 
+printf("bodyCOlor\n");
 	// set body and surface color values
 	module_bodyColor( cube, &White );
+printf("surfCOlor\n");
 	module_surfaceColor( cube, &DkGrey );
-
+printf("going to light\n");
   // manually add a light source to the Lighting structure
   // put it in the same place as the eye in world space
   light = lighting_create();
   lighting_add( light, LightPoint, &White, NULL, &(view.vrp), 0, 0 );
-
+printf("^^^^^^^^^^^^\n");
   // set the shading to Gouraud
   ds = drawstate_create();
 	
@@ -84,9 +89,11 @@ int main(int argc, char *argv[]) {
 	ds->shade = ShadeGouraud;
 	//	ds->shade = ShadeFlat;
 
-  matrix_identity(&GTM);
-  module_draw(cube, &VTM, &GTM, ds, light, src);
 
+  matrix_identity(&GTM);
+  printf("drawinf cube!!!!!!!!!!!!!\n");
+  module_draw(cube, &VTM, &GTM, ds, light, src);
+printf("!!!!!!!!!!!!!!!!!!\n");
   // write out the image
   image_write(src, "test9a.ppm");
 

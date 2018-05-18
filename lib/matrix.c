@@ -114,13 +114,16 @@ void matrix_xformVector( Matrix *m, Vector *p, Vector *q ) {
 }
 
 void matrix_xformPolygon( Matrix *m, Polygon *p ) {
-	Point temp;
+	Point temp_p;
+	Vector temp_v;
 	
 	for ( int k = 0; k < p->nVertex; k++ ) {
 		// copy point to separate left and right hand side of equation below
 		// point_copy(&temp, &p->vertex[k]);
-		matrix_xformPoint( m, &p->vertex[k], &temp );
-		point_copy(&p->vertex[k], &temp);
+		matrix_xformPoint( m, &p->vertex[k], &temp_p );
+		matrix_xformVector( m, &p->normal[k], &temp_v );
+		point_copy(&p->vertex[k], &temp_p);
+		vector_copy(&p->normal[k], &temp_v);
 	}
 }
 

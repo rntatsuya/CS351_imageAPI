@@ -66,19 +66,20 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 	// idk why bruce said to normalize an already normalized vector o_O
 	vector_normalize(N);
 	vector_normalize(V);
-
+	
+	float r_sum = 0.0;
+	float g_sum = 0.0;
+	float b_sum = 0.0;
+	
 	// do some summation in a loop through each light in the lighting light array
 	for (i=0; i<MAX_LIGHTS; i++) {
 		if (!l->light[i])
 			break;
-		
-		float r_sum = 0.0;
-		float g_sum = 0.0;
-		float b_sum = 0.0;
-		
+		printf("lighting_shading %d type %d\n",i, l->light[i]->type);
+
 		switch (l->light[i]->type) {
 			case LightNone : {
-				
+				printf("LightNone %d: %.2f %.2f %.2f\n", i, r_sum, g_sum, b_sum);
 				break;
 			}
 			case LightAmbient : {
@@ -94,10 +95,12 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 				break;
 			}
 			case LightDirect : {
-				
+				printf("LightDirect %d: %.2f %.2f %.2f\n", i, r_sum, g_sum, b_sum);
 				break;
 			}
 			case LightPoint : {	
+				printf("in point light!!!!!!!!\n");
+				printf("s: %.2f\n", s);
 				// calculate light vector (vector from Point p to light source position)
 				Vector L, H;
 				vector_set( &L, 
@@ -105,6 +108,7 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 						l->light[i]->position->val[1] - p->val[1], 
 						l->light[i]->position->val[2] - p->val[2] );
 				vector_normalize(&L);
+				
 
 				float sharp = l->light[i]->sharpness;
 
@@ -124,6 +128,11 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 					LdotN *= (-1.0);
 					HdotN *= (-1.0);
 				}
+				
+				vector_print(&L, stdout);
+				vector_print(V, stdout);
+				vector_print(&H, stdout);
+				
 
 				// what value should we use for the smoothness coefficient?? => Use s in param or sharpness property of light struct?
 				if (r_sum < 1.0)
@@ -143,23 +152,27 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 				break;
 			}
 			case LightSpot : {
-				
+				printf("light spot %d: %.2f %.2f %.2f\n", i, r_sum, g_sum, b_sum);
 				break;
 			}
 
 		}
 		
-		if (r_sum > 1.0)
-			r_sum = 1.0;
-		if (g_sum > 1.0)
-			g_sum = 1.0;
-		if (b_sum > 1.0)
-			b_sum = 1.0;
-		
-		c->c[0] = r_sum;
-		c->c[1] = g_sum;
-		c->c[2] = b_sum;		
+		printf("owowow\n");
+				
 	}
 
+	if (r_sum > 1.0)
+		r_sum = 1.0;
+	if (g_sum > 1.0)
+		g_sum = 1.0;
+	if (b_sum > 1.0)
+		b_sum = 1.0;
+	
+// 	c->c[0] = r_sum;
+// 	c->c[1] = g_sum;
+// 	c->c[2] = b_sum;
+	color_set( c, r_sum, g_sum, b_sum );
+	
 }
 

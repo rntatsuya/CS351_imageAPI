@@ -63,6 +63,9 @@ void module_polyline( Module *md, Polyline *p );
 void module_polygon( Module *md, Polygon *p );
 void module_identity( Module *md );
 void module_color(Module *md, Color *c);
+void module_bodyColor(Module *md, Color *c);
+void module_surfaceColor(Module *md, Color *c);
+void module_surfaceCoeff(Module *md, float coeff);
 void module_bezierCurve(Module *md, BezierCurve *b, int divisions);
 void module_bezierSurface(Module *md, BezierSurface *b, int divisions, int solid);
 
