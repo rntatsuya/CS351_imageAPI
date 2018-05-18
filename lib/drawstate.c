@@ -13,15 +13,18 @@ DrawState *drawstate_create( void ) {
     	exit(-1);
 	}
 	
-	Color c;
-	color_set( &c, 1, 1, 1 );
+	Color c1,c2,c3;
+	color_set( &c1, 1, 1, 1 );
+	color_set( &c2, 1, 1, 1 );
+	color_set( &c3, 1, 1, 1 );
 	
-	ds->color = c;
+	ds->color = c1;
+	ds->body = c2;
+	ds->surface = c3;
 	ds->surfaceCoeff = 1.0;
 	ds->shade = ShadeFrame;
-	
-	printf("shade is %d\n", ds->shade);
-	// printf("%d\n", ShadeFrame);
+	ds->zBufferFlag = 0;
+
 	
 	return ds;
 }

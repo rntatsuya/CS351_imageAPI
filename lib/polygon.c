@@ -567,6 +567,7 @@ void polygon_drawFillBGradient(Polygon *p, Image *src, Color c1, Color c2, Color
 void polygon_drawShade(Polygon *p, Image *src, DrawState *ds, Lighting *light) {
   printf("in drawshade %d\n", ds->shade);
   color_print(&ds->color, stdout);
+//   color_print(&ds->body, stdout);
   switch (ds->shade) {
     case ShadeFrame: 
       {

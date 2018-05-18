@@ -100,7 +100,6 @@ Element *element_init( ObjectType type, void *obj ) {
 
 		case ObjBodyColor :
 			{
-				printf("hsiais\n");
 				color_set( &copyObj.color,
 					((Color *)obj)->c[0],
 					((Color *)obj)->c[1],
@@ -337,7 +336,7 @@ void module_bodyColor(Module *md, Color *c) {
 printf("in module_bodyColor\n");
 	color_set( &tempColor, c->c[0], c->c[1], c->c[2] );
 	e = element_init( ObjBodyColor, &tempColor );
-
+	
 	module_insert( md, e );
 }
 
@@ -438,94 +437,238 @@ void module_bezierSurface(Module *md, BezierSurface *b, int divisions, int solid
 	printf("divisions %d\n", divisions);
 	if (divisions == 0) {
 		// no more subdivisions, just connect the control points
-		Polygon poly;
+// 		Polygon poly;
 		// make vlist with only the 4 corners of the control points
-		Point p[4];
+// 		Point p[4];
 		int i,j;
-
-		for (i=0; i<3; i++) {
-			for (j=0; j<3; j++) {
-				p[0] =  b->cpt[i*4+j];
-				p[1] =  b->cpt[i*4+j+1];
-				p[2] =  b->cpt[(i+1)*4+j+1];
-				p[3] =  b->cpt[(i+1)*4+j];
-
-				// make two triangles
-// 				polygon_set(&poly, 3, &p[0]);
-// 				module_polygon( md, &poly );
-// 				polygon_set(&poly, 3, &p[1]);
-// 				module_polygon( md, &poly );
-
-				// make a quadralateral
-				polygon_set(&poly, 4, &p[0]);
-				printf("Adding polygon: ");
-				polygon_print(&poly, stdout);
-				module_polygon( md, &poly );
-
+		
+		if (solid == 0){
+			Line l;
+			for (i=0; i<4; i++) {
+				for (j=0; j<3; j++) {
+					// draw horizontal lines
+					line_set3D(&l, b->cpt[i*4 + j], b->cpt[i*4 + j+1]);
+					module_line( md, &l );
+				
+					// draw vertical lines
+					line_set3D(&l, b->cpt[i+j*4], b->cpt[i + (j+1)*4]);
+					module_line( md, &l );
+				}
 			}
+		}
+
+		else{
+
+			Polygon p;
+			polygon_init( &p );
+
+			Point pt[3];
+			point_copy(&pt[0], &b->cpt[0]);
+			point_copy(&pt[1], &b->cpt[12]);
+			point_copy(&pt[2], &b->cpt[15]);
+			polygon_set(&p, 3, &pt[0]);
+			module_polygon(md, &p);
+	
+			point_copy(&pt[0], &b->cpt[0]);
+			point_copy(&pt[1], &b->cpt[3]);
+			point_copy(&pt[2], &b->cpt[15]);
+			polygon_set(&p, 3, &pt[0]);
+			module_polygon(md, &p);
+		
+			polygon_clear(&p);
 		}
 		printf("division %d is done\n", divisions);
 		return;
 	}
-
+	
 	// create four new bezier surfaces by subdivision
 	BezierSurface b1;
-	Point p[49];
+	Point p[7];
+	Point p_n[7];
+	Point bsp[49];
 	Point vlist[16];
 	float u = 0.5;
 	int base_idx, i,j,k,l,m;
-
+	
+	// interpolate 
+	
+	
 	// subdivide points horizontally
 	for (i=0; i<4; i++) {
-		for (j=0; j<3; j++) {
-			printf("p[%d] from b->cpt[%d]\n", i*14 + j*2, i*4+j);
-			printf("p[%d] from half of b->cpt[%d] and b->cpt[%d]\n", i*14 + j*2+1, i*4+j, i*4+j+1);
-			point_copy(&p[i*14 + j*2], &b->cpt[i*4+j]);
-			point_setFraction(&p[i*14 + j*2+1], &b->cpt[i*4+j], &b->cpt[i*4+j+1], u);
-		}
-		printf("Last col: p[%d] from b->cpt[%d]\n", i*14 + j*2, i*4+j);
-		point_copy(&p[i*14 + j*2], &b->cpt[i*4+j]);// make sure we get the last column
+		
+		// P0 
+		point_copy(&p[0], &b->cpt[i*4]);
+		// P1
+		point_copy(&p[2], &b->cpt[i*4+1]);
+		// P2
+		point_copy(&p[4], &b->cpt[i*4+2]);
+		// P3
+		point_copy(&p[6], &b->cpt[i*4+3]);
+		// point between P0 and P1 => F0
+		point_setFraction(&p[1], &p[0], &p[2], u);
+		// point between P1 and P2 => F1
+		point_setFraction(&p[3], &p[2], &p[4], u);
+		// point between P2 and P3 => F2
+		point_setFraction(&p[5], &p[4], &p[6], u);
 
+		// P0 => A0
+		point_copy(&p_n[0], &p[0]);
+		// F0 => A1
+		point_copy(&p_n[1], &p[1]);
+		// between A1 and F1 => A2
+		point_setFraction(&p_n[2], &p_n[1], &p[3], u);
+		// start making points from other side 
+		// P3 => B3
+		point_copy(&p_n[6], &p[6]);
+		// F2 => B2
+		point_copy(&p_n[5], &p[5]);
+		// between B2 and F1 => B1
+// 		printf("---------------p_n[4]\n");
+// 		point_print(&p_n[5], stdout);
+// 		point_print(&p[3], stdout);
+		point_setFraction(&p_n[4], &p_n[5], &p[3], u);
+		// between A2 and B1 => A3 & B0
+		point_setFraction(&p_n[3], &p_n[4], &p_n[2], u);
+		
+// 		printf("Original Points\n");
+// 		for (j=0; j<4; j++) {
+// 			point_print(&b->cpt[i*4+j], stdout);
+// 		}
+// 		printf("Original + Half Points\n");
+// 		for (j=0; j<7; j++) {
+// 			point_print(&p[j], stdout);
+// 		}
+// 		printf("Subdivided Points\n");
+// 		for (j=0; j<7; j++) {
+// 			point_print(&p_n[j], stdout);
+// 		}
+		
+		// 
+		for (j=0; j<7; j++) {
+// 			printf("bsp[%d] ", i*14+j);
+			point_copy(&bsp[i*14+j], &p_n[j]);
+// 			point_print(&bsp[i*14+j], stdout);
+		}
 	}
 
+	
 	// subdivide points vertically
-	for (i=0; i<3; i++) { // don't do last row
-		for (j=0; j<3; j++) {
-			printf("p[%d] from half of b->cpt[%d] and b->cpt[%d]\n", i*14 + j*2+7, i*4+j, (i+1)*4+j);
-			printf("p[%d] from half of p[%d] and p[%d]\n", i*14 + j*2+1+7, i*14 + j*2+1, (i+1)*14 + j*2+1);
-			point_setFraction(&p[i*14 + j*2+7], &b->cpt[i*4+j], &b->cpt[(i+1)*4+j], u);
-			point_setFraction(&p[i*14 + j*2+1+7], &p[i*14 + j*2+1], &p[(i+1)*14 + j*2+1], u);
-		}
-		printf("Last col: p[%d] from half of b->cpt[%d] and b->cpt[%d]\n", i*14 + j*2+7, i*4+j, (i+1)*4+j);
-		point_setFraction(&p[i*14 + j*2+7], &b->cpt[i*4+j], &b->cpt[(i+1)*4+j], u);// make sure we get the last column
-	}
+	for (i=0; i<7; i++) {
+			
+		// P0 
+		point_copy(&p[0], &bsp[i]);
+		// P1
+		point_copy(&p[2], &bsp[i+1*14]);
+		// P2
+		point_copy(&p[4], &bsp[i+2*14]);
+		// P3
+		point_copy(&p[6], &bsp[i+3*14]);
+		
+		
+		// point between P0 and P1 => F0
+		point_setFraction(&p[1], &p[0], &p[2], u);
+		// point between P1 and P2 => F1
+		point_setFraction(&p[3], &p[2], &p[4], u);
+		// point between P2 and P3 => F2
+		point_setFraction(&p[5], &p[4], &p[6], u);
 
+		// P0 => A0
+		point_copy(&p_n[0], &p[0]);
+		// F0 => A1
+		point_copy(&p_n[1], &p[1]);
+		// between A1 and F1 => A2
+		point_setFraction(&p_n[2], &p_n[1], &p[3], u);
+		// start making points from other side 
+		// P3 => B3
+		point_copy(&p_n[6], &p[6]);
+		// F2 => B2
+		point_copy(&p_n[5], &p[5]);
+		// between B2 and F1 => B1
+		point_setFraction(&p_n[4], &p_n[5], &p[3], u);
+		// between A2 and B1 => A3 & B0
+		point_setFraction(&p_n[3], &p_n[4], &p_n[2], u);
+		
+// 		printf("Original Points\n");
+// 		for (j=0; j<4; j++) {
+// 			printf("index: %d\n", i+j*4);
+// 			point_print(&b->cpt[i+j*4], stdout);
+// 		}
+// 		printf("Original + Half Points\n");
+// 		for (j=0; j<7; j++) {
+// 			point_print(&p[j], stdout);
+// 		}
+// 		printf("Subdivided Points\n");
+// 		for (j=0; j<7; j++) {
+// 			point_print(&p_n[j], stdout);
+// 		}
+		
+		
+		for (j=0; j<7; j++) { 
+			point_copy(&bsp[i+7*j], &p_n[j]);
+		}
+	}
+	
+// 	exit(-1);
+	
+
+// 	for (i=0; i<49; i++) {
+// 		printf("bsp[%d] ", i);
+// 		point_print(&bsp[i], stdout);
+// 	}
+	
+	
+// 	
+// 	for (i=0; i<4; i++) {
+// 		for (j=0; j<3; j++) {
+// 			printf("p[%d] from b->cpt[%d]\n", i*14 + j*2, i*4+j);
+// 			printf("p[%d] from half of b->cpt[%d] and b->cpt[%d]\n", i*14 + j*2+1, i*4+j, i*4+j+1);
+// 			point_copy(&p[i*14 + j*2], &b->cpt[i*4+j]);
+// 			point_setFraction(&p[i*14 + j*2+1], &b->cpt[i*4+j], &b->cpt[i*4+j+1], u);
+// 		}
+// 		printf("Last col: p[%d] from b->cpt[%d]\n", i*14 + j*2, i*4+j);
+// 		point_copy(&p[i*14 + j*2], &b->cpt[i*4+j]);// make sure we get the last column
+// 		
+// 	}
+// 	
+// 	// subdivide points vertically 
+// 	for (i=0; i<3; i++) { // don't do last row
+// 		for (j=0; j<3; j++) { 
+// 			printf("p[%d] from half of b->cpt[%d] and b->cpt[%d]\n", i*14 + j*2+7, i*4+j, (i+1)*4+j);
+// 			printf("p[%d] from half of p[%d] and p[%d]\n", i*14 + j*2+1+7, i*14 + j*2+1, (i+1)*14 + j*2+1);
+// 			point_setFraction(&p[i*14 + j*2+7], &b->cpt[i*4+j], &b->cpt[(i+1)*4+j], u);
+// 			point_setFraction(&p[i*14 + j*2+1+7], &p[i*14 + j*2+1], &p[(i+1)*14 + j*2+1], u);
+// 		}
+// 		printf("Last col: p[%d] from half of b->cpt[%d] and b->cpt[%d]\n", i*14 + j*2+7, i*4+j, (i+1)*4+j);
+// 		point_setFraction(&p[i*14 + j*2+7], &b->cpt[i*4+j], &b->cpt[(i+1)*4+j], u);// make sure we get the last column
+// 	}
+	
 	// make 16 point vlist 4 times
 	for (i=0; i<2; i++) {
 		for (j=0; j<2; j++) {
 			base_idx = i*21 + j*3;
 			for (k=0; k<4; k++) {
 				for (l=0; l<4; l++) {
-					printf("vlist[%d] = p[%d]\n", k*4+l, base_idx+k*7+l);
-					vlist[k*4+l] = p[base_idx+k*7+l];
+// 					printf("vlist[%d] = bsp[%d]\n", k*4+l, base_idx+k*7+l);
+// 					point_print(&bsp[base_idx+k*7+l], stdout);
+					vlist[k*4+l] = bsp[base_idx+k*7+l];
 				}
 			}
-
-			printf("\nOriginal Points\n");
-			for (m=0; m<16; m++) {
-				printf("b->cpt[%d] is ", m);
-				point_print(&b->cpt[m], stdout);
-			}
-// 			printf("Original + Half Points\n");
-// 			for (i=0; i<7; i++) {
-// 				point_print(&p[i], stdout);
+			
+// 			printf("\nOriginal Points\n");
+// 			for (m=0; m<16; m++) {
+// 				printf("b->cpt[%d] is ", m);
+// 				point_print(&b->cpt[m], stdout);
 // 			}
-			printf("Subdivided Points\n");
-			for (m=0; m<16; m++) {
-				printf("vlist[%d] is ", m);
-				point_print(&vlist[m], stdout);
-			}
-
+// // 			printf("Original + Half Points\n");
+// // 			for (i=0; i<7; i++) {
+// // 				point_print(&p[i], stdout);
+// // 			}
+// 			printf("Subdivided Points\n");
+// 			for (m=0; m<16; m++) {
+// 				printf("vlist[%d] is ", m);
+// 				point_print(&vlist[m], stdout);
+// 			}
+			
 			bezierSurface_set( &b1, &vlist[0] );
 			module_bezierSurface(md, &b1, divisions-1, solid);
 			printf("Done with surface %d\n", i*2+j);
@@ -596,7 +739,7 @@ void module_draw( Module *md, Matrix *VTM, Matrix *GTM, DrawState *ds, Lighting 
 
 
 	while ( cur_e ) { // Break when pointer reaches end of LL
-		// printf("Drawing type %d\n", cur_e->type);
+		printf("Drawing type %d\n", cur_e->type);
 
 		switch( cur_e->type ) {
 			case ObjColor:

@@ -124,6 +124,25 @@ void line_set2D(Line *line, double x1, double y1, double x2, double y2) {
   line->zBuffer = 1.0;
 } // end of line_set
 
+//  initialize a line to ta and tb.
+void line_set3D(Line *line, Point start, Point end) {
+  Point a;
+  Point b;
+
+  a.val[0] = start.val[0];
+  a.val[1] = start.val[1];
+  a.val[2] = start.val[2];
+  a.val[3] = start.val[3];
+
+  b.val[0] = end.val[0];
+  b.val[1] = end.val[1];
+  b.val[2] = end.val[2];
+  b.val[3] = end.val[3];
+  
+  line->a = a;
+  line->b = b;
+} // end of line_set
+
 void line_set (Line *line, Point start, Point end) {
   printf("line set\n");
   point_print( &start, stdout );

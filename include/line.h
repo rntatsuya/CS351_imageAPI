@@ -53,6 +53,9 @@ void point_print(Point *p, FILE *fp);
 
 void line_set2D(Line *line, double x1, double y1, double x2, double y2);
 
+//  initialize a line to ta and tb.
+void line_set3D(Line *line, Point start, Point end);
+
 void line_set(Line *line, Point start, Point end);
 
 void line_zBuffer(Line *l, double flag);
