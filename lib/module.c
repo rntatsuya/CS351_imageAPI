@@ -999,10 +999,6 @@ void module_cube(Module *md, int solid) {
 		printf("rotated\n");
 
 		polygon_init( &p );
-// 		point_set3D( &pt[0], 0, 0, 0 );
-// 		point_set3D( &pt[1], 1, 0, 0 );
-// 		point_set3D( &pt[2], 1, 1, 0 );
-// 		point_set3D( &pt[3], 0, 1, 0 );
 		point_set3D( &pt[0], -0.5, -0.5, -0.5 );
 		point_set3D( &pt[1], 0.5, -0.5, -0.5 );
 		point_set3D( &pt[2], 0.5, 0.5, -0.5 );
@@ -1021,10 +1017,6 @@ void module_cube(Module *md, int solid) {
 
 		printf("added first\n");
 
-// 		point_set3D( &pt[0], 1, 0, 0 );
-// 		point_set3D( &pt[1], 1, 0, 1 );
-// 		point_set3D( &pt[2], 1, 1, 1 );
-// 		point_set3D( &pt[3], 1, 1, 0 );
 		point_set3D( &pt[0], 0.5, -0.5, -0.5 );
 		point_set3D( &pt[1], 0.5, -0.5, 0.5 );
 		point_set3D( &pt[2], 0.5, 0.5, 0.5 );
@@ -1036,11 +1028,6 @@ void module_cube(Module *md, int solid) {
 		module_polygon( md, &p );
 
 		printf("added 2\n");
-
-// 		point_set3D( &pt[0], 1, 0, 1 );
-// 		point_set3D( &pt[1], 0, 0, 1 );
-// 		point_set3D( &pt[2], 0, 1, 1 );
-// 		point_set3D( &pt[3], 1, 1, 1 );
 		point_set3D( &pt[0], 0.5, -0.5, 0.5 );
 		point_set3D( &pt[1], -0.5, -0.5, 0.5 );
 		point_set3D( &pt[2], -0.5, 0.5, 0.5 );
@@ -1053,10 +1040,6 @@ void module_cube(Module *md, int solid) {
 
 		printf("added 3\n");
 
-// 		point_set3D( &pt[0], 0, 0, 0 );
-// 		point_set3D( &pt[1], 0, 0, 1 );
-// 		point_set3D( &pt[2], 0, 1, 1 );
-// 		point_set3D( &pt[3], 0, 1, 0 );
 		point_set3D( &pt[0], -0.5, -0.5, -0.5 );
 		point_set3D( &pt[1], -0.5, -0.5, 0.5 );
 		point_set3D( &pt[2], -0.5, 0.5, 0.5 );
@@ -1068,10 +1051,6 @@ void module_cube(Module *md, int solid) {
 		module_polygon( md, &p );
 
 		// Top
-// 		point_set3D( &pt[0], 0, 1, 0 );
-// 		point_set3D( &pt[1], 0, 1, 1 );
-// 		point_set3D( &pt[2], 1, 1, 1 );
-// 		point_set3D( &pt[3], 1, 1, 0 );
 		point_set3D( &pt[0], -0.5, 0.5, -0.5 );
 		point_set3D( &pt[1], -0.5, 0.5, 0.5 );
 		point_set3D( &pt[2], 0.5, 0.5, 0.5 );
@@ -1083,10 +1062,6 @@ void module_cube(Module *md, int solid) {
 		module_polygon( md, &p );
 
 		// Bottom
-// 		point_set3D( &pt[0], 0, 0, 0 );
-// 		point_set3D( &pt[1], 1, 0, 0 );
-// 		point_set3D( &pt[2], 1, 0, 1 );
-// 		point_set3D( &pt[3], 0, 0, 1 );
 		point_set3D( &pt[0], -0.5, -0.5, -0.5 );
 		point_set3D( &pt[1], 0.5, -0.5, -0.5 );
 		point_set3D( &pt[2], 0.5, -0.5, 0.5 );
@@ -1209,7 +1184,7 @@ void drawTriangle( Module *mod, Point a, Point b, Point c ) {
 	module_polygon( mod, &p );
 }
 
-Point *buildIcosahedron( Module *mod ) {
+void buildIcosahedron( Module *mod ) {
 	// Golden ratio
 	float t = (1 +sqrt(5))/ 2;
 	int size = 1;
@@ -1263,8 +1238,6 @@ Point *buildIcosahedron( Module *mod ) {
 	drawTriangle( mod, pt[6], pt[2], pt[10] );
 	drawTriangle( mod, pt[8], pt[6], pt[7] );
 	drawTriangle( mod, pt[9], pt[8], pt[1]) ;
-
-	return vList;
 }
 
 /**

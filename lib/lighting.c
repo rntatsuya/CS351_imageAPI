@@ -75,7 +75,7 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 	for (i=0; i<MAX_LIGHTS; i++) {
 		if (!l->light[i])
 			break;
-		printf("lighting_shading %d type %d\n",i, l->light[i]->type);
+		// printf("lighting_shading %d type %d\n",i, l->light[i]->type);
 
 		switch (l->light[i]->type) {
 			case LightNone : {
@@ -99,8 +99,6 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 				break;
 			}
 			case LightPoint : {	
-				printf("in point light!!!!!!!!\n");
-				printf("s: %.2f\n", s);
 				// calculate light vector (vector from Point p to light source position)
 				Vector L, H;
 				vector_set( &L, 
@@ -129,12 +127,10 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 					HdotN *= (-1.0);
 				}
 				
-				vector_print(&L, stdout);
-				vector_print(V, stdout);
-				vector_print(&H, stdout);
+				// vector_print(&L, stdout);
+				// vector_print(V, stdout);
+				// vector_print(&H, stdout);
 				
-
-				// what value should we use for the smoothness coefficient?? => Use s in param or sharpness property of light struct?
 				if (r_sum < 1.0)
 					r_sum += (Cb->c[0])*(l->light[i]->color->c[0])*LdotN 
 						+ (l->light[i]->color->c[0])*(Cs->c[0])*pow(HdotN,s);
@@ -158,7 +154,6 @@ void lighting_shading( Lighting *l, Vector *N, Vector *V, Point *p, Color *Cb, C
 
 		}
 		
-		printf("owowow\n");
 				
 	}
 

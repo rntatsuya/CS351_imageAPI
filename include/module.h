@@ -98,5 +98,7 @@ void module_cylinder( Module *mod, int sides );
 void module_pyramid( Module *mod, int sides );
 void module_sphere( Module *mod, int lvl );
 void module_sphere2( Module *mod, int lvl );
+void buildIcosahedron( Module *mod );
+
 
 #endif
